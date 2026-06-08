@@ -368,25 +368,26 @@ INSERT INTO `users` (`email`,`username`,`password_hash`,`role`,`nama`,`is_aktif`
 ('admin@mahadaly.ac.id','admin','$2y$12$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi','superadmin','Super Administrator',1);
 
 -- ============================================================
--- AKTIFKAN EVENT SCHEDULER (jalankan sekali sebagai root)
--- SET GLOBAL event_scheduler = ON;
+-- AKTIFKAN EVENT SCHEDULER (jalankan sekali sebagai root jika perlu)
+-- Di XAMPP local: tidak perlu, lewati saja bagian ini
+-- Di production: SET GLOBAL event_scheduler = ON;
 -- ============================================================
 
 -- ============================================================
--- CLEANUP EVENT: hapus rate_limit & csrf kadaluarsa (opsional)
--- CATATAN: phpMyAdmin tidak support DELIMITER + BEGIN...END
--- Solusi: pisah menjadi 2 event single-statement (tanpa BEGIN...END)
+-- CLEANUP EVENT (OPSIONAL — hanya jalankan jika event scheduler aktif)
+-- Jika phpMyAdmin error saat import, hapus/komentari bagian ini,
+-- tidak mempengaruhi fungsi aplikasi sama sekali.
 -- ============================================================
 
-DROP EVENT IF EXISTS `cleanup_expired`;
-DROP EVENT IF EXISTS `cleanup_expired_csrf`;
+-- DROP EVENT IF EXISTS `cleanup_expired`;
+-- DROP EVENT IF EXISTS `cleanup_expired_csrf`;
 
-CREATE EVENT IF NOT EXISTS `cleanup_expired`
-ON SCHEDULE EVERY 1 HOUR
-DO DELETE FROM `rate_limit` WHERE `window_end` < NOW();
+-- CREATE EVENT IF NOT EXISTS `cleanup_expired`
+-- ON SCHEDULE EVERY 1 HOUR
+-- DO DELETE FROM `rate_limit` WHERE `window_end` < NOW();
 
-CREATE EVENT IF NOT EXISTS `cleanup_expired_csrf`
-ON SCHEDULE EVERY 1 HOUR
-DO DELETE FROM `csrf_tokens` WHERE `expires_at` < NOW();
+-- CREATE EVENT IF NOT EXISTS `cleanup_expired_csrf`
+-- ON SCHEDULE EVERY 1 HOUR
+-- DO DELETE FROM `csrf_tokens` WHERE `expires_at` < NOW();
 
 SET FOREIGN_KEY_CHECKS = 1;

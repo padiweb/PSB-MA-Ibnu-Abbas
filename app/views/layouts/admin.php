@@ -9,7 +9,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
-    <link href="/assets/css/app.css" rel="stylesheet">
+    <link href="<?= BASE_URL ?>/assets/css/app.css" rel="stylesheet">
     <style>
         :root {
             --admin-sidebar-w: 260px;
@@ -137,7 +137,7 @@
 
 <!-- SIDEBAR -->
 <nav id="adminSidebar">
-    <a href="/admin" class="sidebar-brand d-flex align-items-center gap-2">
+    <a href="<?= BASE_URL ?>/admin" class="sidebar-brand d-flex align-items-center gap-2">
         <div class="sidebar-brand-icon">M</div>
         <div>
             <div class="sidebar-brand-text">Ma'had Aly Ibnu Abbas</div>
@@ -149,49 +149,49 @@
         <?php $uri = $_SERVER['REQUEST_URI']; ?>
 
         <div class="nav-section-label">Utama</div>
-        <a href="/admin" class="sidebar-link <?= $uri === '/admin' ? 'active' : '' ?>">
+        <a href="<?= BASE_URL ?>/admin" class="sidebar-link <?= $uri === '/admin' ? 'active' : '' ?>">
             <i class="bi bi-grid-1x2"></i> Dashboard
         </a>
 
         <div class="nav-section-label">Pendaftaran</div>
-        <a href="/admin/pendaftar" class="sidebar-link <?= strpos($uri,'/admin/pendaftar') === 0 ? 'active' : '' ?>">
+        <a href="<?= BASE_URL ?>/admin/pendaftar" class="sidebar-link <?= strpos($uri,'/admin/pendaftar') === 0 ? 'active' : '' ?>">
             <i class="bi bi-people"></i> Data Pendaftar
         </a>
-        <a href="/admin/verifikasi" class="sidebar-link <?= strpos($uri,'/admin/verifikasi') === 0 ? 'active' : '' ?>">
+        <a href="<?= BASE_URL ?>/admin/verifikasi" class="sidebar-link <?= strpos($uri,'/admin/verifikasi') === 0 ? 'active' : '' ?>">
             <i class="bi bi-shield-check"></i> Verifikasi Berkas
         </a>
-        <a href="/admin/export" class="sidebar-link <?= strpos($uri,'/admin/export') === 0 ? 'active' : '' ?>">
+        <a href="<?= BASE_URL ?>/admin/export" class="sidebar-link <?= strpos($uri,'/admin/export') === 0 ? 'active' : '' ?>">
             <i class="bi bi-download"></i> Export Data
         </a>
 
         <div class="nav-section-label">Pengaturan</div>
-        <a href="/admin/tahun-akademik" class="sidebar-link <?= strpos($uri,'/admin/tahun-akademik') === 0 ? 'active' : '' ?>">
+        <a href="<?= BASE_URL ?>/admin/tahun-akademik" class="sidebar-link <?= strpos($uri,'/admin/tahun-akademik') === 0 ? 'active' : '' ?>">
             <i class="bi bi-calendar3"></i> Tahun Akademik
         </a>
-        <a href="/admin/prodi" class="sidebar-link <?= strpos($uri,'/admin/prodi') === 0 ? 'active' : '' ?>">
+        <a href="<?= BASE_URL ?>/admin/prodi" class="sidebar-link <?= strpos($uri,'/admin/prodi') === 0 ? 'active' : '' ?>">
             <i class="bi bi-mortarboard"></i> Program Studi
         </a>
-        <a href="/admin/biaya" class="sidebar-link <?= strpos($uri,'/admin/biaya') === 0 ? 'active' : '' ?>">
+        <a href="<?= BASE_URL ?>/admin/biaya" class="sidebar-link <?= strpos($uri,'/admin/biaya') === 0 ? 'active' : '' ?>">
             <i class="bi bi-currency-dollar"></i> Biaya
         </a>
-        <a href="/admin/persyaratan" class="sidebar-link <?= strpos($uri,'/admin/persyaratan') === 0 ? 'active' : '' ?>">
+        <a href="<?= BASE_URL ?>/admin/persyaratan" class="sidebar-link <?= strpos($uri,'/admin/persyaratan') === 0 ? 'active' : '' ?>">
             <i class="bi bi-list-check"></i> Persyaratan
         </a>
-        <a href="/admin/pengaturan" class="sidebar-link <?= strpos($uri,'/admin/pengaturan') === 0 ? 'active' : '' ?>">
+        <a href="<?= BASE_URL ?>/admin/pengaturan" class="sidebar-link <?= strpos($uri,'/admin/pengaturan') === 0 ? 'active' : '' ?>">
             <i class="bi bi-gear"></i> Pengaturan CMS
         </a>
         <?php if (Session::get('role') === 'superadmin'): ?>
-        <a href="/admin/users" class="sidebar-link <?= strpos($uri,'/admin/users') === 0 ? 'active' : '' ?>">
+        <a href="<?= BASE_URL ?>/admin/users" class="sidebar-link <?= strpos($uri,'/admin/users') === 0 ? 'active' : '' ?>">
             <i class="bi bi-person-gear"></i> Manajemen User
         </a>
         <?php endif; ?>
     </div>
 
     <div class="p-3 border-top" style="border-color:rgba(255,255,255,.08)!important;">
-        <a href="/" target="_blank" class="sidebar-link" style="font-size:.78rem; padding: 7px 8px;">
+        <a href="<?= BASE_URL ?>/" target="_blank" class="sidebar-link" style="font-size:.78rem; padding: 7px 8px;">
             <i class="bi bi-box-arrow-up-right"></i> Lihat Website
         </a>
-        <a href="/logout" class="sidebar-link" style="font-size:.78rem; padding: 7px 8px; color:rgba(255,100,100,.8);">
+        <a href="<?= BASE_URL ?>/logout" class="sidebar-link" style="font-size:.78rem; padding: 7px 8px; color:rgba(255,100,100,.8);">
             <i class="bi bi-power"></i> Keluar
         </a>
     </div>
@@ -205,7 +205,7 @@
     <div class="flex-fill">
         <nav aria-label="breadcrumb">
             <ol class="breadcrumb mb-0" style="font-size:.78rem;">
-                <li class="breadcrumb-item"><a href="/admin" class="text-decoration-none">Admin</a></li>
+                <li class="breadcrumb-item"><a href="<?= BASE_URL ?>/admin" class="text-decoration-none">Admin</a></li>
                 <li class="breadcrumb-item active"><?= htmlspecialchars($page_title ?? '') ?></li>
             </ol>
         </nav>
@@ -228,16 +228,23 @@
 <!-- MAIN CONTENT -->
 <main id="adminMain">
 
-    <?php if ($flash = Session::flash('success')): ?>
+    <?php if ($flash = Session::getFlash('success')): ?>
     <div class="alert alert-success alert-dismissible fade show border-0 rounded-3 mb-4" role="alert">
         <i class="bi bi-check-circle me-2"></i><?= htmlspecialchars($flash) ?>
         <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
     </div>
     <?php endif; ?>
 
-    <?php if ($flash = Session::flash('error')): ?>
+    <?php if ($flash = Session::getFlash('error')): ?>
     <div class="alert alert-danger alert-dismissible fade show border-0 rounded-3 mb-4" role="alert">
         <i class="bi bi-exclamation-triangle me-2"></i><?= htmlspecialchars($flash) ?>
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
+    <?php endif; ?>
+
+    <?php if ($flash = Session::getFlash('info')): ?>
+    <div class="alert alert-info alert-dismissible fade show border-0 rounded-3 mb-4" role="alert">
+        <i class="bi bi-info-circle me-2"></i><?= htmlspecialchars($flash) ?>
         <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
     </div>
     <?php endif; ?>
@@ -247,7 +254,7 @@
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js"></script>
-<script src="/assets/js/app.js"></script>
+<script src="<?= BASE_URL ?>/assets/js/app.js"></script>
 <script>
 function openSidebar() {
     document.getElementById('adminSidebar').classList.add('show');

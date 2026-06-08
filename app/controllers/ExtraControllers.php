@@ -49,7 +49,7 @@ class BiayaController extends Controller
         }
 
         // Cek apakah sudah ada biaya untuk ta+prodi ini (spesifik)
-        $db = Database::getInstance()->getConnection();
+        $db = Database::getInstance();
         $stmtEx = $db->prepare("SELECT * FROM `biaya` WHERE tahun_akademik_id=? AND program_studi_id=? LIMIT 1");
         $stmtEx->execute([$taId, $prodiId]);
         $existing = $stmtEx->fetch() ?: null;
@@ -91,7 +91,7 @@ class BiayaController extends Controller
         Auth::requireRole(['superadmin','admin','verifikator','pendaftar']);
         $taId   = Security::cleanInt($_GET['ta'] ?? 0);
         $prodiId= Security::cleanInt($_GET['prodi'] ?? 0);
-        $db     = Database::getInstance()->getConnection();
+        $db     = Database::getInstance();
         $stmt   = $db->prepare("SELECT * FROM `biaya` WHERE tahun_akademik_id=? AND program_studi_id=? LIMIT 1");
         $stmt->execute([$taId, $prodiId]);
         $biaya  = $stmt->fetch() ?: null;
@@ -151,7 +151,7 @@ class PersyaratanController extends Controller
             $this->redirect('/admin/persyaratan');
         }
 
-        $stmt = $db->prepare("INSERT INTO persyaratan (tahun_akademik_id,nama,keterangan,urutan,is_wajib) VALUES (?,?,?,?,?)");
+        $stmt = $db->prepare("INSERT INTO persyaratan (tahun_akademik_id,nama,keterangan,urutan,wajib) VALUES (?,?,?,?,?)");
         $stmt->execute([$taId, $nama, $ket, $urut, $wajib]);
 
         AuditLog::log('CREATE', 'persyaratan');
@@ -169,7 +169,7 @@ class PersyaratanController extends Controller
         $wajib = isset($_POST['is_wajib']) ? 1 : 0;
         $taId  = Security::cleanInt($_POST['tahun_akademik_id'] ?? 0);
 
-        $stmt = $db->prepare("UPDATE persyaratan SET nama=?,keterangan=?,urutan=?,is_wajib=? WHERE id=?");
+        $stmt = $db->prepare("UPDATE persyaratan SET nama=?,keterangan=?,urutan=?,wajib=? WHERE id=?");
         $stmt->execute([$nama, $ket, $urut, $wajib, (int)$id]);
 
         AuditLog::log('UPDATE', 'persyaratan', (int)$id);
@@ -504,7 +504,7 @@ class PendaftarController extends Controller
     private function getVerifikasiLog(int $pendaftarId): array
     {
         try {
-            $db   = Database::getInstance()->getConnection();
+            $db   = Database::getInstance();
             $stmt = $db->prepare(
                 "SELECT vl.*, u.nama AS nama_verifikator
                  FROM verifikasi_log vl
@@ -523,7 +523,7 @@ class PendaftarController extends Controller
     /** Helper: CSRF check untuk endpoint JSON */
     private function verifyCsrfJson(): void
     {
-        $token = $_POST['_token'] ?? $_SERVER['HTTP_X_CSRF_TOKEN'] ?? '';
+        $token = $_POST['csrf_token'] ?? ($_POST['_token'] ?? ($_SERVER['HTTP_X_CSRF_TOKEN'] ?? ''));
         if (!Security::verifyCsrf($token)) {
             echo json_encode(['success' => false, 'message' => 'Token keamanan tidak valid.']);
             exit;

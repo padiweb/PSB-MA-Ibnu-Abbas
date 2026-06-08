@@ -66,8 +66,8 @@ $roleColors = ['superadmin'=>'bg-danger','admin'=>'bg-primary','verifikator'=>'b
                             <i class="bi bi-key"></i>
                         </button>
                         <?php if ($u['id'] !== Session::get('user_id')): ?>
-                        <form method="POST" action="/admin/users/<?= $u['id'] ?>/toggle" class="d-inline">
-                            <input type="hidden" name="csrf_token" value="<?= Security::csrfToken() ?>">
+                        <form method="POST" action="<?= BASE_URL ?>/admin/users/<?= $u['id'] ?>/toggle" class="d-inline">
+                            <input type="hidden" name="csrf_token" value="<?= Security::generateCsrf() ?>">
                             <button class="btn btn-sm btn-outline-<?= $u['is_aktif'] ? 'secondary' : 'success' ?>" style="padding:3px 8px;" title="<?= $u['is_aktif'] ? 'Nonaktifkan' : 'Aktifkan' ?>">
                                 <i class="bi bi-<?= $u['is_aktif'] ? 'pause-circle' : 'play-circle' ?>"></i>
                             </button>
@@ -90,8 +90,8 @@ $roleColors = ['superadmin'=>'bg-danger','admin'=>'bg-primary','verifikator'=>'b
                 <h5 class="modal-title text-white fw-700">Tambah User Admin</h5>
                 <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
             </div>
-            <form method="POST" action="/admin/users/simpan">
-                <input type="hidden" name="csrf_token" value="<?= Security::csrfToken() ?>">
+            <form method="POST" action="<?= BASE_URL ?>/admin/users">
+                <input type="hidden" name="csrf_token" value="<?= Security::generateCsrf() ?>">
                 <div class="modal-body p-4">
                     <div class="mb-3">
                         <label class="form-label fw-600" style="font-size:.82rem;">Nama Lengkap <span class="text-danger">*</span></label>
@@ -140,7 +140,7 @@ $roleColors = ['superadmin'=>'bg-danger','admin'=>'bg-primary','verifikator'=>'b
                 <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
             </div>
             <form method="POST" id="formReset" action="">
-                <input type="hidden" name="csrf_token" value="<?= Security::csrfToken() ?>">
+                <input type="hidden" name="csrf_token" value="<?= Security::generateCsrf() ?>">
                 <div class="modal-body p-4">
                     <p class="text-muted" style="font-size:.85rem;">Reset password untuk: <strong id="resetNama"></strong></p>
                     <label class="form-label fw-600" style="font-size:.82rem;">Password Baru <span class="text-danger">*</span></label>
@@ -158,9 +158,10 @@ $roleColors = ['superadmin'=>'bg-danger','admin'=>'bg-primary','verifikator'=>'b
 </div>
 
 <script>
+const BASE_URL = '<?= BASE_URL ?>';
 function resetPw(id, nama) {
     document.getElementById('resetNama').textContent = nama;
-    document.getElementById('formReset').action = '/admin/users/' + id + '/reset-password';
+    document.getElementById('formReset').action = BASE_URL + '/admin/users/' + id + '/reset-password';
     new bootstrap.Modal(document.getElementById('modalReset')).show();
 }
 </script>

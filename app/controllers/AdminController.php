@@ -111,7 +111,6 @@ class AdminController extends Controller
             'diverifikasi_oleh'   => Auth::id(),
         ]);
 
-        // Log verifikasi
         (new VerifikasiLogModel())->insert([
             'pendaftar_id'  => $pendaftarId,
             'admin_id'      => Auth::id(),
@@ -129,8 +128,8 @@ class AdminController extends Controller
     {
         Auth::requireRole(['superadmin','admin']);
 
-        $taId    = Security::cleanInt($_GET['ta'] ?? 0);
-        $format  = Security::cleanRaw($_GET['format'] ?? 'csv');
+        $taId   = Security::cleanInt($_GET['ta'] ?? 0);
+        $format = Security::cleanRaw($_GET['format'] ?? 'csv');
         $pendaftarModel = new PendaftarModel();
 
         $filters = $taId ? ['tahun_akademik_id' => $taId] : [];
@@ -139,7 +138,7 @@ class AdminController extends Controller
         if ($format === 'csv') {
             header('Content-Type: text/csv; charset=UTF-8');
             header('Content-Disposition: attachment; filename="pendaftar_pmb_' . date('Ymd') . '.csv"');
-            echo "\xEF\xBB\xBF"; // BOM UTF-8
+            echo "\xEF\xBB\xBF";
 
             $out = fopen('php://output', 'w');
             fputcsv($out, ['No','Nomor Pendaftaran','Nama Lengkap','Jenis Kelamin','Tempat Lahir','Tanggal Lahir','Nomor HP','Alamat','Nama Ibu','Status','Tanggal Submit']);
@@ -162,8 +161,51 @@ class AdminController extends Controller
             exit;
         }
 
-        // Default: redirect back
         $this->redirect('/admin/pendaftar');
+    }
+
+    public function cetakPendaftar(string $id): void
+    {
+        $pendaftar = (new PendaftarModel())->getWithDetails(Security::cleanInt($id));
+        if (!$pendaftar) {
+            Session::flash('error', 'Data tidak ditemukan.');
+            $this->redirect('/admin/pendaftar');
+        }
+        $dokumen = (new DokumenModel())->getByPendaftar($pendaftar['id']);
+        $this->view('pendaftar/cetak', [
+            'layout'     => 'layouts/print',
+            'page_title' => 'Cetak - ' . $pendaftar['nomor_pendaftaran'],
+            'pendaftar'  => $pendaftar,
+            'dokumen'    => $dokumen,
+        ]);
+    }
+
+    public function downloadDokumen(string $id): void
+    {
+        Auth::requireRole(['superadmin','admin','verifikator']);
+        $dokModel = new DokumenModel();
+        $dok = $dokModel->findById(Security::cleanInt($id));
+        if (!$dok) { http_response_code(404); exit('File tidak ditemukan.'); }
+
+        $filePath = STORAGE_PATH . '/uploads/' . $dok['path_file'];
+        if (!file_exists($filePath)) {
+            http_response_code(404);
+            exit('File tidak ditemukan di server.');
+        }
+
+        $realPath    = realpath($filePath);
+        $realStorage = realpath(STORAGE_PATH);
+        if (!$realPath || strpos($realPath, $realStorage) !== 0) {
+            http_response_code(403); exit('Akses ditolak.');
+        }
+
+        AuditLog::log('DOWNLOAD', 'dokumen', (int)$id);
+        header('Content-Type: ' . $dok['mime_type']);
+        header('Content-Disposition: inline; filename="' . basename($dok['nama_file_asli']) . '"');
+        header('Content-Length: ' . filesize($filePath));
+        header('Cache-Control: private, max-age=0');
+        readfile($filePath);
+        exit;
     }
 
     public function apiStatistik(): void
@@ -195,9 +237,8 @@ class AdminController extends Controller
     }
 }
 
-
 /**
- * Tambahan Model: VerifikasiLogModel
+ * VerifikasiLogModel
  */
 class VerifikasiLogModel extends Model
 {
@@ -230,8 +271,8 @@ class TahunAkademikController extends Controller
 
     public function index(): void
     {
-        $taModel  = new TahunAkademikModel();
-        $list     = $taModel->findAll([], 'id DESC');
+        $taModel = new TahunAkademikModel();
+        $list    = $taModel->findAll([], 'id DESC');
         $this->view('admin/tahun-akademik', [
             'layout'     => 'layouts/admin',
             'page_title' => 'Tahun Akademik',
@@ -286,6 +327,45 @@ class TahunAkademikController extends Controller
         Session::flash('success', 'PMB ditutup.');
         $this->redirect('/admin/tahun-akademik');
     }
+
+    public function aktifkan(string $id): void
+    {
+        $this->verifyCsrf();
+        (new TahunAkademikModel())->setAktif((int)$id);
+        AuditLog::log('SET_AKTIF', 'tahun_akademik', (int)$id);
+        Session::flash('success', 'Tahun akademik berhasil diaktifkan.');
+        $this->redirect('/admin/tahun-akademik');
+    }
+
+    public function hapus(string $id): void
+    {
+        $this->verifyCsrf();
+        (new TahunAkademikModel())->update((int)$id, ['aktif' => 0]);
+        AuditLog::log('TUTUP', 'tahun_akademik', (int)$id);
+        Session::flash('success', 'Tahun akademik ditutup.');
+        $this->redirect('/admin/tahun-akademik');
+    }
+
+    public function update(string $id): void
+    {
+        $this->verifyCsrf();
+        $kode = Security::cleanRaw($_POST['kode'] ?? '');
+        $nama = Security::cleanRaw($_POST['nama'] ?? '');
+        $buka = Security::cleanRaw($_POST['tanggal_buka'] ?? '') ?: null;
+        $tutup= Security::cleanRaw($_POST['tanggal_tutup'] ?? '') ?: null;
+
+        $model  = new TahunAkademikModel();
+        $before = $model->findById((int)$id);
+        $model->update((int)$id, [
+            'kode'          => $kode,
+            'nama'          => $nama,
+            'tanggal_buka'  => $buka,
+            'tanggal_tutup' => $tutup,
+        ]);
+        AuditLog::log('UPDATE', 'tahun_akademik', (int)$id, $before, ['kode'=>$kode,'nama'=>$nama]);
+        Session::flash('success', 'Tahun akademik diperbarui.');
+        $this->redirect('/admin/tahun-akademik');
+    }
 }
 
 /**
@@ -298,7 +378,12 @@ class ProdiController extends Controller
     public function index(): void
     {
         $list = (new ProdiModel())->findAll([], 'urutan,jenjang,nama_prodi');
-        $this->view('admin/prodi', ['layout'=>'layouts/admin','page_title'=>'Program Studi','list'=>$list,'csrf'=>Security::generateCsrf()]);
+        $this->view('admin/prodi', [
+            'layout'     => 'layouts/admin',
+            'page_title' => 'Program Studi',
+            'list'       => $list,
+            'csrf'       => Security::generateCsrf(),
+        ]);
     }
 
     public function store(): void
@@ -322,7 +407,7 @@ class ProdiController extends Controller
     {
         $this->verifyCsrf();
         $model = new ProdiModel();
-        $data = [
+        $data  = [
             'nama_prodi'=> Security::cleanRaw($_POST['nama'] ?? ''),
             'singkatan' => strtoupper(Security::cleanRaw($_POST['singkatan'] ?? '')),
             'jenjang'   => Security::cleanRaw($_POST['jenjang'] ?? 'S1'),
@@ -345,6 +430,22 @@ class ProdiController extends Controller
         Session::flash('success', 'Program studi dinonaktifkan.');
         $this->redirect('/admin/prodi');
     }
+
+    public function toggle(string $id): void
+    {
+        $this->verifyCsrf();
+        $model = new ProdiModel();
+        $prodi = $model->findById((int)$id);
+        if (!$prodi) {
+            Session::flash('error', 'Program studi tidak ditemukan.');
+            $this->redirect('/admin/prodi');
+        }
+        $newStatus = $prodi['is_aktif'] ? 0 : 1;
+        $model->update((int)$id, ['is_aktif' => $newStatus]);
+        AuditLog::log($newStatus ? 'ACTIVATE' : 'DEACTIVATE', 'prodi', (int)$id);
+        Session::flash('success', 'Status program studi diperbarui.');
+        $this->redirect('/admin/prodi');
+    }
 }
 
 /**
@@ -357,7 +458,12 @@ class CmsController extends Controller
     public function index(): void
     {
         $grouped = (new CmsModel())->getGrouped();
-        $this->view('admin/pengaturan', ['layout'=>'layouts/admin','page_title'=>'Pengaturan Website','grouped'=>$grouped,'csrf'=>Security::generateCsrf()]);
+        $this->view('admin/pengaturan', [
+            'layout'     => 'layouts/admin',
+            'page_title' => 'Pengaturan Website',
+            'grouped'    => $grouped,
+            'csrf'       => Security::generateCsrf(),
+        ]);
     }
 
     public function save(): void
@@ -365,9 +471,21 @@ class CmsController extends Controller
         $this->verifyCsrf();
         $cms = new CmsModel();
         foreach ($_POST as $k => $v) {
-            if ($k === '_token') continue;
+            if (in_array($k, ['csrf_token', '_token'], true)) continue;
             $cms->set(Security::cleanRaw($k), Security::cleanRaw($v));
         }
+
+        if (!empty($_FILES['logo']) && $_FILES['logo']['error'] === UPLOAD_ERR_OK) {
+            $err = Security::validateUpload($_FILES['logo']);
+            if (empty($err)) {
+                $path = Security::saveUpload($_FILES['logo'], 'images');
+                $cms->set('logo_path', '/assets/images/' . basename($path));
+                $src  = UPLOAD_PATH . '/images/' . basename($path);
+                $dest = PUBLIC_PATH . '/assets/images/logo.' . pathinfo($path, PATHINFO_EXTENSION);
+                if (file_exists($src)) copy($src, $dest);
+            }
+        }
+
         AuditLog::log('UPDATE', 'cms_settings');
         Session::flash('success', 'Pengaturan berhasil disimpan.');
         $this->redirect('/admin/pengaturan');
@@ -376,15 +494,20 @@ class CmsController extends Controller
     public function uploadLogo(): void
     {
         $this->verifyCsrf();
-        if (empty($_FILES['logo'])) { Session::flash('error','File tidak ditemukan.'); $this->redirect('/admin/pengaturan'); }
+        if (empty($_FILES['logo'])) {
+            Session::flash('error', 'File tidak ditemukan.');
+            $this->redirect('/admin/pengaturan');
+        }
 
         $err = Security::validateUpload($_FILES['logo']);
-        if (!empty($err)) { Session::flash('error', implode(' ', $err)); $this->redirect('/admin/pengaturan'); }
+        if (!empty($err)) {
+            Session::flash('error', implode(' ', $err));
+            $this->redirect('/admin/pengaturan');
+        }
 
         $path = Security::saveUpload($_FILES['logo'], 'images');
         (new CmsModel())->set('logo_path', '/assets/images/' . basename($path));
 
-        // Copy ke public assets
         $src  = UPLOAD_PATH . '/images/' . basename($path);
         $dest = PUBLIC_PATH . '/assets/images/logo.' . pathinfo($path, PATHINFO_EXTENSION);
         copy($src, $dest);

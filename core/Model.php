@@ -118,4 +118,13 @@ abstract class Model
             'last_page'    => (int) ceil($total / $perPage),
         ];
     }
+
+    public function findBy(string $column, mixed $value): ?array
+    {
+        $allowed = preg_match('/^[a-zA-Z_][a-zA-Z0-9_]*$/', $column);
+        if (!$allowed) return null;
+        $stmt = $this->db->prepare("SELECT * FROM `{$this->table}` WHERE `{$column}` = ? LIMIT 1");
+        $stmt->execute([$value]);
+        return $stmt->fetch() ?: null;
+    }
 }

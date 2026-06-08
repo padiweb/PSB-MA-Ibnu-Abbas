@@ -1,5 +1,13 @@
 <?php
 /**
+ * Global helper: escape HTML output
+ */
+function e(?string $value): string
+{
+    return htmlspecialchars((string)($value ?? ''), ENT_QUOTES | ENT_HTML5, 'UTF-8');
+}
+
+/**
  * Session Handler
  */
 class Session

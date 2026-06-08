@@ -18,7 +18,7 @@ $tahunAktif = $tahun_aktif ?? null;
         <i class="bi bi-calendar-check me-1"></i> <?= htmlspecialchars($tahunAktif['nama']) ?> — Aktif
     </span>
     <?php else: ?>
-    <a href="/admin/tahun-akademik" class="btn btn-sm" style="background:var(--primary);color:#fff;">
+    <a href="<?= BASE_URL ?>/admin/tahun-akademik" class="btn btn-sm" style="background:var(--primary);color:#fff;">
         <i class="bi bi-plus-circle me-1"></i> Buka PMB Baru
     </a>
     <?php endif; ?>
@@ -82,7 +82,7 @@ $tahunAktif = $tahun_aktif ?? null;
         <div class="admin-table">
             <div class="d-flex align-items-center justify-content-between p-3 border-bottom">
                 <h6 class="mb-0 fw-600" style="color:var(--primary);">Detail per Program Studi</h6>
-                <a href="/admin/pendaftar" class="btn btn-sm" style="background:var(--primary);color:#fff;font-size:.75rem;">
+                <a href="<?= BASE_URL ?>/admin/pendaftar" class="btn btn-sm" style="background:var(--primary);color:#fff;font-size:.75rem;">
                     Lihat Semua <i class="bi bi-arrow-right ms-1"></i>
                 </a>
             </div>
@@ -132,22 +132,22 @@ $tahunAktif = $tahun_aktif ?? null;
                     <i class="bi bi-lightning-charge me-2"></i>Aksi Cepat
                 </h6>
                 <div class="d-grid gap-2">
-                    <a href="/admin/verifikasi" class="btn btn-sm text-start" style="background:#eff6ff;color:#1d4ed8;border:1px solid #bfdbfe;">
+                    <a href="<?= BASE_URL ?>/admin/pendaftar?status=menunggu" class="btn btn-sm text-start" style="background:#eff6ff;color:#1d4ed8;border:1px solid #bfdbfe;">
                         <i class="bi bi-shield-check me-2"></i> Verifikasi Berkas
                         <?php if(($stat['menunggu'] ?? 0) > 0): ?>
                         <span class="badge bg-danger ms-1"><?= $stat['menunggu'] ?></span>
                         <?php endif; ?>
                     </a>
-                    <a href="/admin/pendaftar?status=revisi" class="btn btn-sm text-start" style="background:#fffbeb;color:#b45309;border:1px solid #fde68a;">
+                    <a href="<?= BASE_URL ?>/admin/pendaftar?status=revisi" class="btn btn-sm text-start" style="background:#fffbeb;color:#b45309;border:1px solid #fde68a;">
                         <i class="bi bi-pencil-square me-2"></i> Pendaftar Revisi
                     </a>
-                    <a href="/admin/export" class="btn btn-sm text-start" style="background:#f0fdf4;color:#15803d;border:1px solid #bbf7d0;">
+                    <a href="<?= BASE_URL ?>/admin/export" class="btn btn-sm text-start" style="background:#f0fdf4;color:#15803d;border:1px solid #bbf7d0;">
                         <i class="bi bi-file-earmark-spreadsheet me-2"></i> Export Excel/CSV
                     </a>
-                    <a href="/admin/tahun-akademik" class="btn btn-sm text-start" style="background:#f5f3ff;color:#6d28d9;border:1px solid #ddd6fe;">
+                    <a href="<?= BASE_URL ?>/admin/tahun-akademik" class="btn btn-sm text-start" style="background:#f5f3ff;color:#6d28d9;border:1px solid #ddd6fe;">
                         <i class="bi bi-calendar3 me-2"></i> Kelola Tahun Akademik
                     </a>
-                    <a href="/admin/pengaturan" class="btn btn-sm text-start" style="background:#fff7ed;color:#c2410c;border:1px solid #fed7aa;">
+                    <a href="<?= BASE_URL ?>/admin/pengaturan" class="btn btn-sm text-start" style="background:#fff7ed;color:#c2410c;border:1px solid #fed7aa;">
                         <i class="bi bi-gear me-2"></i> Pengaturan Landing Page
                     </a>
                 </div>
@@ -177,7 +177,7 @@ $tahunAktif = $tahun_aktif ?? null;
                 </div>
                 <?php else: ?>
                 <p class="text-muted mb-0" style="font-size:.82rem;">Tidak ada tahun akademik aktif.</p>
-                <a href="/admin/tahun-akademik" class="btn btn-sm mt-2" style="background:var(--primary);color:#fff;">
+                <a href="<?= BASE_URL ?>/admin/tahun-akademik" class="btn btn-sm mt-2" style="background:var(--primary);color:#fff;">
                     <i class="bi bi-plus-circle me-1"></i> Buka PMB Baru
                 </a>
                 <?php endif; ?>

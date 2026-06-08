@@ -47,7 +47,7 @@ $tahunAktif = $tahun_aktif ?? null;
             <!-- FORM CONTAINER -->
             <div class="card border-0 rounded-4 shadow">
                 <form id="regForm" novalidate>
-                    <input type="hidden" name="csrf_token" value="<?= Security::csrfToken() ?>">
+                    <input type="hidden" name="csrf_token" value="<?= Security::generateCsrf() ?>">
                     <input type="hidden" name="tahun_akademik_id" value="<?= $tahunAktif['id'] ?? '' ?>">
 
                     <!-- STEP 1: DATA DIRI -->
@@ -330,6 +330,7 @@ $tahunAktif = $tahun_aktif ?? null;
 </style>
 
 <script>
+const BASE_URL = '<?= BASE_URL ?>';
 // Multi-step form logic
 let currentStep = 1;
 const totalSteps = 5;
@@ -516,7 +517,7 @@ function togglePw(id, btn) {
 function submitForm() {
     const form = document.getElementById('regForm');
     const fd = new FormData(form);
-    fetch('/daftar/submit', { method: 'POST', body: fd })
+    fetch(BASE_URL + '/daftar/submit', { method: 'POST', body: fd })
         .then(r => r.json())
         .then(data => {
             document.getElementById('submitProgress').style.display = 'none';
@@ -535,7 +536,7 @@ function submitForm() {
                             Simpan nomor pendaftaran ini. Gunakan untuk login ke dashboard pendaftar.
                         </p>
                         <div class="d-flex gap-3 justify-content-center">
-                            <a href="/daftar/sukses/${data.nomor}" class="btn px-4" style="background:var(--primary);color:#fff;">
+                            <a href="<?= BASE_URL ?>/daftar/sukses/${data.nomor}" class="btn px-4" style="background:var(--primary);color:#fff;">
                                 <i class="bi bi-house me-1"></i> Lihat Status
                             </a>
                         </div>

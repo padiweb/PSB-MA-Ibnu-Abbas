@@ -40,8 +40,8 @@ $list = $list ?? [];
                 <td class="text-center">
                     <div class="d-flex gap-1 justify-content-center">
                         <?php if (!$ta['aktif']): ?>
-                        <form method="POST" action="/admin/tahun-akademik/<?= $ta['id'] ?>/aktifkan" class="d-inline">
-                            <input type="hidden" name="csrf_token" value="<?= Security::csrfToken() ?>">
+                        <form method="POST" action="<?= BASE_URL ?>/admin/tahun-akademik/<?= $ta['id'] ?>/aktifkan" class="d-inline">
+                            <input type="hidden" name="csrf_token" value="<?= Security::generateCsrf() ?>">
                             <button class="btn btn-sm btn-outline-success" style="padding:3px 8px;font-size:.72rem;"
                                     onclick="return confirm('Aktifkan tahun akademik ini? PMB sebelumnya akan ditutup.')">
                                 <i class="bi bi-check-circle"></i> Aktifkan
@@ -53,8 +53,8 @@ $list = $list ?? [];
                             <i class="bi bi-pencil"></i>
                         </button>
                         <?php if (!$ta['aktif']): ?>
-                        <form method="POST" action="/admin/tahun-akademik/<?= $ta['id'] ?>/hapus" class="d-inline">
-                            <input type="hidden" name="csrf_token" value="<?= Security::csrfToken() ?>">
+                        <form method="POST" action="<?= BASE_URL ?>/admin/tahun-akademik/<?= $ta['id'] ?>/hapus" class="d-inline">
+                            <input type="hidden" name="csrf_token" value="<?= Security::generateCsrf() ?>">
                             <button class="btn btn-sm btn-outline-danger" style="padding:3px 8px;"
                                     onclick="return confirm('Hapus tahun akademik ini?')">
                                 <i class="bi bi-trash"></i>
@@ -78,8 +78,8 @@ $list = $list ?? [];
                 <h5 class="modal-title text-white fw-700" id="modalTATitle">Tambah Tahun Akademik</h5>
                 <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
             </div>
-            <form method="POST" id="formTA" action="/admin/tahun-akademik/simpan">
-                <input type="hidden" name="csrf_token" value="<?= Security::csrfToken() ?>">
+            <form method="POST" id="formTA" action="<?= BASE_URL ?>/admin/tahun-akademik">
+                <input type="hidden" name="csrf_token" value="<?= Security::generateCsrf() ?>">
                 <input type="hidden" name="id" id="taId" value="">
                 <div class="modal-body p-4">
                     <div class="mb-3">
@@ -114,6 +114,7 @@ $list = $list ?? [];
 </div>
 
 <script>
+const BASE_URL = '<?= BASE_URL ?>';
 function editTA(data) {
     document.getElementById('modalTATitle').textContent = 'Edit Tahun Akademik';
     document.getElementById('taId').value   = data.id;
@@ -121,13 +122,13 @@ function editTA(data) {
     document.getElementById('taKode').value = data.kode;
     document.getElementById('taMulai').value= data.tanggal_mulai || '';
     document.getElementById('taTutup').value= data.tanggal_tutup || '';
-    document.getElementById('formTA').action = '/admin/tahun-akademik/' + data.id + '/update';
+    document.getElementById('formTA').action = BASE_URL + '/admin/tahun-akademik/' + data.id + '/update';
     new bootstrap.Modal(document.getElementById('modalTA')).show();
 }
 document.getElementById('modalTA').addEventListener('hidden.bs.modal', function () {
     document.getElementById('modalTATitle').textContent = 'Tambah Tahun Akademik';
     document.getElementById('formTA').reset();
-    document.getElementById('formTA').action = '/admin/tahun-akademik/simpan';
+    document.getElementById('formTA').action = BASE_URL + '/admin/tahun-akademik';
     document.getElementById('taId').value = '';
 });
 </script>

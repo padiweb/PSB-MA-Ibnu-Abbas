@@ -58,7 +58,7 @@ $taId   = $ta_id ?? 0;
                 <td class="fw-600"><?= htmlspecialchars($p['nama']) ?></td>
                 <td style="font-size:.83rem;color:#64748b;"><?= htmlspecialchars($p['keterangan'] ?? '-') ?></td>
                 <td class="text-center">
-                    <?php if ($p['is_wajib']): ?>
+                    <?php if ($p['wajib']): ?>
                     <span class="badge bg-danger" style="font-size:.7rem;">Wajib</span>
                     <?php else: ?>
                     <span class="badge bg-info text-dark" style="font-size:.7rem;">Opsional</span>
@@ -70,7 +70,7 @@ $taId   = $ta_id ?? 0;
                                 onclick="editPersyaratan(<?= htmlspecialchars(json_encode($p)) ?>, <?= $taId ?>)">
                             <i class="bi bi-pencil"></i>
                         </button>
-                        <a href="/admin/persyaratan/<?= $p['id'] ?>/hapus?ta=<?= $taId ?>"
+                        <a href="<?= BASE_URL ?>/admin/persyaratan/<?= $p['id'] ?>/hapus?ta=<?= $taId ?>"
                            class="btn btn-sm btn-outline-danger" style="padding:3px 8px;"
                            onclick="return confirm('Hapus persyaratan ini?')">
                             <i class="bi bi-trash"></i>
@@ -92,8 +92,8 @@ $taId   = $ta_id ?? 0;
                 <h5 class="modal-title text-white fw-700" id="modalPersTitle">Tambah Persyaratan</h5>
                 <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
             </div>
-            <form method="POST" id="formPers" action="/admin/persyaratan/simpan">
-                <input type="hidden" name="csrf_token" value="<?= Security::csrfToken() ?>">
+            <form method="POST" id="formPers" action="<?= BASE_URL ?>/admin/persyaratan">
+                <input type="hidden" name="csrf_token" value="<?= Security::generateCsrf() ?>">
                 <input type="hidden" name="id" id="persId" value="">
                 <input type="hidden" name="tahun_akademik_id" id="persTaId" value="<?= $taId ?>">
                 <div class="modal-body p-4">
@@ -138,7 +138,7 @@ function editPersyaratan(data, taId) {
     document.getElementById('persNama').value  = data.nama;
     document.getElementById('persKet').value   = data.keterangan || '';
     document.getElementById('persUrutan').value= data.urutan || 1;
-    document.getElementById('persWajib').checked = data.is_wajib == 1;
+    document.getElementById('persWajib').checked = data.wajib == 1;
     document.getElementById('persTaId').value  = taId;
     document.getElementById('formPers').action = '/admin/persyaratan/' + data.id + '/update';
     new bootstrap.Modal(document.getElementById('modalPersyaratan')).show();

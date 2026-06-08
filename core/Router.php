@@ -20,7 +20,8 @@ class Router
     {
         $method = $_SERVER['REQUEST_METHOD'];
         $uri    = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
-        $uri    = rtrim(str_replace(parse_url(BASE_URL, PHP_URL_PATH) ?? '', '', $uri), '/') ?: '/';
+        $base   = parse_url(BASE_URL, PHP_URL_PATH) ?? '';
+        $uri    = rtrim(str_replace($base, '', $uri), '/') ?: '/';
 
         $routes = $this->routes[$method] ?? [];
 
@@ -39,9 +40,9 @@ class Router
 
     private function run(string $ctrl, string $action, array $params): void
     {
-        // Load semua file controller (order penting: Base dulu, lalu yang lain)
+        // Semua file sudah di-load di index.php via require_once
+        // Cukup load controller files di sini (require_once aman dari double-load)
         $ctrlFiles = [
-            APP_PATH . '/models/Models.php',
             APP_PATH . '/controllers/BaseController.php',
             APP_PATH . '/controllers/PendaftaranController.php',
             APP_PATH . '/controllers/AdminController.php',
@@ -53,7 +54,7 @@ class Router
 
         if (!class_exists($ctrl)) {
             http_response_code(500);
-            die("Controller class {$ctrl} tidak ditemukan.");
+            die("Controller [{$ctrl}] tidak ditemukan.");
         }
 
         $obj = new $ctrl();
@@ -65,21 +66,3 @@ class Router
         call_user_func_array([$obj, $action], $params);
     }
 }
-
-/**
- * Autoloader
- */
-spl_autoload_register(function (string $class): void {
-    $dirs = [
-        ROOT_PATH . '/core/',
-        ROOT_PATH . '/app/controllers/',
-        ROOT_PATH . '/app/models/',
-    ];
-    foreach ($dirs as $dir) {
-        $file = $dir . $class . '.php';
-        if (file_exists($file)) {
-            require_once $file;
-            return;
-        }
-    }
-});

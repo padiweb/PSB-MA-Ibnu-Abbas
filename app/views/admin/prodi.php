@@ -48,8 +48,8 @@ $list = $list ?? [];
                                 onclick="editProdi(<?= htmlspecialchars(json_encode($pr)) ?>)">
                             <i class="bi bi-pencil"></i>
                         </button>
-                        <form method="POST" action="/admin/prodi/<?= $pr['id'] ?>/toggle" class="d-inline">
-                            <input type="hidden" name="csrf_token" value="<?= Security::csrfToken() ?>">
+                        <form method="POST" action="<?= BASE_URL ?>/admin/prodi/<?= $pr['id'] ?>/toggle" class="d-inline">
+                            <input type="hidden" name="csrf_token" value="<?= Security::generateCsrf() ?>">
                             <button class="btn btn-sm btn-outline-<?= $pr['is_aktif'] ? 'warning' : 'success' ?>" style="padding:3px 8px;font-size:.72rem;">
                                 <i class="bi bi-<?= $pr['is_aktif'] ? 'pause-circle' : 'play-circle' ?>"></i>
                             </button>
@@ -71,8 +71,8 @@ $list = $list ?? [];
                 <h5 class="modal-title text-white fw-700" id="modalProdiTitle">Tambah Program Studi</h5>
                 <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
             </div>
-            <form method="POST" id="formProdi" action="/admin/prodi/simpan">
-                <input type="hidden" name="csrf_token" value="<?= Security::csrfToken() ?>">
+            <form method="POST" id="formProdi" action="<?= BASE_URL ?>/admin/prodi">
+                <input type="hidden" name="csrf_token" value="<?= Security::generateCsrf() ?>">
                 <input type="hidden" name="id" id="prodiId" value="">
                 <div class="modal-body p-4">
                     <div class="mb-3">
@@ -122,6 +122,7 @@ $list = $list ?? [];
 </div>
 
 <script>
+const BASE_URL = '<?= BASE_URL ?>';
 function editProdi(data) {
     document.getElementById('modalProdiTitle').textContent = 'Edit Program Studi';
     document.getElementById('prodiId').value       = data.id;
@@ -131,13 +132,13 @@ function editProdi(data) {
     document.getElementById('prodiGelar').value     = data.gelar || '';
     document.getElementById('prodiFakultas').value  = data.nama_fakultas || '';
     document.getElementById('prodiAktif').checked   = data.is_aktif == 1;
-    document.getElementById('formProdi').action = '/admin/prodi/' + data.id + '/update';
+    document.getElementById('formProdi').action = BASE_URL + '/admin/prodi/' + data.id + '/update';
     new bootstrap.Modal(document.getElementById('modalProdi')).show();
 }
 document.getElementById('modalProdi').addEventListener('hidden.bs.modal', function () {
     document.getElementById('modalProdiTitle').textContent = 'Tambah Program Studi';
     document.getElementById('formProdi').reset();
-    document.getElementById('formProdi').action = '/admin/prodi/simpan';
+    document.getElementById('formProdi').action = BASE_URL + '/admin/prodi';
     document.getElementById('prodiId').value = '';
     document.getElementById('prodiAktif').checked = true;
 });

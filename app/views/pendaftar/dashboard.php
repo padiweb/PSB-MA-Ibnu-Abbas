@@ -16,15 +16,15 @@ $st = $statusColors[$p['status_verifikasi'] ?? 'menunggu'];
 <!-- TOPBAR PENDAFTAR -->
 <nav class="navbar" style="background:#fff;border-bottom:1px solid #e2e8f0;padding:0 0;">
     <div class="container">
-        <a href="/" class="navbar-brand d-flex align-items-center gap-2">
+        <a href="<?= BASE_URL ?>/" class="navbar-brand d-flex align-items-center gap-2">
             <div style="width:32px;height:32px;background:var(--primary);border-radius:8px;display:flex;align-items:center;justify-content:center;color:#fff;font-weight:700;font-size:.85rem;">M</div>
             <span style="font-weight:700;font-size:.9rem;color:var(--primary);">Ma'had Aly PMB</span>
         </a>
         <div class="d-flex align-items-center gap-3">
-            <a href="/pendaftar/cetak/<?= $p['id'] ?>" target="_blank" class="btn btn-sm btn-outline-primary" style="font-size:.78rem;">
+            <a href="<?= BASE_URL ?>/pendaftar/cetak/<?= $p['id'] ?>" target="_blank" class="btn btn-sm btn-outline-primary" style="font-size:.78rem;">
                 <i class="bi bi-printer me-1"></i> Cetak Bukti
             </a>
-            <a href="/logout" class="btn btn-sm btn-outline-danger" style="font-size:.78rem;">
+            <a href="<?= BASE_URL ?>/logout" class="btn btn-sm btn-outline-danger" style="font-size:.78rem;">
                 <i class="bi bi-power me-1"></i> Keluar
             </a>
         </div>
@@ -187,8 +187,8 @@ $st = $statusColors[$p['status_verifikasi'] ?? 'menunggu'];
                 <h5 class="modal-title text-white fw-700">Upload Dokumen</h5>
                 <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
             </div>
-            <form method="POST" action="/pendaftar/upload" enctype="multipart/form-data">
-                <input type="hidden" name="csrf_token" value="<?= Security::csrfToken() ?>">
+            <form method="POST" action="<?= BASE_URL ?>/pendaftar/upload" enctype="multipart/form-data">
+                <input type="hidden" name="csrf_token" value="<?= Security::generateCsrf() ?>">
                 <div class="modal-body p-4">
                     <div class="mb-3">
                         <label class="form-label fw-600" style="font-size:.82rem;">Jenis Dokumen</label>

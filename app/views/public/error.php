@@ -30,7 +30,7 @@ $message = $error_message ?? 'Halaman tidak ditemukan';
             <?php endif; ?>
 
             <div class="d-flex gap-3 justify-content-center">
-                <a href="/" class="btn px-4 py-2 fw-600" style="background:#fff;color:var(--primary);border-radius:10px;">
+                <a href="<?= BASE_URL ?>/" class="btn px-4 py-2 fw-600" style="background:#fff;color:var(--primary);border-radius:10px;">
                     <i class="bi bi-house me-2"></i>Ke Beranda
                 </a>
                 <button onclick="history.back()" class="btn px-4 py-2 fw-600" style="background:rgba(255,255,255,.15);color:#fff;border:1px solid rgba(255,255,255,.3);border-radius:10px;">

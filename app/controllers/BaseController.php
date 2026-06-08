@@ -9,7 +9,6 @@ class Controller
 
     public function __construct()
     {
-        require_once APP_PATH . '/models/Models.php';
         $this->cms      = new CmsModel();
         $this->settings = $this->cms->getAll();
     }
@@ -55,7 +54,7 @@ class Controller
 
     protected function verifyCsrf(): void
     {
-        $token = $_POST['_token'] ?? ($_SERVER['HTTP_X_CSRF_TOKEN'] ?? '');
+        $token = $_POST['csrf_token'] ?? ($_POST['_token'] ?? ($_SERVER['HTTP_X_CSRF_TOKEN'] ?? ''));
         if (!Security::verifyCsrf($token)) {
             if ($this->isAjax()) {
                 $this->json(['success' => false, 'message' => 'Token tidak valid. Muat ulang halaman.'], 403);

@@ -27,12 +27,18 @@ if (getenv('APP_URL')) {
     // Auto-detect untuk local XAMPP/WAMP/Laragon
     $scheme   = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ? 'https' : 'http';
     $host     = $_SERVER['HTTP_HOST'] ?? 'localhost';
-    // Ambil subfolder dari SCRIPT_NAME, misal: /pmb-mahadaly/public/index.php → /pmb-mahadaly
-    $base     = '';
+    // Ambil subfolder sebelum /public/ dari SCRIPT_NAME
+    // Misal: /PSB_MA_IBNU_ABBAS/public/index.php → /PSB_MA_IBNU_ABBAS
+    $base = '';
     if (!empty($_SERVER['SCRIPT_NAME'])) {
-        $parts = explode('/', trim($_SERVER['SCRIPT_NAME'], '/'));
-        // Ambil hanya folder pertama (nama project), bukan 'public' atau file
-        if (count($parts) > 1) {
+        $scriptName = str_replace('\\', '/', $_SERVER['SCRIPT_NAME']);
+        // Cari posisi /public/ lalu ambil semua yang sebelumnya
+        $publicPos = strrpos($scriptName, '/public/');
+        if ($publicPos !== false) {
+            $base = substr($scriptName, 0, $publicPos);
+        } elseif (substr_count($scriptName, '/') > 1) {
+            // Fallback: ambil folder pertama saja
+            $parts = explode('/', trim($scriptName, '/'));
             $base = '/' . $parts[0];
         }
     }
@@ -40,7 +46,10 @@ if (getenv('APP_URL')) {
 }
 
 // ── Paths ───────────────────────────────────────────────────────
-define('ROOT_PATH',    dirname(__DIR__));
+// ROOT_PATH mungkin sudah didefinisikan di index.php sebelum require config
+if (!defined('ROOT_PATH')) {
+    define('ROOT_PATH', dirname(__DIR__));
+}
 define('APP_PATH',     ROOT_PATH . '/app');
 define('CONFIG_PATH',  ROOT_PATH . '/config');
 define('STORAGE_PATH', ROOT_PATH . '/storage');
