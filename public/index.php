@@ -11,7 +11,6 @@ require_once ROOT_PATH . '/config/config.php';
 
 // Load core — urutan penting!
 require_once ROOT_PATH . '/core/Database.php';
-require_once ROOT_PATH . '/core/Model.php';      // abstract class Model (base)
 require_once ROOT_PATH . '/core/Helpers.php';    // Session, Logger, AuditLog, Auth
 require_once ROOT_PATH . '/core/Security.php';   // Security
 require_once ROOT_PATH . '/app/models/Models.php'; // semua Model konkret

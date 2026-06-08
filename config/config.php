@@ -25,22 +25,16 @@ if (getenv('APP_URL')) {
     define('BASE_URL', rtrim(getenv('APP_URL'), '/'));
 } else {
     // Auto-detect untuk local XAMPP/WAMP/Laragon
-    $scheme   = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ? 'https' : 'http';
-    $host     = $_SERVER['HTTP_HOST'] ?? 'localhost';
-    // Ambil subfolder sebelum /public/ dari SCRIPT_NAME
-    // Misal: /PSB_MA_IBNU_ABBAS/public/index.php → /PSB_MA_IBNU_ABBAS
+    $scheme = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ? 'https' : 'http';
+    $host   = $_SERVER['HTTP_HOST'] ?? 'localhost';
+    // BASE_URL = semua path sampai sebelum index.php
+    // Misal: /PSB_MA_IBNU_ABBAS/public/index.php → /PSB_MA_IBNU_ABBAS/public
     $base = '';
     if (!empty($_SERVER['SCRIPT_NAME'])) {
         $scriptName = str_replace('\\', '/', $_SERVER['SCRIPT_NAME']);
-        // Cari posisi /public/ lalu ambil semua yang sebelumnya
-        $publicPos = strrpos($scriptName, '/public/');
-        if ($publicPos !== false) {
-            $base = substr($scriptName, 0, $publicPos);
-        } elseif (substr_count($scriptName, '/') > 1) {
-            // Fallback: ambil folder pertama saja
-            $parts = explode('/', trim($scriptName, '/'));
-            $base = '/' . $parts[0];
-        }
+        // Hapus /index.php di akhir
+        $base = rtrim(dirname($scriptName), '/');
+        if ($base === '.') $base = '';
     }
     define('BASE_URL', $scheme . '://' . $host . $base);
 }

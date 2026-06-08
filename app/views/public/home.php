@@ -1,24 +1,24 @@
-<?php
-// app/views/public/home.php
-?>
-<!-- HERO SECTION -->
+<?php // app/views/public/home.php ?>
+
+<!-- ═══════════════════════ HERO ═══════════════════════ -->
 <section class="hero-section" id="home">
-  <div class="container position-relative">
-    <div class="row align-items-center g-5">
-      <div class="col-lg-7" data-aos="fade-up">
-        <div class="hero-badge">
+  <div class="container position-relative" style="z-index:2">
+    <div class="row align-items-center g-4 g-lg-5">
+      <div class="col-lg-6">
+        <div class="hero-badge mb-3">
           <i class="bi bi-mortarboard-fill"></i>
           <?= $tahun_aktif ? Security::clean($tahun_aktif['nama']) : 'Pendaftaran Dibuka' ?>
         </div>
-        <h1 class="hero-title">
-          Penerimaan<br>Mahasiswa Baru
+        <h1 class="hero-title mb-3">
+          Penerimaan<br>
+          <span style="color:var(--gold-light)">Mahasiswa Baru</span>
         </h1>
-        <p class="hero-subtitle">
-          <?= Security::clean($settings['hero_subtitle'] ?? "Wujudkan Impianmu di " . ($settings['site_name'] ?? '')) ?>
+        <p class="hero-subtitle mb-2">
+          <?= Security::clean($settings['hero_subtitle'] ?? 'Wujudkan Impianmu Bersama Kami') ?>
         </p>
-        <p class="hero-kerjasama">
+        <p class="hero-kerjasama mb-4">
           <i class="bi bi-building-check me-1"></i>
-          <?= Security::clean($settings['site_kerjasama'] ?? '') ?>
+          <?= Security::clean($settings['site_kerjasama'] ?? 'Bekerjasama dengan Institut Muhammadiyah Ngawi') ?>
         </p>
         <div class="d-flex flex-wrap gap-3">
           <?php if ($tahun_aktif): ?>
@@ -26,134 +26,134 @@
             <i class="bi bi-pencil-square me-2"></i> Daftar Sekarang
           </a>
           <?php endif; ?>
-          <a href="#program" class="btn btn-outline-light px-4 rounded-pill">
+          <a href="#program" class="btn btn-outline-light rounded-pill px-4">
             <i class="bi bi-book me-2"></i> Lihat Program
           </a>
         </div>
       </div>
-      <div class="col-lg-5">
-        <div class="row g-3 hero-stats">
+      <div class="col-lg-6">
+        <div class="row g-3">
+          <?php foreach ([
+            ['num'=>'7+',    'lbl'=>'Program Studi',    'icon'=>'bi-journals',         'delay'=>'0s'],
+            ['num'=>'S1&S2', 'lbl'=>'Jenjang Tersedia', 'icon'=>'bi-award',             'delay'=>'.08s'],
+            ['num'=>'8',     'lbl'=>'Semester S1',       'icon'=>'bi-calendar3',        'delay'=>'.16s'],
+            ['num'=>'3–4',   'lbl'=>'Semester S2',       'icon'=>'bi-lightning-charge', 'delay'=>'.24s'],
+          ] as $s): ?>
           <div class="col-6">
-            <div class="hero-stat fade-up">
-              <span class="num">7+</span>
-              <span class="lbl">Program Studi</span>
+            <div class="hero-stat" style="transition-delay:<?= $s['delay'] ?>">
+              <i class="bi <?= $s['icon'] ?>" style="font-size:1.6rem;color:var(--gold-light);margin-bottom:.5rem;display:block"></i>
+              <span class="num"><?= $s['num'] ?></span>
+              <span class="lbl"><?= $s['lbl'] ?></span>
             </div>
           </div>
-          <div class="col-6">
-            <div class="hero-stat fade-up" style="transition-delay:.1s">
-              <span class="num">S1 & S2</span>
-              <span class="lbl">Jenjang Tersedia</span>
-            </div>
-          </div>
-          <div class="col-6">
-            <div class="hero-stat fade-up" style="transition-delay:.2s">
-              <span class="num">8</span>
-              <span class="lbl">Semester S1</span>
-            </div>
-          </div>
-          <div class="col-6">
-            <div class="hero-stat fade-up" style="transition-delay:.3s">
-              <span class="num">3-4</span>
-              <span class="lbl">Semester S2</span>
-            </div>
-          </div>
+          <?php endforeach; ?>
         </div>
       </div>
     </div>
   </div>
 </section>
 
-<!-- PROMO BANNER (S2) -->
-<div class="bg-warning py-2 text-center" style="background: linear-gradient(90deg, #c9a227, #e8c547) !important;">
-  <div class="container">
-    <p class="mb-0 fw-bold text-dark small">
+<!-- PROMO STRIP -->
+<div style="background:linear-gradient(90deg,var(--gold-deep),var(--gold-main),var(--gold-light));padding:.6rem 0">
+  <div class="container text-center">
+    <p class="mb-0 fw-bold text-dark" style="font-size:.88rem">
       <i class="bi bi-gift-fill me-1"></i>
-      Promo Spesial: 20 Pendaftar Pertama Program Magister S2 <strong>GRATIS Biaya Pendaftaran!</strong>
-      &nbsp;
-      <a href="<?= BASE_URL ?>/daftar" class="text-dark fw-bold text-decoration-underline">Daftar sekarang &rarr;</a>
+      Promo: 20 Pendaftar Pertama S2 <strong>GRATIS Biaya Pendaftaran!</strong>
+      &ensp;<a href="<?= BASE_URL ?>/daftar" class="text-dark fw-bold">Daftar sekarang →</a>
     </p>
   </div>
 </div>
 
-<!-- PROGRAM STUDI -->
-<section class="py-6" id="program" style="padding: 5rem 0;">
+
+<!-- ═══════════════════════ PROGRAM STUDI ═══════════════════════ -->
+<section id="program" style="padding:5rem 0;background:var(--off-white)">
   <div class="container">
-    <div class="text-center mb-5 fade-up">
+    <div class="text-center mb-5">
       <span class="section-label">Pilihan Program</span>
-      <h2 class="fw-bold">Program Studi Unggulan</h2>
+      <h2 class="fw-bold mt-1">Program Studi Unggulan</h2>
       <div class="section-divider centered"></div>
-      <p class="text-muted mx-auto" style="max-width:520px">Pilih program studi yang sesuai dengan minat, bakat, dan tujuan karir Anda</p>
+      <p class="text-muted mx-auto" style="max-width:520px">
+        Pilih program yang sesuai dengan minat, bakat, dan tujuan karir Anda
+      </p>
     </div>
 
     <?php
-    $s1Groups = [];
-    $s2Groups = [];
+    $s1Groups = []; $s2Groups = [];
     foreach ($prodi_grouped as $g) {
-        if ($g['jenjang'] === 'S1') $s1Groups[] = $g;
-        else                         $s2Groups[] = $g;
+        if (($g['jenjang'] ?? 'S1') === 'S2') $s2Groups[] = $g;
+        else $s1Groups[] = $g;
     }
     ?>
 
     <div class="row g-4">
-      <!-- S1 -->
       <div class="col-lg-8">
-        <div class="card-premium" style="border-top: 4px solid var(--blue-main);">
+        <div class="card-premium h-100" style="border-top:4px solid var(--blue-main);padding:2rem">
           <div class="d-flex align-items-center gap-3 mb-4">
-            <div class="card-icon blue"><i class="bi bi-mortarboard"></i></div>
+            <div class="card-icon blue" style="width:52px;height:52px;font-size:1.4rem"><i class="bi bi-mortarboard"></i></div>
             <div>
-              <h3 class="mb-0" style="font-size:1.3rem">Program Sarjana (S1)</h3>
+              <h3 class="mb-0" style="font-size:1.2rem;font-weight:700;color:var(--blue-main)">Program Sarjana (S1)</h3>
               <small class="text-muted">Masa Studi: 8 Semester</small>
             </div>
           </div>
           <?php foreach ($s1Groups as $g): ?>
           <div class="mb-3">
-            <h6 class="text-gold fw-bold mb-2">
-              <i class="bi bi-building me-1"></i><?= Security::clean($g['fakultas']) ?>
-            </h6>
-            <div class="ps-3">
-              <?php foreach ($g['prodi'] as $p): ?>
-              <div class="d-flex align-items-center gap-2 py-2 border-bottom">
-                <i class="bi bi-arrow-right-circle-fill text-blue"></i>
-                <div>
-                  <span class="fw-500"><?= Security::clean($p['nama']) ?></span>
-                  <span class="text-muted small ms-1">(<?= Security::clean($p['singkatan']) ?>)</span>
-                  <span class="badge bg-light text-dark ms-1 border"><?= Security::clean($p['gelar']) ?></span>
-                </div>
-              </div>
-              <?php endforeach; ?>
+            <div class="d-flex align-items-center gap-2 mb-2">
+              <i class="bi bi-building-fill" style="color:var(--gold-deep);font-size:.8rem"></i>
+              <span class="fw-700" style="color:var(--gold-deep);font-size:.78rem;text-transform:uppercase;letter-spacing:.5px">
+                <?= Security::clean($g['fakultas']) ?>
+              </span>
             </div>
+            <?php foreach ($g['prodi'] as $p): ?>
+            <div class="d-flex align-items-center gap-3 py-2 px-3 mb-1 rounded-3"
+                 style="background:var(--off-white);border:1px solid var(--border)">
+              <i class="bi bi-arrow-right-circle-fill" style="color:var(--blue-main);flex-shrink:0"></i>
+              <span class="fw-600 flex-grow-1" style="font-size:.92rem"><?= Security::clean($p['nama_prodi']) ?></span>
+              <span class="text-muted small">(<?= Security::clean($p['singkatan']) ?>)</span>
+              <span class="badge rounded-pill" style="background:var(--blue-pale);color:var(--blue-main);font-size:.7rem;white-space:nowrap">
+                <?= Security::clean($p['gelar']) ?>
+              </span>
+            </div>
+            <?php endforeach; ?>
           </div>
           <?php endforeach; ?>
+          <div class="mt-3">
+            <a href="<?= BASE_URL ?>/daftar" class="btn-primary-blue">
+              <i class="bi bi-pencil-square me-2"></i> Daftar Program S1
+            </a>
+          </div>
         </div>
       </div>
 
-      <!-- S2 -->
       <div class="col-lg-4">
-        <div class="card-premium" style="border-top: 4px solid var(--gold-main); height:100%">
+        <div class="card-premium h-100" style="border-top:4px solid var(--gold-main);padding:2rem">
           <div class="d-flex align-items-center gap-3 mb-4">
-            <div class="card-icon gold"><i class="bi bi-award"></i></div>
+            <div class="card-icon gold" style="width:52px;height:52px;font-size:1.4rem"><i class="bi bi-award"></i></div>
             <div>
-              <h3 class="mb-0" style="font-size:1.3rem">Program Magister (S2)</h3>
+              <h3 class="mb-0" style="font-size:1.2rem;font-weight:700;color:var(--blue-main)">Program Magister (S2)</h3>
               <small class="text-muted">Masa Studi: 3–4 Semester</small>
             </div>
           </div>
           <?php foreach ($s2Groups as $g): ?>
           <?php foreach ($g['prodi'] as $p): ?>
-          <div class="d-flex align-items-center gap-2 py-2 border-bottom mb-2">
-            <i class="bi bi-star-fill text-warning"></i>
-            <div>
-              <span class="fw-500"><?= Security::clean($p['nama']) ?></span>
-              <span class="text-muted small ms-1">(<?= Security::clean($p['singkatan']) ?>)</span>
-              <br><span class="badge" style="background:var(--gold-pale);color:var(--gold-deep)"><?= Security::clean($p['gelar']) ?></span>
+          <div class="d-flex align-items-center gap-3 py-2 px-3 mb-2 rounded-3"
+               style="background:var(--gold-pale);border:1px solid rgba(201,162,39,.25)">
+            <i class="bi bi-star-fill" style="color:var(--gold-main);flex-shrink:0"></i>
+            <div class="flex-grow-1">
+              <div class="fw-600" style="font-size:.92rem"><?= Security::clean($p['nama_prodi']) ?></div>
+              <div style="font-size:.78rem;color:var(--text-muted)"><?= Security::clean($p['singkatan']) ?></div>
+              <span class="badge" style="background:var(--gold-main);color:var(--blue-dark);font-size:.7rem"><?= Security::clean($p['gelar']) ?></span>
             </div>
           </div>
           <?php endforeach; ?>
           <?php endforeach; ?>
-          <!-- Promo box -->
-          <div class="mt-3 p-3 rounded-3 text-center" style="background:var(--gold-pale);border:1.5px dashed var(--gold-main)">
-            <i class="bi bi-gift-fill text-warning fs-4 mb-2 d-block"></i>
-            <p class="small fw-bold mb-1" style="color:var(--gold-deep)">Promo 20 Pendaftar Pertama</p>
-            <p class="small mb-0 text-muted">Gratis Biaya Pendaftaran S2</p>
+          <div class="mt-4 p-3 text-center rounded-3"
+               style="background:linear-gradient(135deg,var(--gold-pale),#fff9e0);border:1.5px dashed var(--gold-main)">
+            <i class="bi bi-gift-fill d-block mb-2" style="font-size:1.5rem;color:var(--gold-main)"></i>
+            <p class="fw-bold mb-1 small" style="color:var(--gold-deep)">Promo 20 Pendaftar Pertama</p>
+            <p class="text-muted mb-2" style="font-size:.78rem">Gratis Biaya Pendaftaran S2</p>
+            <a href="<?= BASE_URL ?>/daftar" class="btn-primary-gold" style="font-size:.8rem;padding:.4rem 1rem">
+              <i class="bi bi-pencil-square me-1"></i> Daftar S2
+            </a>
           </div>
         </div>
       </div>
@@ -161,84 +161,69 @@
   </div>
 </section>
 
-<!-- BIAYA PENDIDIKAN -->
-<section class="py-5 bg-light" id="biaya">
+
+<!-- ═══════════════════════ BIAYA ═══════════════════════ -->
+<section id="biaya" style="padding:5rem 0;background:#fff">
   <div class="container">
-    <div class="text-center mb-5 fade-up">
+    <div class="text-center mb-5">
       <span class="section-label">Investasi Pendidikan</span>
-      <h2 class="fw-bold">Biaya Pendidikan</h2>
+      <h2 class="fw-bold mt-1">Biaya Pendidikan</h2>
       <div class="section-divider centered"></div>
+      <p class="text-muted">Terjangkau, transparan, tanpa biaya tersembunyi</p>
     </div>
     <div class="row g-4 justify-content-center">
-      <!-- S1 -->
-      <div class="col-lg-5">
-        <div class="biaya-card fade-up">
+      <div class="col-md-6 col-lg-5">
+        <div class="biaya-card h-100">
           <div class="biaya-card-header s1">
-            <div class="d-flex align-items-center gap-3 mb-3">
-              <div class="card-icon" style="background:rgba(255,255,255,.2);color:white;font-size:1.5rem;width:52px;height:52px;border-radius:10px;display:flex;align-items:center;justify-content:center;">
+            <div class="d-flex align-items-center gap-3">
+              <div style="width:52px;height:52px;border-radius:10px;background:rgba(255,255,255,.2);display:flex;align-items:center;justify-content:center;font-size:1.5rem;color:#fff;flex-shrink:0">
                 <i class="bi bi-mortarboard"></i>
               </div>
               <div>
-                <h4 class="mb-0 text-white">Program S1</h4>
-                <p class="mb-0 text-white-50 small">Sarjana - 8 Semester</p>
+                <h4 class="mb-0 text-white fw-bold">Program S1</h4>
+                <p class="mb-0 small" style="color:rgba(255,255,255,.7)">Sarjana · 8 Semester</p>
               </div>
             </div>
           </div>
           <div class="biaya-card-body">
-            <div class="biaya-item">
-              <span class="biaya-label"><i class="bi bi-receipt me-2"></i>Biaya Pendaftaran</span>
-              <span class="biaya-value">Rp 300.000</span>
-            </div>
-            <div class="biaya-item">
-              <span class="biaya-label"><i class="bi bi-calendar-month me-2"></i>SPP per Bulan</span>
-              <span class="biaya-value">Rp 250.000</span>
-            </div>
-            <div class="biaya-item">
-              <span class="biaya-label"><i class="bi bi-clock me-2"></i>Masa Studi</span>
-              <span class="biaya-value">8 Semester</span>
-            </div>
-            <div class="mt-3">
+            <div class="biaya-item"><span class="biaya-label"><i class="bi bi-receipt me-2 text-blue"></i>Biaya Pendaftaran</span><span class="biaya-value">Rp 300.000</span></div>
+            <div class="biaya-item"><span class="biaya-label"><i class="bi bi-calendar-month me-2 text-blue"></i>SPP per Bulan</span><span class="biaya-value">Rp 250.000</span></div>
+            <div class="biaya-item" style="border:none"><span class="biaya-label"><i class="bi bi-clock me-2 text-blue"></i>Masa Studi</span><span class="biaya-value">8 Semester</span></div>
+            <div class="mt-4">
               <a href="<?= BASE_URL ?>/daftar" class="btn-primary-blue w-100 justify-content-center">
-                <i class="bi bi-pencil-square me-2"></i> Daftar Program S1
+                <i class="bi bi-pencil-square me-2"></i> Daftar S1
               </a>
             </div>
           </div>
         </div>
       </div>
-      <!-- S2 -->
-      <div class="col-lg-5">
-        <div class="biaya-card fade-up" style="transition-delay:.1s">
+      <div class="col-md-6 col-lg-5">
+        <div class="biaya-card h-100" style="position:relative">
+          <div style="position:absolute;top:0;right:1.5rem;background:var(--gold-main);color:var(--blue-dark);font-size:.7rem;font-weight:700;padding:.15rem .7rem;border-radius:0 0 8px 8px;z-index:1">PROMO</div>
           <div class="biaya-card-header s2">
-            <div class="d-flex align-items-center gap-3 mb-3">
-              <div class="card-icon" style="background:rgba(255,255,255,.2);color:white;font-size:1.5rem;width:52px;height:52px;border-radius:10px;display:flex;align-items:center;justify-content:center;">
+            <div class="d-flex align-items-center gap-3">
+              <div style="width:52px;height:52px;border-radius:10px;background:rgba(255,255,255,.2);display:flex;align-items:center;justify-content:center;font-size:1.5rem;color:#fff;flex-shrink:0">
                 <i class="bi bi-award"></i>
               </div>
               <div>
-                <h4 class="mb-0 text-white">Program Magister S2</h4>
-                <p class="mb-0 text-white-50 small">Pascasarjana - 3-4 Semester</p>
+                <h4 class="mb-0 text-white fw-bold">Program Magister S2</h4>
+                <p class="mb-0 small" style="color:rgba(255,255,255,.7)">Pascasarjana · 3–4 Semester</p>
               </div>
             </div>
           </div>
           <div class="biaya-card-body">
             <div class="biaya-item">
-              <span class="biaya-label"><i class="bi bi-receipt me-2"></i>Biaya Pendaftaran</span>
-              <span class="biaya-value" style="color:var(--gold-deep)">Rp 500.000 <span class="badge bg-warning text-dark small">Promo!</span></span>
+              <span class="biaya-label"><i class="bi bi-receipt me-2" style="color:var(--gold-deep)"></i>Biaya Pendaftaran</span>
+              <div class="text-end">
+                <span class="biaya-value" style="color:var(--gold-deep)">Rp 500.000</span><br>
+                <span class="badge bg-warning text-dark" style="font-size:.65rem">Promo: GRATIS!</span>
+              </div>
             </div>
-            <div class="biaya-item">
-              <span class="biaya-label"><i class="bi bi-journal-bookmark me-2"></i>Biaya Pendidikan</span>
-              <span class="biaya-value" style="color:var(--gold-deep)">Rp 8.000.000 (s/d lulus)</span>
-            </div>
-            <div class="biaya-item">
-              <span class="biaya-label"><i class="bi bi-calendar-month me-2"></i>Atau per Bulan</span>
-              <span class="biaya-value" style="color:var(--gold-deep)">Rp 500.000 / bulan</span>
-            </div>
-            <div class="biaya-item">
-              <span class="biaya-label"><i class="bi bi-clock me-2"></i>Masa Studi</span>
-              <span class="biaya-value" style="color:var(--gold-deep)">3–4 Semester</span>
-            </div>
-            <div class="mt-3">
+            <div class="biaya-item"><span class="biaya-label"><i class="bi bi-journal-bookmark me-2" style="color:var(--gold-deep)"></i>Biaya s/d Lulus</span><span class="biaya-value" style="color:var(--gold-deep)">Rp 8.000.000</span></div>
+            <div class="biaya-item" style="border:none"><span class="biaya-label"><i class="bi bi-clock me-2" style="color:var(--gold-deep)"></i>Masa Studi</span><span class="biaya-value" style="color:var(--gold-deep)">3–4 Semester</span></div>
+            <div class="mt-4">
               <a href="<?= BASE_URL ?>/daftar" class="btn-primary-gold w-100 justify-content-center">
-                <i class="bi bi-pencil-square me-2"></i> Daftar Program S2
+                <i class="bi bi-pencil-square me-2"></i> Daftar S2
               </a>
             </div>
           </div>
@@ -248,88 +233,107 @@
   </div>
 </section>
 
-<!-- ALUR PENDAFTARAN -->
-<section class="py-5" id="alur">
+
+<!-- ═══════════════════════ ALUR ═══════════════════════ -->
+<section id="alur" style="padding:5rem 0;background:var(--off-white)">
   <div class="container">
-    <div class="text-center mb-5 fade-up">
+    <div class="text-center mb-5">
       <span class="section-label">Cara Mendaftar</span>
-      <h2 class="fw-bold">Alur Pendaftaran</h2>
+      <h2 class="fw-bold mt-1">Alur Pendaftaran</h2>
       <div class="section-divider centered"></div>
+      <p class="text-muted">Mudah dan cepat, bisa dilakukan dari mana saja</p>
     </div>
-    <div class="row justify-content-center">
-      <div class="col-lg-7">
-        <div class="alur-steps fade-up">
-          <?php
-          $steps = [
-            ['icon'=>'bi-pc-display','title'=>'Isi Formulir Online','desc'=>'Kunjungi website dan isi formulir pendaftaran secara lengkap dan benar.'],
-            ['icon'=>'bi-upload','title'=>'Upload Dokumen','desc'=>'Upload scan dokumen persyaratan (KTP, KK, Akte, Ijazah, Foto).'],
-            ['icon'=>'bi-check2-circle','title'=>'Verifikasi Berkas','desc'=>'Tim kami akan memverifikasi kelengkapan dokumen Anda.'],
-            ['icon'=>'bi-credit-card','title'=>'Pembayaran Biaya Pendaftaran','desc'=>'Lakukan pembayaran biaya pendaftaran sesuai program yang dipilih.'],
-            ['icon'=>'bi-envelope-check','title'=>'Terima Konfirmasi','desc'=>'Anda akan menerima konfirmasi penerimaan melalui email atau WhatsApp.'],
-          ];
-          foreach ($steps as $i => $s):
-          ?>
-          <div class="alur-step">
-            <div class="alur-step-num"><?= $i+1 ?></div>
-            <?php if ($i < count($steps)-1): ?>
-            <div class="alur-step-line"></div>
-            <?php endif; ?>
-            <div class="alur-step-content">
-              <h5><i class="<?= $s['icon'] ?> me-2 text-gold"></i><?= $s['title'] ?></h5>
-              <p><?= $s['desc'] ?></p>
-            </div>
+    <div class="row g-3">
+      <?php
+      $steps = [
+        ['icon'=>'bi-pencil-square',  'title'=>'Isi Formulir Online',    'desc'=>'Daftar akun dan isi data diri secara lengkap dan benar.'],
+        ['icon'=>'bi-cloud-upload',   'title'=>'Upload Dokumen',          'desc'=>'Upload scan KTP, KK, Akte, Ijazah, dan Foto Resmi.'],
+        ['icon'=>'bi-shield-check',   'title'=>'Verifikasi Berkas',       'desc'=>'Tim kami memverifikasi kelengkapan dan keabsahan dokumen.'],
+        ['icon'=>'bi-credit-card',    'title'=>'Pembayaran',              'desc'=>'Lakukan pembayaran biaya pendaftaran sesuai program.'],
+        ['icon'=>'bi-envelope-check', 'title'=>'Konfirmasi Penerimaan',   'desc'=>'Terima konfirmasi via email atau WhatsApp.'],
+      ];
+      foreach ($steps as $i => $s):
+      ?>
+      <div class="col-sm-6 col-lg-4">
+        <div class="d-flex gap-3 p-3 rounded-3 h-100"
+             style="background:#fff;border:1px solid var(--border);box-shadow:var(--shadow-sm)">
+          <div style="width:42px;height:42px;border-radius:50%;background:var(--blue-main);color:#fff;font-weight:700;font-size:.95rem;display:flex;align-items:center;justify-content:center;flex-shrink:0;box-shadow:0 4px 12px rgba(26,58,107,.25)">
+            <?= $i + 1 ?>
           </div>
-          <?php endforeach; ?>
-        </div>
-        <div class="text-center mt-4">
-          <a href="<?= BASE_URL ?>/daftar" class="btn-primary-gold">
-            <i class="bi bi-pencil-square me-2"></i> Mulai Pendaftaran
-          </a>
+          <div>
+            <h6 class="fw-700 mb-1" style="color:var(--blue-main);font-size:.88rem">
+              <i class="bi <?= $s['icon'] ?> me-1" style="color:var(--gold-main)"></i><?= $s['title'] ?>
+            </h6>
+            <p class="mb-0 text-muted" style="font-size:.82rem"><?= $s['desc'] ?></p>
+          </div>
         </div>
       </div>
+      <?php endforeach; ?>
+    </div>
+    <div class="text-center mt-5">
+      <a href="<?= BASE_URL ?>/daftar" class="btn-primary-gold">
+        <i class="bi bi-pencil-square me-2"></i> Mulai Pendaftaran Sekarang
+      </a>
     </div>
   </div>
 </section>
 
-<!-- PERSYARATAN -->
-<section class="py-5 bg-light" id="persyaratan">
+
+<!-- ═══════════════════════ PERSYARATAN ═══════════════════════ -->
+<section id="persyaratan" style="padding:5rem 0;background:#fff">
   <div class="container">
-    <div class="text-center mb-5 fade-up">
+    <div class="text-center mb-5">
       <span class="section-label">Yang Perlu Disiapkan</span>
-      <h2 class="fw-bold">Persyaratan Pendaftaran</h2>
+      <h2 class="fw-bold mt-1">Persyaratan Pendaftaran</h2>
       <div class="section-divider centered"></div>
     </div>
     <div class="row g-3 justify-content-center">
       <?php if (!empty($persyaratan_list)): ?>
-        <?php foreach ($persyaratan_list as $i => $p): ?>
-        <div class="col-md-6 col-lg-4 fade-up" style="transition-delay:<?= $i * 0.06 ?>s">
-          <div class="card-premium d-flex gap-3 align-items-start p-3">
-            <div class="card-icon <?= $p['wajib'] ? 'blue' : 'gold' ?>" style="width:40px;height:40px;border-radius:8px;font-size:1rem;flex-shrink:0">
-              <i class="bi <?= $p['wajib'] ? 'bi-check-circle-fill' : 'bi-info-circle' ?>"></i>
+        <?php foreach ($persyaratan_list as $p): ?>
+        <?php $wajib = (bool)($p['wajib'] ?? 1); ?>
+        <div class="col-sm-6 col-lg-4">
+          <div class="d-flex gap-3 align-items-start p-3 rounded-3 h-100"
+               style="background:<?= $wajib ? 'var(--blue-pale)' : 'var(--gold-pale)' ?>;border:1px solid <?= $wajib ? 'rgba(26,58,107,.15)' : 'rgba(201,162,39,.25)' ?>">
+            <div style="width:38px;height:38px;border-radius:8px;background:<?= $wajib ? 'var(--blue-main)' : 'var(--gold-main)' ?>;color:#fff;display:flex;align-items:center;justify-content:center;font-size:.9rem;flex-shrink:0">
+              <i class="bi <?= $wajib ? 'bi-check-lg' : 'bi-info-circle' ?>"></i>
             </div>
             <div>
-              <p class="mb-0 fw-500 small"><?= Security::clean($p['nama']) ?></p>
-              <?php if ($p['keterangan']): ?>
-              <p class="mb-0 text-muted" style="font-size:.82rem"><?= Security::clean($p['keterangan']) ?></p>
+              <p class="mb-1 fw-600" style="font-size:.88rem"><?= Security::clean($p['nama']) ?></p>
+              <?php if (!empty($p['keterangan'])): ?>
+              <p class="mb-1 text-muted" style="font-size:.78rem"><?= Security::clean($p['keterangan']) ?></p>
               <?php endif; ?>
-              <?php if (!$p['wajib']): ?>
-              <span class="badge bg-light text-muted border" style="font-size:.72rem">Bisa Menyusul</span>
+              <?php if (!$wajib): ?>
+              <span class="badge" style="background:var(--gold-main);color:var(--blue-dark);font-size:.68rem">Bisa Menyusul</span>
               <?php endif; ?>
             </div>
           </div>
         </div>
         <?php endforeach; ?>
+
       <?php else: ?>
-        <?php
-        $reqs = ['Mengisi Formulir Pendaftaran Online','Scan Asli KTP','Scan Asli Kartu Keluarga (KK)','Scan Asli Akte Kelahiran','Scan Asli Ijazah Terakhir & Transkrip Nilai','Foto Resmi Berjas Hitam Background Biru Muda'];
-        foreach ($reqs as $i => $r):
-        ?>
-        <div class="col-md-6 col-lg-4 fade-up" style="transition-delay:<?= $i * 0.06 ?>s">
-          <div class="card-premium d-flex gap-3 align-items-center p-3">
-            <div class="card-icon blue" style="width:40px;height:40px;border-radius:8px;font-size:1rem;flex-shrink:0">
-              <i class="bi bi-check-circle-fill"></i>
+        <?php foreach ([
+          ['nama'=>'Mengisi Formulir Pendaftaran Online', 'wajib'=>true],
+          ['nama'=>'Scan Asli KTP',                       'wajib'=>true],
+          ['nama'=>'Scan Asli Kartu Keluarga (KK)',        'wajib'=>true],
+          ['nama'=>'Scan Asli Akte Kelahiran',             'wajib'=>true],
+          ['nama'=>'Scan Asli Ijazah Terakhir & Transkrip','wajib'=>true],
+          ['nama'=>'Ijazah S1 (khusus pendaftar S2)',      'wajib'=>false],
+          ['nama'=>'Foto Resmi Berjas Hitam, BG Biru Muda','wajib'=>true],
+          ['nama'=>'Transkrip Nilai S1 (bisa menyusul)',   'wajib'=>false],
+          ['nama'=>'Nomor HP aktif (WhatsApp)',             'wajib'=>true],
+        ] as $r): ?>
+        <div class="col-sm-6 col-lg-4">
+          <div class="d-flex gap-3 align-items-start p-3 rounded-3 h-100"
+               style="background:<?= $r['wajib'] ? 'var(--blue-pale)' : 'var(--gold-pale)' ?>;border:1px solid <?= $r['wajib'] ? 'rgba(26,58,107,.15)' : 'rgba(201,162,39,.25)' ?>">
+            <div style="width:38px;height:38px;border-radius:8px;background:<?= $r['wajib'] ? 'var(--blue-main)' : 'var(--gold-main)' ?>;color:#fff;display:flex;align-items:center;justify-content:center;font-size:.9rem;flex-shrink:0">
+              <i class="bi <?= $r['wajib'] ? 'bi-check-lg' : 'bi-info-circle' ?>"></i>
             </div>
-            <p class="mb-0 fw-500 small"><?= Security::clean($r) ?></p>
+            <div>
+              <p class="mb-0 fw-600" style="font-size:.88rem"><?= Security::clean($r['nama']) ?></p>
+              <?php if (!$r['wajib']): ?>
+              <span class="badge mt-1" style="background:var(--gold-main);color:var(--blue-dark);font-size:.68rem">Bisa Menyusul</span>
+              <?php endif; ?>
+            </div>
           </div>
         </div>
         <?php endforeach; ?>
@@ -338,36 +342,46 @@
   </div>
 </section>
 
-<!-- FAQ -->
-<section class="py-5" id="faq">
+
+<!-- ═══════════════════════ FAQ ═══════════════════════ -->
+<section id="faq" style="padding:5rem 0;background:var(--off-white)">
   <div class="container">
-    <div class="text-center mb-5 fade-up">
+    <div class="text-center mb-5">
       <span class="section-label">Pertanyaan Umum</span>
-      <h2 class="fw-bold">FAQ</h2>
+      <h2 class="fw-bold mt-1">FAQ</h2>
       <div class="section-divider centered"></div>
     </div>
     <div class="row justify-content-center">
       <div class="col-lg-8">
-        <div class="accordion accordion-premium" id="faqAccordion">
+        <div class="accordion" id="faqAccordion">
           <?php
           $faqs = [
-            ['q'=>'Apakah pendaftaran bisa dilakukan secara online?','a'=>'Ya, seluruh proses pendaftaran dapat dilakukan secara online melalui website ini. Upload dokumen, isi formulir, dan pantau status pendaftaran dari mana saja.'],
-            ['q'=>'Berapa biaya pendaftaran Program S1?','a'=>'Biaya pendaftaran Program S1 adalah Rp 300.000, dengan SPP Rp 250.000/bulan. Masa studi 8 semester.'],
-            ['q'=>'Apakah ada promo untuk Program Magister S2?','a'=>'Ya! 20 pendaftar pertama Program Magister S2 mendapatkan GRATIS biaya pendaftaran (senilai Rp 500.000). Segera daftar sebelum kuota habis!'],
-            ['q'=>'Dokumen apa saja yang harus diupload?','a'=>'KTP, Kartu Keluarga (KK), Akte Kelahiran, Ijazah Terakhir & Transkrip Nilai, dan Foto Resmi. Untuk S2, ijazah S1 bisa menyusul.'],
-            ['q'=>'Bagaimana cara mengetahui status pendaftaran saya?','a'=>'Setelah mendaftar, Anda akan mendapat Nomor Pendaftaran. Login ke dashboard menggunakan Nomor Pendaftaran dan password untuk memantau status verifikasi.'],
-            ['q'=>'Apakah Ma\'had Aly Ibnu Abbas Karanganyar terdaftar resmi?','a'=>'Ya, Ma\'had Aly Ibnu Abbas Karanganyar bekerjasama dengan Institut Muhammadiyah Ngawi dan telah terdaftar resmi dalam sistem pendidikan tinggi Indonesia.'],
+            ['q'=>'Apakah pendaftaran bisa dilakukan secara online?',
+             'a'=>'Ya, seluruh proses pendaftaran dapat dilakukan secara online melalui website ini. Upload dokumen, isi formulir, dan pantau status dari mana saja.'],
+            ['q'=>'Berapa biaya pendaftaran Program S1?',
+             'a'=>'Biaya pendaftaran Program S1 adalah Rp 300.000, dengan SPP Rp 250.000/bulan. Masa studi 8 semester.'],
+            ['q'=>'Apakah ada promo untuk Program Magister S2?',
+             'a'=>'Ya! 20 pendaftar pertama Program S2 mendapatkan GRATIS biaya pendaftaran (Rp 500.000). Segera daftar sebelum kuota habis!'],
+            ['q'=>'Dokumen apa saja yang harus diupload?',
+             'a'=>'KTP, Kartu Keluarga, Akte Kelahiran, Ijazah & Transkrip, dan Foto Resmi. Untuk S2, ijazah S1 bisa menyusul.'],
+            ['q'=>'Bagaimana cara mengetahui status pendaftaran saya?',
+             'a'=>'Setelah mendaftar, Anda mendapat Nomor Pendaftaran. Login ke dashboard untuk memantau status verifikasi berkas.'],
+            ['q'=>'Apakah Ma\'had Aly Ibnu Abbas Karanganyar terdaftar resmi?',
+             'a'=>'Ya, bekerjasama dengan Institut Muhammadiyah Ngawi dan telah terdaftar resmi dalam sistem pendidikan tinggi Indonesia.'],
           ];
           foreach ($faqs as $i => $f):
           ?>
-          <div class="accordion-item">
+          <div class="accordion-item mb-2 rounded-3 overflow-hidden"
+               style="border:1px solid var(--border)!important;box-shadow:var(--shadow-sm)">
             <h2 class="accordion-header">
-              <button class="accordion-button <?= $i>0?'collapsed':'' ?>" type="button" data-bs-toggle="collapse" data-bs-target="#faq<?=$i?>">
+              <button class="accordion-button fw-600 <?= $i > 0 ? 'collapsed' : '' ?>" type="button"
+                      data-bs-toggle="collapse" data-bs-target="#faq<?= $i ?>"
+                      style="font-size:.92rem;color:var(--blue-main)">
                 <?= Security::clean($f['q']) ?>
               </button>
             </h2>
-            <div id="faq<?=$i?>" class="accordion-collapse collapse <?= $i===0?'show':'' ?>" data-bs-parent="#faqAccordion">
-              <div class="accordion-body">
+            <div id="faq<?= $i ?>" class="accordion-collapse collapse <?= $i === 0 ? 'show' : '' ?>" data-bs-parent="#faqAccordion">
+              <div class="accordion-body text-muted" style="font-size:.9rem">
                 <?= Security::clean($f['a']) ?>
               </div>
             </div>
@@ -379,45 +393,70 @@
   </div>
 </section>
 
-<!-- KONTAK -->
-<section class="py-5" id="kontak" style="background: linear-gradient(135deg, var(--blue-dark), var(--blue-main)); color:white;">
+
+<!-- ═══════════════════════ KONTAK / CTA ═══════════════════════ -->
+<section id="kontak" style="padding:5rem 0;background:linear-gradient(135deg,var(--blue-dark),var(--blue-main) 60%,var(--blue-mid))">
   <div class="container">
     <div class="row g-5 align-items-center">
-      <div class="col-lg-6 fade-up">
+      <div class="col-lg-6">
         <span class="section-label" style="color:var(--gold-light)">Hubungi Kami</span>
-        <h2 class="fw-bold text-white mb-3">Siap Mendaftar?</h2>
-        <p class="text-white-75 mb-4">Hubungi kami untuk informasi lebih lanjut atau langsung daftar secara online.</p>
+        <h2 class="fw-bold text-white mt-1 mb-3">Siap Melangkah<br>Bersama Kami?</h2>
+        <p style="color:rgba(255,255,255,.75);margin-bottom:2rem">
+          Hubungi tim kami untuk informasi lebih lanjut, atau langsung daftar secara online.
+        </p>
         <div class="d-flex flex-column gap-3">
-          <a href="https://wa.me/<?= preg_replace('/[^0-9]/', '', $settings['site_phone'] ?? '085614649050') ?>" class="d-flex align-items-center gap-3 text-white text-decoration-none">
-            <div class="card-icon" style="background:rgba(255,255,255,.1);color:white;width:48px;height:48px">
-              <i class="bi bi-whatsapp"></i>
-            </div>
+          <a href="https://wa.me/<?= preg_replace('/[^0-9]/', '', $settings['site_phone'] ?? '08561464905') ?>"
+             target="_blank" class="d-flex align-items-center gap-3 text-white text-decoration-none">
+            <div style="width:48px;height:48px;border-radius:12px;background:rgba(255,255,255,.12);display:flex;align-items:center;justify-content:center;font-size:1.2rem;flex-shrink:0"><i class="bi bi-whatsapp"></i></div>
             <div>
-              <div class="small text-white-50">WhatsApp / Telepon</div>
+              <div style="font-size:.75rem;color:rgba(255,255,255,.55)">WhatsApp / Telepon</div>
               <div class="fw-bold"><?= Security::clean($settings['site_phone'] ?? '0856-1464-905') ?></div>
             </div>
           </a>
-          <a href="https://<?= Security::clean($settings['site_website'] ?? 'www.ibnuabbass.com') ?>" class="d-flex align-items-center gap-3 text-white text-decoration-none">
-            <div class="card-icon" style="background:rgba(255,255,255,.1);color:white;width:48px;height:48px">
-              <i class="bi bi-globe"></i>
-            </div>
+          <div class="d-flex align-items-center gap-3">
+            <div style="width:48px;height:48px;border-radius:12px;background:rgba(255,255,255,.12);display:flex;align-items:center;justify-content:center;font-size:1.2rem;flex-shrink:0"><i class="bi bi-globe"></i></div>
             <div>
-              <div class="small text-white-50">Website</div>
+              <div style="font-size:.75rem;color:rgba(255,255,255,.55)">Website</div>
               <div class="fw-bold"><?= Security::clean($settings['site_website'] ?? 'www.ibnuabbass.com') ?></div>
             </div>
-          </a>
+          </div>
+          <div class="d-flex align-items-center gap-3">
+            <div style="width:48px;height:48px;border-radius:12px;background:rgba(255,255,255,.12);display:flex;align-items:center;justify-content:center;font-size:1.2rem;flex-shrink:0"><i class="bi bi-geo-alt-fill"></i></div>
+            <div>
+              <div style="font-size:.75rem;color:rgba(255,255,255,.55)">Alamat</div>
+              <div class="fw-bold" style="font-size:.9rem"><?= Security::clean($settings['site_alamat'] ?? 'Karanganyar, Jawa Tengah') ?></div>
+            </div>
+          </div>
         </div>
       </div>
-      <div class="col-lg-4 offset-lg-2 text-center fade-up" style="transition-delay:.15s">
-        <div class="p-4 rounded-4" style="background:rgba(255,255,255,.08);border:1.5px solid rgba(255,255,255,.15)">
-          <h4 class="text-white mb-1">Daftar Sekarang</h4>
-          <p class="text-white-50 small mb-4">Proses cepat, mudah, online</p>
-          <a href="<?= BASE_URL ?>/daftar" class="btn-primary-gold d-inline-flex w-100 justify-content-center mb-3">
+
+      <div class="col-lg-5 offset-lg-1">
+        <div class="p-4 rounded-4" style="background:rgba(255,255,255,.09);border:1.5px solid rgba(255,255,255,.18)">
+          <h4 class="text-white fw-bold mb-1">Daftar Sekarang</h4>
+          <p style="color:rgba(255,255,255,.6);font-size:.85rem;margin-bottom:1.5rem">Proses cepat, mudah, 100% online</p>
+          <?php if ($tahun_aktif): ?>
+          <a href="<?= BASE_URL ?>/daftar" class="btn-primary-gold d-flex align-items-center justify-content-center w-100 mb-3" style="padding:.75rem">
             <i class="bi bi-pencil-square me-2"></i> Mulai Pendaftaran
           </a>
-          <a href="<?= BASE_URL ?>/login" class="btn btn-outline-light rounded-pill w-100">
+          <?php endif; ?>
+          <a href="<?= BASE_URL ?>/login" class="btn btn-outline-light rounded-pill w-100" style="font-size:.9rem">
             <i class="bi bi-box-arrow-in-right me-2"></i> Login Pendaftar
           </a>
+          <hr style="border-color:rgba(255,255,255,.15);margin:1.25rem 0">
+          <div class="row g-2 text-center">
+            <div class="col-4">
+              <div style="font-size:1.3rem;font-weight:700;color:var(--gold-light)">7+</div>
+              <div style="font-size:.7rem;color:rgba(255,255,255,.5)">Prodi</div>
+            </div>
+            <div class="col-4">
+              <div style="font-size:1.1rem;font-weight:700;color:var(--gold-light)">S1&S2</div>
+              <div style="font-size:.7rem;color:rgba(255,255,255,.5)">Jenjang</div>
+            </div>
+            <div class="col-4">
+              <div style="font-size:1.3rem;font-weight:700;color:var(--gold-light)">100%</div>
+              <div style="font-size:.7rem;color:rgba(255,255,255,.5)">Online</div>
+            </div>
+          </div>
         </div>
       </div>
     </div>
