@@ -75,33 +75,48 @@ class Controller
 
     protected function validate(array $data, array $rules): array
     {
+        $labels = [
+            'nama_lengkap'     => 'Nama lengkap',
+            'tempat_lahir'     => 'Tempat lahir',
+            'tanggal_lahir'    => 'Tanggal lahir',
+            'jenis_kelamin'    => 'Jenis kelamin',
+            'nomor_hp'         => 'Nomor HP',
+            'alamat'           => 'Alamat',
+            'nama_ibu_kandung' => 'Nama ibu kandung',
+            'program_studi_id' => 'Program studi',
+            'password'         => 'Password',
+        ];
+
         $errors = [];
         foreach ($rules as $field => $rule) {
             $parts = explode('|', $rule);
             $val   = $data[$field] ?? '';
+            $label = $labels[$field] ?? $field;
             foreach ($parts as $part) {
                 if ($part === 'required' && empty(trim((string)$val))) {
-                    $errors[$field] = 'Field ini wajib diisi.';
+                    $errors[$field] = "{$label} wajib diisi.";
                     break;
                 }
-                if (str_starts_with($part, 'min:') && strlen((string)$val) < (int)substr($part,4)) {
-                    $errors[$field] = 'Minimal ' . substr($part,4) . ' karakter.';
+                if (strncmp($part, 'min:', 4) === 0 && strlen((string)$val) < (int)substr($part, 4)) {
+                    $min = (int)substr($part, 4);
+                    $errors[$field] = "{$label} minimal {$min} karakter.";
                     break;
                 }
-                if (str_starts_with($part, 'max:') && strlen((string)$val) > (int)substr($part,4)) {
-                    $errors[$field] = 'Maksimal ' . substr($part,4) . ' karakter.';
+                if (strncmp($part, 'max:', 4) === 0 && strlen((string)$val) > (int)substr($part, 4)) {
+                    $max = (int)substr($part, 4);
+                    $errors[$field] = "{$label} maksimal {$max} karakter.";
                     break;
                 }
                 if ($part === 'email' && !filter_var($val, FILTER_VALIDATE_EMAIL)) {
-                    $errors[$field] = 'Format email tidak valid.';
+                    $errors[$field] = "Format {$label} tidak valid.";
                     break;
                 }
                 if ($part === 'numeric' && !is_numeric($val)) {
-                    $errors[$field] = 'Harus berupa angka.';
+                    $errors[$field] = "{$label} harus dipilih.";
                     break;
                 }
                 if ($part === 'date' && !strtotime((string)$val)) {
-                    $errors[$field] = 'Format tanggal tidak valid.';
+                    $errors[$field] = "Format {$label} tidak valid.";
                     break;
                 }
             }

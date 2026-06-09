@@ -93,8 +93,10 @@ $tahunAktif = $tahun_aktif ?? null;
                   <div class="input-group">
                     <span class="input-group-text"><i class="bi bi-phone"></i></span>
                     <input type="tel" name="nomor_hp" class="form-control" required
-                           placeholder="08xxxxxxxxxx" maxlength="16">
+                           placeholder="08xxxxxxxxxx" maxlength="16"
+                           oninput="validatePhone(this)">
                   </div>
+                  <div class="form-text text-muted" style="font-size:.75rem">Format: 08xx-xxxx-xxxx (8–16 digit)</div>
                 </div>
                 <div class="col-12">
                   <label class="form-label fw-600 small required">Nama Ibu Kandung</label>
@@ -379,8 +381,66 @@ $tahunAktif = $tahun_aktif ?? null;
 
 <script>
 const BASE_URL = '<?= BASE_URL ?>';
+const SAVE_KEY  = 'pmb_form_data';
 let currentStep = 1;
 const totalSteps = 5;
+
+// ── Simpan data form ke sessionStorage ──────────────────────────
+function saveFormData() {
+  try {
+    const fd = new FormData(document.getElementById('regForm'));
+    const data = {};
+    for (const [k, v] of fd.entries()) {
+      // Jangan simpan password dan file
+      if (['password','password_confirm','csrf_token'].includes(k)) continue;
+      if (v instanceof File) continue;
+      data[k] = v;
+    }
+    // Simpan juga prodi yang dipilih
+    const radio = document.querySelector('.prodi-radio:checked');
+    if (radio) {
+      data['_prodi_id']    = radio.value;
+      data['_prodi_nama']  = radio.dataset.nama;
+      data['_prodi_jenjang']= radio.dataset.jenjang;
+    }
+    sessionStorage.setItem(SAVE_KEY, JSON.stringify(data));
+  } catch(e) {}
+}
+
+// ── Pulihkan data dari sessionStorage ───────────────────────────
+function restoreFormData() {
+  try {
+    const raw = sessionStorage.getItem(SAVE_KEY);
+    if (!raw) return;
+    const data = JSON.parse(raw);
+    Object.entries(data).forEach(([k, v]) => {
+      if (k.startsWith('_')) return; // skip metadata
+      const el = document.querySelector(`[name="${k}"]`);
+      if (!el) return;
+      if (el.tagName === 'SELECT' || el.type === 'text' || el.type === 'tel'
+          || el.type === 'date'  || el.type === 'email' || el.tagName === 'TEXTAREA') {
+        el.value = v;
+      }
+    });
+    // Pulihkan pilihan prodi
+    if (data['_prodi_id']) {
+      const radio = document.querySelector(`.prodi-radio[value="${data['_prodi_id']}"]`);
+      if (radio) {
+        radio.checked = true;
+        radio.closest('.prodi-card')?.classList.add('selected');
+        const icon = radio.closest('.prodi-card')?.querySelector('.prodi-check-icon i');
+        if (icon) icon.style.display = 'inline';
+        const checkIcon = radio.closest('.prodi-card')?.querySelector('.prodi-check-icon');
+        if (checkIcon) { checkIcon.style.borderColor='var(--blue-main)'; checkIcon.style.background='var(--blue-main)'; }
+        updateBiayaInfo(radio.dataset);
+      }
+    }
+  } catch(e) {}
+}
+
+// ── Auto-save saat input berubah ────────────────────────────────
+document.getElementById('regForm').addEventListener('change', saveFormData);
+document.getElementById('regForm').addEventListener('input',  saveFormData);
 
 function showStep(step) {
   document.querySelectorAll('.form-step').forEach(s => s.style.display = 'none');
@@ -416,29 +476,119 @@ function validateStep(step) {
   if (!stepEl) return true;
   const inputs = stepEl.querySelectorAll('[required]');
   let valid = true;
+  let firstInvalid = null;
+
   inputs.forEach(inp => {
     inp.classList.remove('is-invalid');
     const isEmpty = inp.type === 'file' ? inp.files.length === 0 : !inp.value.trim();
-    if (isEmpty) { inp.classList.add('is-invalid'); valid = false; }
-  });
-  if (step === 1) {
-    const pw1 = document.querySelector('[name=password]')?.value;
-    const pw2 = document.querySelector('[name=password_confirm]')?.value;
-    if (pw1 !== pw2) {
-      document.querySelector('[name=password_confirm]').classList.add('is-invalid');
-      showToast('Password dan konfirmasi tidak cocok', 'danger'); return false;
+    if (isEmpty) {
+      inp.classList.add('is-invalid');
+      valid = false;
+      if (!firstInvalid) firstInvalid = inp;
     }
-    if ((pw1||'').length < 8) {
-      document.querySelector('[name=password]').classList.add('is-invalid');
-      showToast('Password minimal 8 karakter', 'danger'); return false;
+  });
+
+  // Validasi password khusus step 1
+  if (step === 1) {
+    const pw1El = document.querySelector('[name=password]');
+    const pw2El = document.querySelector('[name=password_confirm]');
+    const pw1   = pw1El?.value || '';
+    const pw2   = pw2El?.value || '';
+
+    // Cek panjang minimal
+    if (pw1.length > 0 && pw1.length < 8) {
+      pw1El.classList.add('is-invalid');
+      // Tampilkan pesan di bawah field
+      showFieldError(pw1El, 'Password minimal 8 karakter');
+      if (!firstInvalid) firstInvalid = pw1El;
+      valid = false;
+    }
+    // Cek kecocokan - hanya jika keduanya sudah diisi
+    if (pw1.length >= 8 && pw2.length > 0 && pw1 !== pw2) {
+      pw2El.classList.add('is-invalid');
+      showFieldError(pw2El, 'Password tidak cocok');
+      if (!firstInvalid) firstInvalid = pw2El;
+      valid = false;
+    }
+    // Jika pw2 kosong dan pw1 sudah valid
+    if (valid && pw1.length >= 8 && pw2.length === 0) {
+      pw2El.classList.add('is-invalid');
+      showFieldError(pw2El, 'Konfirmasi password wajib diisi');
+      firstInvalid = pw2El;
+      valid = false;
     }
   }
-  if (!valid) showToast('Lengkapi semua field wajib yang bertanda *', 'danger');
+
+  if (!valid) {
+    showToast('Periksa kembali data yang belum lengkap', 'danger');
+    if (firstInvalid) firstInvalid.focus();
+  }
   return valid;
 }
 
+// ── Tampilkan pesan error di bawah field ────────────────────────
+function validatePhone(el) {
+  // Hanya izinkan angka, +, -, spasi
+  el.value = el.value.replace(/[^0-9+\-\s]/g, '');
+  const digits = el.value.replace(/[^0-9]/g, '');
+  const existing = el.closest('.input-group').nextElementSibling;
+  // Hapus pesan error lama
+  const errDiv = el.closest('.mb-3')?.querySelector('.field-error-msg');
+  if (errDiv) errDiv.remove();
+  el.classList.remove('is-invalid','is-valid');
+  if (digits.length > 0) {
+    if (digits.length < 8) {
+      el.classList.add('is-invalid');
+    } else {
+      el.classList.add('is-valid');
+    }
+  }
+}
+
+function showFieldError(el, msg) {
+  // Hapus pesan lama
+  const existing = el.parentElement.querySelector('.field-error-msg');
+  if (existing) existing.remove();
+  const div = document.createElement('div');
+  div.className = 'field-error-msg';
+  div.style.cssText = 'color:#dc2626;font-size:.78rem;margin-top:.25rem';
+  div.textContent = msg;
+  el.parentElement.appendChild(div);
+  // Hapus otomatis saat field diubah
+  el.addEventListener('input', () => { div.remove(); el.classList.remove('is-invalid'); }, { once: true });
+}
+
+// ── Real-time password check ────────────────────────────────────
+document.getElementById('pw2')?.addEventListener('input', function() {
+  const pw1 = document.getElementById('pw1')?.value || '';
+  const pw2 = this.value;
+  const existing = this.parentElement.querySelector('.field-error-msg');
+  if (existing) existing.remove();
+  if (pw2.length > 0 && pw1 !== pw2) {
+    this.classList.add('is-invalid');
+    showFieldError(this, 'Password tidak cocok');
+  } else if (pw2.length > 0 && pw1 === pw2) {
+    this.classList.remove('is-invalid');
+    this.classList.add('is-valid');
+  }
+});
+document.getElementById('pw1')?.addEventListener('input', function() {
+  const pw2El = document.getElementById('pw2');
+  if (pw2El?.value) pw2El.dispatchEvent(new Event('input'));
+  const existing = this.parentElement.querySelector('.field-error-msg');
+  if (existing) existing.remove();
+  if (this.value.length > 0 && this.value.length < 8) {
+    this.classList.add('is-invalid');
+    showFieldError(this, `${this.value.length}/8 karakter minimum`);
+  } else if (this.value.length >= 8) {
+    this.classList.remove('is-invalid');
+    this.classList.add('is-valid');
+  }
+});
+
 document.querySelectorAll('.btn-next').forEach(btn => {
   btn.addEventListener('click', () => {
+    saveFormData();
     if (validateStep(currentStep)) showStep(currentStep + 1);
   });
 });
@@ -567,6 +717,7 @@ function submitForm() {
       const res = document.getElementById('submitResult');
       res.style.display = 'block';
       if (data.success) {
+        sessionStorage.removeItem(SAVE_KEY); // Hapus data setelah berhasil
         const nomor = data.nomor_pendaftaran || data.nomor || '';
         res.innerHTML = `
           <div class="py-3">
@@ -610,13 +761,40 @@ function submitForm() {
         <div class="py-3">
           <div style="font-size:3rem;color:#dc2626"><i class="bi bi-wifi-off"></i></div>
           <h5 class="fw-700 mt-3 text-danger">Koneksi Terputus</h5>
-          <p class="text-muted">Periksa koneksi internet dan coba lagi.</p>
-          <button class="btn btn-outline-primary rounded-pill px-4 mt-2" onclick="showStep(4)">
-            <i class="bi bi-arrow-left me-1"></i> Kembali
-          </button>
+          <p class="text-muted mb-3">Data Anda <strong>masih tersimpan</strong>. Periksa koneksi dan coba lagi.</p>
+          <div class="d-flex gap-2 justify-content-center flex-wrap">
+            <button class="btn-primary-blue" onclick="retrySubmit()">
+              <i class="bi bi-arrow-clockwise me-1"></i> Coba Kirim Lagi
+            </button>
+            <button class="btn btn-outline-secondary rounded-pill px-4" onclick="showStep(4)">
+              <i class="bi bi-arrow-left me-1"></i> Kembali ke Review
+            </button>
+          </div>
         </div>`;
     });
 }
+
+// ── Retry submit tanpa isi ulang ────────────────────────────────
+function retrySubmit() {
+  document.getElementById('submitResult').style.display = 'none';
+  document.getElementById('submitProgress').style.display = 'block';
+  submitForm();
+}
+
+// ── Restore data saat halaman dibuka kembali ───────────────────
+window.addEventListener('DOMContentLoaded', () => {
+  restoreFormData();
+  // Tampilkan notif jika ada data tersimpan
+  try {
+    const raw = sessionStorage.getItem(SAVE_KEY);
+    if (raw) {
+      const data = JSON.parse(raw);
+      if (data.nama_lengkap) {
+        showToast('Data sebelumnya dipulihkan. Anda dapat melanjutkan dari langkah terakhir.', 'info');
+      }
+    }
+  } catch(e) {}
+});
 
 function showToast(msg, type='info') {
   const colors = {success:'#16a34a',danger:'#dc2626',info:'#1a3a6b',warning:'#b45309'};

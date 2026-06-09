@@ -61,13 +61,18 @@ class PendaftaranController extends Controller
         $input = $this->sanitizeInput($_POST);
 
         // Validasi
+        // Normalisasi nomor HP: hapus spasi, tanda hubung, kurung
+        if (!empty($input['nomor_hp'])) {
+            $input['nomor_hp'] = preg_replace('/[^0-9+]/', '', $input['nomor_hp']);
+        }
+
         $errors = $this->validate($input, [
             'nama_lengkap'    => 'required|min:3|max:150',
             'tempat_lahir'    => 'required|min:2|max:100',
-            'tanggal_lahir'   => 'required|date',
+            'tanggal_lahir'   => 'required',
             'jenis_kelamin'   => 'required',
-            'nomor_hp'        => 'required|min:10|max:16',
-            'alamat'          => 'required|min:10',
+            'nomor_hp'        => 'required|min:8|max:16',
+            'alamat'          => 'required|min:5',
             'nama_ibu_kandung'=> 'required|min:3|max:150',
             'program_studi_id'=> 'required|numeric',
             'password'        => 'required|min:8',
@@ -84,7 +89,7 @@ class PendaftaranController extends Controller
         }
 
         // Konfirmasi password
-        if ($input['password'] !== ($_POST['password_confirmation'] ?? '')) {
+        if ($input['password'] !== ($_POST['password_confirm'] ?? $_POST['password_confirmation'] ?? '')) {
             $this->json(['success'=>false,'errors'=>['password_confirmation'=>'Password tidak cocok.']], 422);
         }
 
