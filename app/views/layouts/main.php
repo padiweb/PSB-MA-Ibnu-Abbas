@@ -214,7 +214,13 @@ $flashInfo    = Session::getFlash('info');
           <p class="mb-0 small">&copy; <?= date('Y') ?> <?= Security::clean($settings['site_name'] ?? APP_NAME) ?>. Semua hak dilindungi.</p>
         </div>
         <div class="col-md-6 text-center text-md-end">
-          <p class="mb-0 small" style="color:rgba(255,255,255,.3)">Sistem PMB v<?= APP_VERSION ?></p>
+          <p class="mb-0 small" style="color:rgba(255,255,255,.35)">
+            Sistem PMB v<?= APP_VERSION ?> &nbsp;&middot;&nbsp;
+             <a href="https://padiweb.com" target="_blank" 
+               style="color:rgba(255,255,255,.55);text-decoration:none;font-weight:600;transition:.2s"
+               onmouseover="this.style.color='var(--gold-light)'"
+               onmouseout="this.style.color='rgba(255,255,255,.55)'">Padiweb Labs</a>
+          </p>
         </div>
       </div>
     </div>
