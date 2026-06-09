@@ -40,7 +40,7 @@ $list = $list ?? [];
                 <td class="text-center">
                     <div class="d-flex gap-1 justify-content-center">
                         <?php if (!$ta['aktif']): ?>
-                        <form method="POST" action="<?= url('/admin/tahun-akademik/<?= $ta['id'] ?>/aktifkan') ?>" class="d-inline">
+                        <form method="POST" action="<?= url('/admin/tahun-akademik/' . $ta['id'] . '/aktifkan') ?>" class="d-inline">
                             <input type="hidden" name="csrf_token" value="<?= Security::generateCsrf() ?>">
                             <button class="btn btn-sm btn-outline-success" style="padding:3px 8px;font-size:.72rem;"
                                     onclick="return confirm('Aktifkan tahun akademik ini? PMB sebelumnya akan ditutup.')">
@@ -53,7 +53,7 @@ $list = $list ?? [];
                             <i class="bi bi-pencil"></i>
                         </button>
                         <?php if (!$ta['aktif']): ?>
-                        <form method="POST" action="<?= url('/admin/tahun-akademik/<?= $ta['id'] ?>/hapus') ?>" class="d-inline">
+                        <form method="POST" action="<?= url('/admin/tahun-akademik/' . $ta['id'] . '/hapus') ?>" class="d-inline">
                             <input type="hidden" name="csrf_token" value="<?= Security::generateCsrf() ?>">
                             <button class="btn btn-sm btn-outline-danger" style="padding:3px 8px;"
                                     onclick="return confirm('Hapus tahun akademik ini?')">

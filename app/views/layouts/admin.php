@@ -157,7 +157,7 @@
         <a href="<?= url('/admin/pendaftar') ?>" class="sidebar-link <?= strpos($uri,'/admin/pendaftar') === 0 ? 'active' : '' ?>">
             <i class="bi bi-people"></i> Data Pendaftar
         </a>
-        <a href="<?= url('/admin/verifikasi') ?>" class="sidebar-link <?= strpos($uri,'/admin/verifikasi') === 0 ? 'active' : '' ?>">
+        <a href="<?= url('/admin/pendaftar', ['status'=>'menunggu']) ?>" class="sidebar-link <?= strpos($uri,'/admin/verifikasi') === 0 ? 'active' : '' ?>">
             <i class="bi bi-shield-check"></i> Verifikasi Berkas
         </a>
         <a href="<?= url('/admin/export') ?>" class="sidebar-link <?= strpos($uri,'/admin/export') === 0 ? 'active' : '' ?>">

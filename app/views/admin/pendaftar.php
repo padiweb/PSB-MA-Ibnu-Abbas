@@ -134,10 +134,10 @@ $statusLabels = [
                     </td>
                     <td class="text-center">
                         <div class="d-flex gap-1 justify-content-center">
-                            <a href="<?= url('/admin/pendaftar/<?= $p['id'] ?>') ?>" class="btn btn-sm btn-outline-primary" title="Detail" style="padding:3px 8px;">
+                            <a href="<?= url('/admin/pendaftar/' . $p['id']) ?>" class="btn btn-sm btn-outline-primary" title="Detail" style="padding:3px 8px;">
                                 <i class="bi bi-eye"></i>
                             </a>
-                            <a href="<?= url('/admin/pendaftar/<?= $p['id'] ?>/cetak') ?>" class="btn btn-sm btn-outline-secondary" title="Cetak" style="padding:3px 8px;" target="_blank">
+                            <a href="<?= url('/admin/pendaftar/' . $p['id'] . '/cetak') ?>" class="btn btn-sm btn-outline-secondary" title="Cetak" style="padding:3px 8px;" target="_blank">
                                 <i class="bi bi-printer"></i>
                             </a>
                         </div>

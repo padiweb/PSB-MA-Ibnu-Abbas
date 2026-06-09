@@ -48,7 +48,7 @@ $list = $list ?? [];
                                 onclick="editProdi(<?= htmlspecialchars(json_encode($pr)) ?>)">
                             <i class="bi bi-pencil"></i>
                         </button>
-                        <form method="POST" action="<?= url('/admin/prodi/<?= $pr['id'] ?>/toggle') ?>" class="d-inline">
+                        <form method="POST" action="<?= url('/admin/prodi/' . $pr['id'] . '/toggle') ?>" class="d-inline">
                             <input type="hidden" name="csrf_token" value="<?= Security::generateCsrf() ?>">
                             <button class="btn btn-sm btn-outline-<?= $pr['is_aktif'] ? 'warning' : 'success' ?>" style="padding:3px 8px;font-size:.72rem;">
                                 <i class="bi bi-<?= $pr['is_aktif'] ? 'pause-circle' : 'play-circle' ?>"></i>

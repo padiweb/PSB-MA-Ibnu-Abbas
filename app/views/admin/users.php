@@ -66,7 +66,7 @@ $roleColors = ['superadmin'=>'bg-danger','admin'=>'bg-primary','verifikator'=>'b
                             <i class="bi bi-key"></i>
                         </button>
                         <?php if ($u['id'] !== Session::get('user_id')): ?>
-                        <form method="POST" action="<?= url('/admin/users/<?= $u['id'] ?>/toggle') ?>" class="d-inline">
+                        <form method="POST" action="<?= url('/admin/users/' . $u['id'] . '/toggle') ?>" class="d-inline">
                             <input type="hidden" name="csrf_token" value="<?= Security::generateCsrf() ?>">
                             <button class="btn btn-sm btn-outline-<?= $u['is_aktif'] ? 'secondary' : 'success' ?>" style="padding:3px 8px;" title="<?= $u['is_aktif'] ? 'Nonaktifkan' : 'Aktifkan' ?>">
                                 <i class="bi bi-<?= $u['is_aktif'] ? 'pause-circle' : 'play-circle' ?>"></i>

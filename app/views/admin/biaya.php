@@ -90,7 +90,7 @@ $taId      = $ta_id ?? 0;
                                 onclick="editBiaya(<?= htmlspecialchars(json_encode($b)) ?>)">
                             <i class="bi bi-pencil"></i>
                         </button>
-                        <form method="POST" action="<?= url('/admin/biaya/<?= $b['id'] ?>/hapus') ?>" class="d-inline">
+                        <form method="POST" action="<?= url('/admin/biaya/' . $b['id'] . '/hapus') ?>" class="d-inline">
                             <input type="hidden" name="csrf_token" value="<?= Security::generateCsrf() ?>">
                             <button class="btn btn-sm btn-outline-danger" style="padding:3px 8px;"
                                     onclick="return confirm('Hapus data biaya ini?')">

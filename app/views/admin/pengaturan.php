@@ -1,7 +1,6 @@
 <?php // views/admin/pengaturan.php
-$settings = $settings ?? [];
-$s = [];
-foreach ($settings as $row) $s[$row['key']] = $row['value'];
+// $settings dari BaseController sudah berupa array ['key_name' => 'value']
+$s = $settings ?? [];
 ?>
 <div class="page-header">
     <h1><i class="bi bi-gear me-2"></i>Pengaturan Landing Page</h1>

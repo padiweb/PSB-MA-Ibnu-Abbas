@@ -70,7 +70,7 @@ $taId   = $ta_id ?? 0;
                                 onclick="editPersyaratan(<?= htmlspecialchars(json_encode($p)) ?>, <?= $taId ?>)">
                             <i class="bi bi-pencil"></i>
                         </button>
-                        <a href="<?= url('/admin/persyaratan/<?= $p['id'] ?>/hapus?ta=<?= $taId ?>') ?>"
+                        <a href="<?= url('/admin/persyaratan/' . $p['id'] . '/hapus?ta=' . $taId) ?>"
                            class="btn btn-sm btn-outline-danger" style="padding:3px 8px;"
                            onclick="return confirm('Hapus persyaratan ini?')">
                             <i class="bi bi-trash"></i>

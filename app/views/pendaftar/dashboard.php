@@ -21,7 +21,7 @@ $st = $statusColors[$p['status_verifikasi'] ?? 'menunggu'];
             <span style="font-weight:700;font-size:.9rem;color:var(--primary);">Ma'had Aly PMB</span>
         </a>
         <div class="d-flex align-items-center gap-3">
-            <a href="<?= url('/pendaftar/cetak/<?= $p['id'] ?>') ?>" target="_blank" class="btn btn-sm btn-outline-primary" style="font-size:.78rem;">
+            <a href="<?= url('/pendaftar/cetak/' . $p['id']) ?>" target="_blank" class="btn btn-sm btn-outline-primary" style="font-size:.78rem;">
                 <i class="bi bi-printer me-1"></i> Cetak Bukti
             </a>
             <a href="<?= url('/logout') ?>" class="btn btn-sm btn-outline-danger" style="font-size:.78rem;">

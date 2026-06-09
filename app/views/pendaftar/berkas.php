@@ -186,7 +186,7 @@
                 </a>
             </li>
             <li class="nav-item">
-                <a href="<?= url('/pendaftar/cetak/<?= $pendaftar['id'] ?>') ?>" target="_blank">
+                <a href="<?= url('/pendaftar/cetak/' . $pendaftar['id']) ?>" target="_blank">
                     <i class="bi bi-printer"></i> Cetak Bukti
                 </a>
             </li>
@@ -388,7 +388,7 @@
             <a href="<?= url('/pendaftar') ?>" class="btn btn-outline-secondary">
                 <i class="bi bi-arrow-left me-1"></i>Kembali ke Dashboard
             </a>
-            <a href="<?= url('/pendaftar/cetak/<?= $pendaftar['id'] ?>') ?>" target="_blank"
+            <a href="<?= url('/pendaftar/cetak/' . $pendaftar['id']) ?>" target="_blank"
                class="btn btn-outline-primary">
                 <i class="bi bi-printer me-1"></i>Cetak Bukti
             </a>
