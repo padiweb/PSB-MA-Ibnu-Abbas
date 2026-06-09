@@ -114,41 +114,95 @@ $st = $statusColors[$p['status'] ?? 'menunggu'];
             </div>
 
             <!-- DOKUMEN -->
+            <?php
+            $allTypes  = (new DokumenModel())->getDokumenTypes();
+            $uploaded  = [];
+            foreach ($docs as $d) { $uploaded[$d['jenis_dokumen']] = $d; }
+            $isS2      = ($p['jenjang'] ?? '') === 'S2';
+            $s1Only    = ['ijazah_s1','transkrip_s1'];
+            $total     = count($allTypes);
+            $doneCnt   = count($uploaded);
+            $pct       = $total > 0 ? round($doneCnt/$total*100) : 0;
+            ?>
             <div class="card border-0 rounded-3 mb-4" style="box-shadow:0 2px 12px rgba(0,0,0,.06);">
                 <div class="card-body p-4">
                     <div class="d-flex align-items-center justify-content-between mb-3">
                         <h6 class="fw-700 mb-0" style="color:var(--primary);">
-                            <i class="bi bi-folder2-open me-2"></i>Dokumen Saya
+                            <i class="bi bi-folder2-open me-2"></i>Kelengkapan Berkas
+                            <span class="badge rounded-pill ms-2" style="background:var(--primary);font-size:.68rem;"><?= $doneCnt ?>/<?= $total ?></span>
                         </h6>
-                        <button class="btn btn-sm" style="background:var(--primary);color:#fff;font-size:.75rem;"
-                                data-bs-toggle="modal" data-bs-target="#modalUpload">
-                            <i class="bi bi-cloud-upload me-1"></i> Upload Dokumen
-                        </button>
                     </div>
 
-                    <?php if (empty($docs)): ?>
-                    <p class="text-muted text-center py-3" style="font-size:.85rem;">
-                        Belum ada dokumen yang diunggah.
-                    </p>
-                    <?php else: ?>
+                    <!-- Progress bar -->
+                    <div class="mb-4">
+                        <div class="d-flex justify-content-between mb-1" style="font-size:.75rem;">
+                            <span class="text-muted">Progress Upload</span>
+                            <span class="fw-600" style="color:var(--primary)"><?= $pct ?>%</span>
+                        </div>
+                        <div class="progress" style="height:6px;border-radius:3px;">
+                            <div class="progress-bar" style="width:<?= $pct ?>%;background:linear-gradient(90deg,var(--primary),#2563eb);border-radius:3px;"></div>
+                        </div>
+                    </div>
+
+                    <!-- Grid semua jenis dokumen -->
                     <div class="row g-2">
-                        <?php foreach ($docs as $doc): ?>
+                        <?php foreach ($allTypes as $jKey => $jLabel): ?>
+                        <?php
+                            $isUploaded = isset($uploaded[$jKey]);
+                            $docData    = $uploaded[$jKey] ?? null;
+                            $isS1Doc    = in_array($jKey, $s1Only, true);
+                            $isOptional = !$isS2 && $isS1Doc;
+                            $ext        = $isUploaded ? strtolower(pathinfo($docData['nama_file_asli'] ?? '', PATHINFO_EXTENSION)) : '';
+                            $uploadedAt = $isUploaded ? ($docData['uploaded_at'] ?? null) : null;
+                        ?>
                         <div class="col-md-6">
-                            <div class="d-flex align-items-center gap-3 p-3 rounded-2" style="background:#f8fafc;border:1px solid #e2e8f0;">
-                                <?php $ext = strtolower(pathinfo($doc['nama_file_asli'] ?? '', PATHINFO_EXTENSION)); ?>
-                                <i class="bi <?= $ext === 'pdf' ? 'bi-file-earmark-pdf text-danger' : 'bi-file-earmark-image text-primary' ?>" style="font-size:1.8rem;"></i>
-                                <div class="flex-fill" style="min-width:0;">
-                                    <div class="fw-600" style="font-size:.8rem;"><?= htmlspecialchars($doc['jenis_dokumen']) ?></div>
-                                    <div style="font-size:.7rem;color:#94a3b8;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">
-                                        <?= htmlspecialchars($doc['nama_file_asli'] ?? '') ?>
+                            <div class="rounded-3 p-3 h-100 position-relative"
+                                 style="border:1.5px solid <?= $isUploaded ? '#86efac' : ($isOptional ? '#fde68a' : '#fecaca') ?>;
+                                        background:<?= $isUploaded ? '#f0fdf4' : ($isOptional ? '#fffbeb' : '#fff5f5') ?>;">
+                                <div class="d-flex align-items-start gap-3">
+                                    <!-- Icon status -->
+                                    <div style="width:38px;height:38px;border-radius:8px;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:1.1rem;
+                                                background:<?= $isUploaded ? '#dcfce7' : ($isOptional ? '#fef9c3' : '#fee2e2') ?>;
+                                                color:<?= $isUploaded ? '#16a34a' : ($isOptional ? '#ca8a04' : '#dc2626') ?>;">
+                                        <i class="bi <?= $isUploaded ? 'bi-check-circle-fill' : ($isOptional ? 'bi-dash-circle' : 'bi-exclamation-circle') ?>"></i>
                                     </div>
-                                    <div style="font-size:.7rem;color:#94a3b8;"><?= date('d M Y', strtotime($doc['created_at'])) ?></div>
+                                    <div class="flex-fill" style="min-width:0;">
+                                        <div class="fw-600" style="font-size:.83rem;color:#1e293b;"><?= $jLabel ?></div>
+                                        <?php if ($isUploaded): ?>
+                                        <div class="d-flex align-items-center gap-1 mt-1">
+                                            <i class="bi <?= $ext === 'pdf' ? 'bi-file-earmark-pdf text-danger' : 'bi-file-earmark-image text-primary' ?>" style="font-size:.85rem;"></i>
+                                            <span style="font-size:.72rem;color:#64748b;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:120px;">
+                                                <?= htmlspecialchars($docData['nama_file_asli'] ?? '') ?>
+                                            </span>
+                                        </div>
+                                        <?php if ($uploadedAt): ?>
+                                        <div style="font-size:.68rem;color:#94a3b8;margin-top:2px;">
+                                            <i class="bi bi-calendar3 me-1"></i><?= date('d M Y', strtotime($uploadedAt)) ?>
+                                        </div>
+                                        <?php endif; ?>
+                                        <?php else: ?>
+                                        <div style="font-size:.72rem;color:<?= $isOptional ? '#ca8a04' : '#dc2626' ?>;margin-top:2px;">
+                                            <?= $isOptional ? 'Opsional (bisa menyusul)' : 'Belum diunggah' ?>
+                                        </div>
+                                        <?php endif; ?>
+                                    </div>
+                                    <!-- Tombol upload/ganti -->
+                                    <?php if (in_array($p['status'] ?? '', ['draft','menunggu','revisi'])): ?>
+                                    <button class="btn btn-sm rounded-2 flex-shrink-0"
+                                            style="font-size:.7rem;padding:3px 8px;
+                                                   background:<?= $isUploaded ? '#fff' : 'var(--primary)' ?>;
+                                                   color:<?= $isUploaded ? 'var(--primary)' : '#fff' ?>;
+                                                   border:1px solid var(--primary);"
+                                            onclick="openUpload('<?= $jKey ?>', '<?= htmlspecialchars($jLabel) ?>')">
+                                        <i class="bi <?= $isUploaded ? 'bi-arrow-repeat' : 'bi-upload' ?> me-1"></i>
+                                        <?= $isUploaded ? 'Ganti' : 'Upload' ?>
+                                    </button>
+                                    <?php endif; ?>
                                 </div>
                             </div>
                         </div>
                         <?php endforeach; ?>
                     </div>
-                    <?php endif; ?>
                 </div>
             </div>
 
@@ -182,44 +236,63 @@ $st = $statusColors[$p['status'] ?? 'menunggu'];
 <!-- MODAL UPLOAD DOKUMEN -->
 <div class="modal fade" id="modalUpload" tabindex="-1">
     <div class="modal-dialog">
-        <div class="modal-content border-0 rounded-3">
-            <div class="modal-header border-0" style="background:var(--primary);">
-                <h5 class="modal-title text-white fw-700">Upload Dokumen</h5>
+        <div class="modal-content border-0 rounded-3 overflow-hidden">
+            <div class="modal-header border-0 p-4" style="background:linear-gradient(135deg,var(--primary),#2563eb);">
+                <div>
+                    <h5 class="modal-title text-white fw-700 mb-0" id="modalUploadTitle">Upload Dokumen</h5>
+                    <p class="text-white-50 mb-0 mt-1" style="font-size:.75rem;" id="modalUploadSub">Pilih file PDF, JPG, atau PNG (maks 5 MB)</p>
+                </div>
                 <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
             </div>
             <form id="uploadForm">
                 <input type="hidden" name="csrf_token" value="<?= Security::generateCsrf() ?>">
+                <input type="hidden" name="jenis_dokumen" id="jenisInput" value="">
                 <div class="modal-body p-4">
-                    <div class="mb-3">
-                        <label class="form-label fw-600" style="font-size:.82rem;">Jenis Dokumen</label>
-                        <select name="jenis_dokumen" class="form-select form-select-sm" required>
-                            <option value="">-- Pilih jenis dokumen --</option>
-                            <?php foreach ((new DokumenModel())->getDokumenTypes() as $key => $label): ?>
-                            <option value="<?= $key ?>"><?= $label ?></option>
-                            <?php endforeach; ?>
-                        </select>
+                    <!-- Drop zone -->
+                    <div id="dropZone" class="rounded-3 text-center p-4 mb-3"
+                         style="border:2px dashed #cbd5e1;background:#f8fafc;cursor:pointer;transition:.2s"
+                         onclick="document.getElementById('dokumenFile').click()"
+                         ondragover="event.preventDefault();this.style.borderColor='var(--primary)';this.style.background='#eff6ff'"
+                         ondragleave="this.style.borderColor='#cbd5e1';this.style.background='#f8fafc'"
+                         ondrop="handleDropFile(event)">
+                        <i class="bi bi-cloud-upload" style="font-size:2rem;color:#94a3b8;"></i>
+                        <p class="mb-0 mt-2" style="font-size:.82rem;color:#64748b;">
+                            Klik atau seret file ke sini<br>
+                            <span style="font-size:.72rem;color:#94a3b8;">PDF, JPG, PNG — Maks 5 MB</span>
+                        </p>
                     </div>
-                    <div class="mb-0">
-                        <label class="form-label fw-600" style="font-size:.82rem;">File Dokumen</label>
-                        <input type="file" name="dokumen" id="dokumenFile" class="form-control form-control-sm" required accept=".pdf,.jpg,.jpeg,.png">
-                        <div class="form-text">PDF, JPG, PNG. Maks 5 MB</div>
-                    </div>
-                    <!-- Progress bar -->
-                    <div id="uploadProgress" class="mt-3" style="display:none">
-                        <div class="d-flex align-items-center gap-2 mb-1">
-                            <div class="spinner-border spinner-border-sm text-primary"></div>
-                            <span style="font-size:.82rem">Mengunggah...</span>
+                    <input type="file" name="dokumen" id="dokumenFile" class="d-none" accept=".pdf,.jpg,.jpeg,.png" onchange="previewDokumen(this)">
+
+                    <!-- Preview file -->
+                    <div id="filePreview" class="rounded-3 p-3 mb-3" style="background:#f0fdf4;border:1px solid #86efac;display:none;">
+                        <div class="d-flex align-items-center gap-3">
+                            <i id="fileIcon" class="bi bi-file-earmark-image" style="font-size:1.6rem;color:#16a34a;"></i>
+                            <div class="flex-fill">
+                                <div id="fileName" class="fw-600" style="font-size:.83rem;"></div>
+                                <div id="fileSize" style="font-size:.72rem;color:#64748b;"></div>
+                            </div>
+                            <button type="button" class="btn btn-sm btn-outline-danger" onclick="clearFile()">
+                                <i class="bi bi-x"></i>
+                            </button>
                         </div>
-                        <div class="progress" style="height:6px">
-                            <div id="uploadBar" class="progress-bar" style="width:0%;background:var(--primary)"></div>
+                    </div>
+
+                    <!-- Progress -->
+                    <div id="uploadProgress" style="display:none" class="mb-2">
+                        <div class="d-flex align-items-center justify-content-between mb-1">
+                            <span style="font-size:.78rem;color:var(--primary);font-weight:600;">Mengunggah...</span>
+                            <span id="uploadPct" style="font-size:.75rem;color:#64748b;">0%</span>
+                        </div>
+                        <div class="progress" style="height:6px;border-radius:3px;">
+                            <div id="uploadBar" class="progress-bar" style="width:0%;background:var(--primary);border-radius:3px;transition:.1s"></div>
                         </div>
                     </div>
                 </div>
-                <div class="modal-footer border-0 pt-0">
-                    <button type="button" class="btn btn-outline-secondary btn-sm" data-bs-dismiss="modal" id="cancelUpload">Batal</button>
-                    <button type="button" class="btn btn-sm" id="btnUpload" style="background:var(--primary);color:#fff;"
-                            onclick="submitUpload()">
-                        <i class="bi bi-upload me-1"></i> Upload
+                <div class="modal-footer border-0 pt-0 px-4 pb-4">
+                    <button type="button" class="btn btn-outline-secondary btn-sm rounded-pill px-4" data-bs-dismiss="modal">Batal</button>
+                    <button type="button" class="btn btn-sm rounded-pill px-4" id="btnUpload"
+                            style="background:var(--primary);color:#fff;" onclick="submitUpload()">
+                        <i class="bi bi-upload me-1"></i> Upload Sekarang
                     </button>
                 </div>
             </form>
@@ -230,30 +303,71 @@ $st = $statusColors[$p['status'] ?? 'menunggu'];
 <script>
 const BASE_URL = '<?= BASE_URL ?>';
 
+// Buka modal upload dengan jenis tertentu
+function openUpload(jenis, label) {
+    document.getElementById('jenisInput').value  = jenis;
+    document.getElementById('modalUploadTitle').textContent = 'Upload: ' + label;
+    clearFile();
+    const m = new bootstrap.Modal(document.getElementById('modalUpload'));
+    m.show();
+}
+
+function previewDokumen(input) {
+    const file = input.files[0];
+    if (!file) return;
+    const maxSize = 5 * 1024 * 1024;
+    const ext = file.name.split('.').pop().toLowerCase();
+    if (!['pdf','jpg','jpeg','png'].includes(ext)) {
+        showToastDashboard('Format tidak didukung. Gunakan PDF, JPG, atau PNG.', 'danger');
+        input.value = ''; return;
+    }
+    if (file.size > maxSize) {
+        showToastDashboard('Ukuran file melebihi 5 MB.', 'danger');
+        input.value = ''; return;
+    }
+    // Tampilkan preview
+    const isPdf = ext === 'pdf';
+    document.getElementById('dropZone').style.display   = 'none';
+    document.getElementById('filePreview').style.display = 'block';
+    document.getElementById('fileName').textContent = file.name;
+    document.getElementById('fileSize').textContent = (file.size / 1024).toFixed(1) + ' KB';
+    document.getElementById('fileIcon').className   = 'bi ' + (isPdf ? 'bi-file-earmark-pdf text-danger' : 'bi-file-earmark-image text-success');
+}
+
+function clearFile() {
+    document.getElementById('dokumenFile').value    = '';
+    document.getElementById('filePreview').style.display = 'none';
+    document.getElementById('dropZone').style.display   = 'block';
+    document.getElementById('uploadProgress').style.display = 'none';
+    document.getElementById('uploadBar').style.width = '0%';
+}
+
+function handleDropFile(e) {
+    e.preventDefault();
+    e.currentTarget.style.borderColor = '#cbd5e1';
+    e.currentTarget.style.background  = '#f8fafc';
+    const file = e.dataTransfer.files[0];
+    if (!file) return;
+    const dt = new DataTransfer();
+    dt.items.add(file);
+    const inp = document.getElementById('dokumenFile');
+    inp.files = dt.files;
+    previewDokumen(inp);
+}
+
 function submitUpload() {
-    const form     = document.getElementById('uploadForm');
-    const jenis    = form.querySelector('[name=jenis_dokumen]').value;
+    const jenis    = document.getElementById('jenisInput').value;
     const fileEl   = document.getElementById('dokumenFile');
     const file     = fileEl.files[0];
     const btnUpload= document.getElementById('btnUpload');
     const progress = document.getElementById('uploadProgress');
     const bar      = document.getElementById('uploadBar');
+    const pct      = document.getElementById('uploadPct');
 
-    // Validasi
-    if (!jenis) { showToastDashboard('Pilih jenis dokumen terlebih dahulu.', 'warning'); return; }
-    if (!file)  { showToastDashboard('Pilih file yang akan diupload.', 'warning'); return; }
+    if (!jenis) { showToastDashboard('Jenis dokumen tidak diketahui.', 'warning'); return; }
+    if (!file)  { showToastDashboard('Pilih file terlebih dahulu.', 'warning'); return; }
 
-    const maxSize = 5 * 1024 * 1024;
-    const ext = file.name.split('.').pop().toLowerCase();
-    if (!['pdf','jpg','jpeg','png'].includes(ext)) {
-        showToastDashboard('Format tidak didukung. Gunakan PDF, JPG, atau PNG.', 'danger'); return;
-    }
-    if (file.size > maxSize) {
-        showToastDashboard('Ukuran file melebihi 5 MB.', 'danger'); return;
-    }
-
-    // Kirim via XHR agar bisa lihat progress
-    const fd = new FormData(form);
+    const fd = new FormData(document.getElementById('uploadForm'));
     const xhr = new XMLHttpRequest();
     xhr.open('POST', BASE_URL + '/index.php?page=pendaftar/upload');
 
@@ -263,26 +377,25 @@ function submitUpload() {
 
     xhr.upload.onprogress = (e) => {
         if (e.lengthComputable) {
-            bar.style.width = Math.round(e.loaded / e.total * 100) + '%';
+            const p = Math.round(e.loaded / e.total * 100);
+            bar.style.width = p + '%';
+            if (pct) pct.textContent = p + '%';
         }
     };
 
     xhr.onload = () => {
         btnUpload.disabled = false;
-        btnUpload.innerHTML = '<i class="bi bi-upload me-1"></i> Upload';
+        btnUpload.innerHTML = '<i class="bi bi-upload me-1"></i> Upload Sekarang';
         progress.style.display = 'none';
-        bar.style.width = '0%';
 
         let res = {};
         try { res = JSON.parse(xhr.responseText); } catch(e) {}
 
         if (res.success) {
             showToastDashboard('Berkas berhasil diunggah!', 'success');
-            // Tutup modal dan reload halaman setelah 1 detik
-            const modal = bootstrap.Modal.getInstance(document.getElementById('uploadModal'));
-            if (modal) modal.hide();
-            form.reset();
-            setTimeout(() => location.reload(), 1000);
+            bootstrap.Modal.getInstance(document.getElementById('modalUpload'))?.hide();
+            clearFile();
+            setTimeout(() => location.reload(), 900);
         } else {
             showToastDashboard(res.message || 'Gagal mengunggah berkas.', 'danger');
         }
@@ -290,7 +403,7 @@ function submitUpload() {
 
     xhr.onerror = () => {
         btnUpload.disabled = false;
-        btnUpload.innerHTML = '<i class="bi bi-upload me-1"></i> Upload';
+        btnUpload.innerHTML = '<i class="bi bi-upload me-1"></i> Upload Sekarang';
         progress.style.display = 'none';
         showToastDashboard('Koneksi terputus. Coba lagi.', 'danger');
     };
@@ -309,12 +422,7 @@ function showToastDashboard(msg, type = 'info') {
         animation:slideUp .3s ease`;
     el.innerHTML = `<i class="bi bi-${icons[type]||'info-circle-fill'}" style="color:${colors[type]};font-size:1.1rem;flex-shrink:0"></i><span>${msg}</span>`;
     document.body.appendChild(el);
-    setTimeout(() => {
-        el.style.opacity = '0';
-        el.style.transform = 'translateY(8px)';
-        el.style.transition = '.3s';
-        setTimeout(() => el.remove(), 300);
-    }, 3500);
+    setTimeout(() => { el.style.opacity='0'; el.style.transform='translateY(8px)'; el.style.transition='.3s'; setTimeout(()=>el.remove(),300); }, 3500);
 }
 </script>
 <style>
