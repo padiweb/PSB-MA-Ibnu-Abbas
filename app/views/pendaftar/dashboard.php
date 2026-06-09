@@ -10,7 +10,7 @@ $statusColors = [
     'revisi'   => ['bg'=>'#eff6ff','border'=>'#bfdbfe','text'=>'#1d4ed8','icon'=>'bi-pencil-square','label'=>'Perlu Revisi'],
     'ditolak'  => ['bg'=>'#fff1f2','border'=>'#fecdd3','text'=>'#be123c','icon'=>'bi-x-circle-fill','label'=>'Ditolak'],
 ];
-$st = $statusColors[$p['status_verifikasi'] ?? 'menunggu'];
+$st = $statusColors[$p['status'] ?? 'menunggu'];
 ?>
 
 <!-- TOPBAR PENDAFTAR -->
@@ -106,7 +106,7 @@ $st = $statusColors[$p['status_verifikasi'] ?? 'menunggu'];
                             </div>
                             <div class="py-2" style="font-size:.83rem;">
                                 <span class="text-muted d-block" style="font-size:.72rem;">Tahun Akademik</span>
-                                <span class="fw-500"><?= htmlspecialchars($p['tahun_akademik'] ?? '-') ?></span>
+                                <span class="fw-500"><?= htmlspecialchars($p['ta_nama'] ?? $p['ta_kode'] ?? '-' ?? '-') ?></span>
                             </div>
                         </div>
                     </div>
@@ -163,7 +163,7 @@ $st = $statusColors[$p['status_verifikasi'] ?? 'menunggu'];
                     <div class="d-flex gap-3 pb-3 mb-3 border-bottom" style="font-size:.82rem;">
                         <div style="min-width:8px;width:8px;height:8px;border-radius:50%;background:var(--primary);margin-top:5px;flex-shrink:0;"></div>
                         <div>
-                            <div class="fw-600">Status diubah ke <span class="text-primary"><?= ucfirst($log['status_baru']) ?></span></div>
+                            <div class="fw-600">Status diubah ke <span class="text-primary"><?= ucfirst($log['status_sesudah']) ?></span></div>
                             <?php if ($log['catatan']): ?>
                             <div class="mt-1 text-muted"><?= htmlspecialchars($log['catatan']) ?></div>
                             <?php endif; ?>
@@ -187,28 +187,38 @@ $st = $statusColors[$p['status_verifikasi'] ?? 'menunggu'];
                 <h5 class="modal-title text-white fw-700">Upload Dokumen</h5>
                 <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
             </div>
-            <form method="POST" action="<?= url('/pendaftar/upload') ?>" enctype="multipart/form-data">
+            <form id="uploadForm">
                 <input type="hidden" name="csrf_token" value="<?= Security::generateCsrf() ?>">
                 <div class="modal-body p-4">
                     <div class="mb-3">
                         <label class="form-label fw-600" style="font-size:.82rem;">Jenis Dokumen</label>
                         <select name="jenis_dokumen" class="form-select form-select-sm" required>
                             <option value="">-- Pilih jenis dokumen --</option>
-                            <?php $jenisDoc = ['KTP','Kartu Keluarga','Akte Kelahiran','Ijazah SMA','Transkrip SMA','Ijazah S1','Transkrip S1','Foto Resmi','Dokumen Lainnya'];
-                            foreach ($jenisDoc as $j): ?>
-                            <option value="<?= $j ?>"><?= $j ?></option>
+                            <?php foreach ((new DokumenModel())->getDokumenTypes() as $key => $label): ?>
+                            <option value="<?= $key ?>"><?= $label ?></option>
                             <?php endforeach; ?>
                         </select>
                     </div>
                     <div class="mb-0">
-                        <label class="form-label fw-600" style="font-size:.82rem;">File</label>
-                        <input type="file" name="file" class="form-control form-control-sm" required accept=".pdf,.jpg,.jpeg,.png">
+                        <label class="form-label fw-600" style="font-size:.82rem;">File Dokumen</label>
+                        <input type="file" name="dokumen" id="dokumenFile" class="form-control form-control-sm" required accept=".pdf,.jpg,.jpeg,.png">
                         <div class="form-text">PDF, JPG, PNG. Maks 5 MB</div>
+                    </div>
+                    <!-- Progress bar -->
+                    <div id="uploadProgress" class="mt-3" style="display:none">
+                        <div class="d-flex align-items-center gap-2 mb-1">
+                            <div class="spinner-border spinner-border-sm text-primary"></div>
+                            <span style="font-size:.82rem">Mengunggah...</span>
+                        </div>
+                        <div class="progress" style="height:6px">
+                            <div id="uploadBar" class="progress-bar" style="width:0%;background:var(--primary)"></div>
+                        </div>
                     </div>
                 </div>
                 <div class="modal-footer border-0 pt-0">
-                    <button type="button" class="btn btn-outline-secondary btn-sm" data-bs-dismiss="modal">Batal</button>
-                    <button type="submit" class="btn btn-sm" style="background:var(--primary);color:#fff;">
+                    <button type="button" class="btn btn-outline-secondary btn-sm" data-bs-dismiss="modal" id="cancelUpload">Batal</button>
+                    <button type="button" class="btn btn-sm" id="btnUpload" style="background:var(--primary);color:#fff;"
+                            onclick="submitUpload()">
                         <i class="bi bi-upload me-1"></i> Upload
                     </button>
                 </div>
@@ -216,3 +226,97 @@ $st = $statusColors[$p['status_verifikasi'] ?? 'menunggu'];
         </div>
     </div>
 </div>
+
+<script>
+const BASE_URL = '<?= BASE_URL ?>';
+
+function submitUpload() {
+    const form     = document.getElementById('uploadForm');
+    const jenis    = form.querySelector('[name=jenis_dokumen]').value;
+    const fileEl   = document.getElementById('dokumenFile');
+    const file     = fileEl.files[0];
+    const btnUpload= document.getElementById('btnUpload');
+    const progress = document.getElementById('uploadProgress');
+    const bar      = document.getElementById('uploadBar');
+
+    // Validasi
+    if (!jenis) { showToastDashboard('Pilih jenis dokumen terlebih dahulu.', 'warning'); return; }
+    if (!file)  { showToastDashboard('Pilih file yang akan diupload.', 'warning'); return; }
+
+    const maxSize = 5 * 1024 * 1024;
+    const ext = file.name.split('.').pop().toLowerCase();
+    if (!['pdf','jpg','jpeg','png'].includes(ext)) {
+        showToastDashboard('Format tidak didukung. Gunakan PDF, JPG, atau PNG.', 'danger'); return;
+    }
+    if (file.size > maxSize) {
+        showToastDashboard('Ukuran file melebihi 5 MB.', 'danger'); return;
+    }
+
+    // Kirim via XHR agar bisa lihat progress
+    const fd = new FormData(form);
+    const xhr = new XMLHttpRequest();
+    xhr.open('POST', BASE_URL + '/index.php?page=pendaftar/upload');
+
+    btnUpload.disabled = true;
+    btnUpload.innerHTML = '<span class="spinner-border spinner-border-sm me-1"></span> Uploading...';
+    progress.style.display = 'block';
+
+    xhr.upload.onprogress = (e) => {
+        if (e.lengthComputable) {
+            bar.style.width = Math.round(e.loaded / e.total * 100) + '%';
+        }
+    };
+
+    xhr.onload = () => {
+        btnUpload.disabled = false;
+        btnUpload.innerHTML = '<i class="bi bi-upload me-1"></i> Upload';
+        progress.style.display = 'none';
+        bar.style.width = '0%';
+
+        let res = {};
+        try { res = JSON.parse(xhr.responseText); } catch(e) {}
+
+        if (res.success) {
+            showToastDashboard('Berkas berhasil diunggah!', 'success');
+            // Tutup modal dan reload halaman setelah 1 detik
+            const modal = bootstrap.Modal.getInstance(document.getElementById('uploadModal'));
+            if (modal) modal.hide();
+            form.reset();
+            setTimeout(() => location.reload(), 1000);
+        } else {
+            showToastDashboard(res.message || 'Gagal mengunggah berkas.', 'danger');
+        }
+    };
+
+    xhr.onerror = () => {
+        btnUpload.disabled = false;
+        btnUpload.innerHTML = '<i class="bi bi-upload me-1"></i> Upload';
+        progress.style.display = 'none';
+        showToastDashboard('Koneksi terputus. Coba lagi.', 'danger');
+    };
+
+    xhr.send(fd);
+}
+
+function showToastDashboard(msg, type = 'info') {
+    const colors = { success:'#16a34a', danger:'#dc2626', warning:'#d97706', info:'#1a3a6b' };
+    const icons  = { success:'check-circle-fill', danger:'x-circle-fill', warning:'exclamation-triangle-fill', info:'info-circle-fill' };
+    const el = document.createElement('div');
+    el.style.cssText = `position:fixed;bottom:1.5rem;right:1.5rem;z-index:9999;background:#fff;
+        padding:.8rem 1.1rem;border-radius:.6rem;box-shadow:0 4px 20px rgba(0,0,0,.15);
+        border-left:4px solid ${colors[type]||colors.info};font-size:.84rem;font-weight:500;
+        display:flex;align-items:center;gap:.6rem;min-width:260px;max-width:340px;
+        animation:slideUp .3s ease`;
+    el.innerHTML = `<i class="bi bi-${icons[type]||'info-circle-fill'}" style="color:${colors[type]};font-size:1.1rem;flex-shrink:0"></i><span>${msg}</span>`;
+    document.body.appendChild(el);
+    setTimeout(() => {
+        el.style.opacity = '0';
+        el.style.transform = 'translateY(8px)';
+        el.style.transition = '.3s';
+        setTimeout(() => el.remove(), 300);
+    }, 3500);
+}
+</script>
+<style>
+@keyframes slideUp { from { transform:translateY(12px); opacity:0 } to { transform:translateY(0); opacity:1 } }
+</style>

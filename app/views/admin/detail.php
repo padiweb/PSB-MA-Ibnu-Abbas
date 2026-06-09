@@ -44,7 +44,7 @@ $statusColors  = ['menunggu'=>'warning','diterima'=>'success','revisi'=>'info','
                             ['Tanggal Lahir',    $p['tanggal_lahir'] ? date('d F Y', strtotime($p['tanggal_lahir'])) : ''],
                             ['Nomor HP',         $p['nomor_hp'] ?? ''],
                             ['Nama Ibu Kandung', $p['nama_ibu_kandung'] ?? ''],
-                            ['Alamat KTP',       $p['alamat_ktp'] ?? ''],
+                            ['Alamat KTP',       $p['alamat'] ?? ''],
                         ]; foreach ($fields as [$lbl, $val]): ?>
                         <div class="col-md-6">
                             <div class="text-muted" style="font-size:.72rem;font-weight:600;text-transform:uppercase;letter-spacing:.04em;"><?= $lbl ?></div>
@@ -79,7 +79,7 @@ $statusColors  = ['menunggu'=>'warning','diterima'=>'success','revisi'=>'info','
                         </div>
                         <div class="col-md-3">
                             <div class="text-muted" style="font-size:.72rem;font-weight:600;text-transform:uppercase;">Tahun Akademik</div>
-                            <div class="fw-500 mt-1"><?= htmlspecialchars($p['tahun_akademik'] ?? '-') ?></div>
+                            <div class="fw-500 mt-1"><?= htmlspecialchars($p['ta_nama'] ?? $p['ta_kode'] ?? '-' ?? '-') ?></div>
                         </div>
                     </div>
                 </div>
@@ -112,7 +112,7 @@ $statusColors  = ['menunggu'=>'warning','diterima'=>'success','revisi'=>'info','
                                         <?= htmlspecialchars($doc['jenis_dokumen']) ?>
                                     </div>
                                     <div style="font-size:.7rem;color:#94a3b8;"><?= htmlspecialchars($doc['nama_file_asli'] ?? '') ?></div>
-                                    <div style="font-size:.7rem;color:#94a3b8;"><?= date('d M Y', strtotime($doc['created_at'])) ?></div>
+                                    <div style="font-size:.7rem;color:#94a3b8;"><?= date('d M Y', strtotime($doc['uploaded_at'] ?? $doc['created_at'] ?? 'now')) ?></div>
                                 </div>
                                 <a href="<?= url('/admin/dokumen/' . $doc['id'] . '/download') ?>"
                                    class="btn btn-sm btn-outline-primary" style="padding:3px 8px;font-size:.72rem;">
@@ -144,8 +144,8 @@ $statusColors  = ['menunggu'=>'warning','diterima'=>'success','revisi'=>'info','
                             <div class="fw-600">
                                 <?= htmlspecialchars($log['admin_nama'] ?? 'Admin') ?>
                                 <span class="text-muted fw-400">mengubah status ke</span>
-                                <span class="badge bg-<?= $statusColors[$log['status_baru']] ?? 'secondary' ?> ms-1" style="font-size:.68rem;">
-                                    <?= ucfirst($log['status_baru']) ?>
+                                <span class="badge bg-<?= $statusColors[$log['status_sesudah']] ?? 'secondary' ?> ms-1" style="font-size:.68rem;">
+                                    <?= ucfirst($log['status_sesudah']) ?>
                                 </span>
                             </div>
                             <?php if ($log['catatan']): ?>
@@ -173,8 +173,9 @@ $statusColors  = ['menunggu'=>'warning','diterima'=>'success','revisi'=>'info','
                     </h6>
                     <div class="d-flex align-items-center gap-2 mt-2">
                         <span class="text-white-50" style="font-size:.78rem;">Status saat ini:</span>
-                        <span class="badge bg-<?= $statusColors[$p['status_verifikasi'] ?? 'menunggu'] ?> text-white" style="font-size:.75rem;">
-                            <?= ucfirst($p['status_verifikasi'] ?? 'menunggu') ?>
+                        <?php $curStatus = $p['status'] ?? 'menunggu'; ?>
+                        <span class="badge bg-<?= $statusColors[$curStatus] ?? 'secondary' ?> text-white" style="font-size:.75rem;">
+                            <?= ucfirst($curStatus) ?>
                         </span>
                     </div>
                 </div>
@@ -188,7 +189,7 @@ $statusColors  = ['menunggu'=>'warning','diterima'=>'success','revisi'=>'info','
                             <label class="form-label fw-600" style="font-size:.8rem;">Ubah Status</label>
                             <select name="status" class="form-select form-select-sm">
                                 <?php foreach ($statusOptions as $opt): ?>
-                                <option value="<?= $opt ?>" <?= ($p['status_verifikasi'] ?? '') === $opt ? 'selected' : '' ?>>
+                                <option value="<?= $opt ?>" <?= ($p['status'] ?? '') === $opt ? 'selected' : '' ?>>
                                     <?= ucfirst($opt) ?>
                                 </option>
                                 <?php endforeach; ?>
@@ -223,7 +224,7 @@ $statusColors  = ['menunggu'=>'warning','diterima'=>'success','revisi'=>'info','
                             <span>Dokumen Terupload</span>
                             <strong><?= count($docs) ?> berkas</strong>
                         </div>
-                        <?php if ($p['promo_digunakan'] ?? false): ?>
+                        <?php if ($p['promo_id'] ?? false): ?>
                         <div class="mt-2 p-2 rounded-2" style="background:#fffbeb;border:1px solid #fde68a;">
                             <i class="bi bi-gift text-warning me-1"></i>
                             <span style="color:#92400e;font-weight:600;font-size:.75rem;">Menggunakan promo gratis pendaftaran</span>

@@ -12,7 +12,7 @@ $promo = $promo_digunakan ?? false;
             Pendaftaran Berhasil!
         </h1>
         <p class="text-white mb-0" style="opacity:.8;">
-            Ma'had Aly Ibnu Abbas Karanganyar — Tahun Akademik <?= htmlspecialchars($p['tahun_akademik'] ?? '') ?>
+            Ma'had Aly Ibnu Abbas Karanganyar — Tahun Akademik <?= htmlspecialchars($p['ta_nama'] ?? $p['ta_kode'] ?? '' ?? '') ?>
         </p>
     </div>
 </section>

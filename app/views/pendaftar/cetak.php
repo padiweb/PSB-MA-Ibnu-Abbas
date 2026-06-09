@@ -6,7 +6,7 @@ $logs = $verifikasi_log ?? [];
 
 $statusLabels = ['menunggu'=>'Menunggu Verifikasi','diterima'=>'Diterima','revisi'=>'Perlu Revisi','ditolak'=>'Ditolak'];
 $statusColors = ['menunggu'=>'#d97706','diterima'=>'#16a34a','revisi'=>'#2563eb','ditolak'=>'#dc2626'];
-$st = $p['status_verifikasi'] ?? 'menunggu';
+$st = $p['status'] ?? 'menunggu';
 ?>
 <div class="print-container">
 
@@ -44,7 +44,7 @@ $st = $p['status_verifikasi'] ?? 'menunggu';
                 ['Tanggal Lahir', $p['tanggal_lahir'] ? date('d F Y', strtotime($p['tanggal_lahir'])) : '-'],
                 ['Nomor HP', $p['nomor_hp'] ?? '-'],
                 ['Nama Ibu Kandung', $p['nama_ibu_kandung'] ?? '-'],
-                ['Alamat KTP', $p['alamat_ktp'] ?? '-'],
+                ['Alamat KTP', $p['alamat'] ?? '-'],
             ]; foreach ($dataDiri as [$lbl, $val]): ?>
             <div class="info-row">
                 <span class="info-label"><?= $lbl ?></span>
@@ -60,7 +60,7 @@ $st = $p['status_verifikasi'] ?? 'menunggu';
         <?php $dataProdi = [
             ['Program Studi', $p['nama_prodi'] ?? '-'],
             ['Jenjang', $p['jenjang'] ?? '-'],
-            ['Tahun Akademik', $p['tahun_akademik'] ?? '-'],
+            ['Tahun Akademik', $p['ta_nama'] ?? $p['ta_kode'] ?? '-' ?? '-'],
             ['Tanggal Daftar', $p['created_at'] ? date('d F Y H:i', strtotime($p['created_at'])) : '-'],
         ]; foreach ($dataProdi as [$lbl, $val]): ?>
         <div class="info-row">
@@ -113,7 +113,7 @@ $st = $p['status_verifikasi'] ?? 'menunggu';
                 <?php foreach ($logs as $log): ?>
                 <tr>
                     <td><?= date('d/m/Y H:i', strtotime($log['created_at'])) ?></td>
-                    <td><strong><?= ucfirst($log['status_baru']) ?></strong></td>
+                    <td><strong><?= ucfirst($log['status_sesudah']) ?></strong></td>
                     <td><?= htmlspecialchars($log['catatan'] ?? '-') ?></td>
                 </tr>
                 <?php endforeach; ?>

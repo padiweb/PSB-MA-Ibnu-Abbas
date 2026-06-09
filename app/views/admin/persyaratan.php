@@ -13,7 +13,8 @@ $taId   = $ta_id ?? 0;
 <!-- Filter Tahun -->
 <div class="card border-0 rounded-3 mb-4" style="box-shadow:0 2px 12px rgba(0,0,0,.06);">
     <div class="card-body p-3">
-        <form method="GET">
+        <form method="GET" action="<?= BASE_URL ?>/index.php">
+                <input type="hidden" name="page" value="admin/persyaratan">
             <div class="row g-2 align-items-end">
                 <div class="col-md-4">
                     <label class="form-label mb-1 fw-600" style="font-size:.75rem;color:#64748b;">TAHUN AKADEMIK</label>

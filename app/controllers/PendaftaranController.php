@@ -151,6 +151,41 @@ class PendaftaranController extends Controller
 
             $pendaftarId = $this->pendaftarModel->insert($pendaftarData);
 
+            // Proses upload dokumen dari form
+            $dokModel = new DokumenModel();
+            $docKeyMap = [
+                'doc_ktp'       => 'ktp',
+                'doc_kk'        => 'kk',
+                'doc_akte'      => 'akte_kelahiran',
+                'doc_ijazah_sma'=> 'ijazah_sma',
+                'doc_ijazah_s1' => 'ijazah_s1',
+                'doc_foto'      => 'foto',
+            ];
+            foreach ($docKeyMap as $fieldName => $jenisDoc) {
+                if (empty($_FILES[$fieldName]) || $_FILES[$fieldName]['error'] !== UPLOAD_ERR_OK) continue;
+                try {
+                    $relPath = Security::saveUpload($_FILES[$fieldName], 'dokumen/' . $pendaftarId);
+                    $dokModel->insert([
+                        'pendaftar_id'   => $pendaftarId,
+                        'jenis_dokumen'  => $jenisDoc,
+                        'nama_file_asli' => Security::cleanRaw($_FILES[$fieldName]['name']),
+                        'nama_file'      => basename($relPath),
+                        'path_file'      => $relPath,
+                        'mime_type'      => $_FILES[$fieldName]['type'],
+                        'ukuran_file'    => $_FILES[$fieldName]['size'],
+                        'status'         => 'menunggu',
+                    ]);
+                } catch (Exception $e) {
+                    Logger::error('Upload dokumen gagal (' . $jenisDoc . '): ' . $e->getMessage());
+                }
+            }
+
+            // Update status pendaftar menjadi 'menunggu' setelah submit
+            $this->pendaftarModel->update($pendaftarId, [
+                'status'         => 'menunggu',
+                'tanggal_submit' => date('Y-m-d H:i:s'),
+            ]);
+
             $db->commit();
 
             // Login otomatis

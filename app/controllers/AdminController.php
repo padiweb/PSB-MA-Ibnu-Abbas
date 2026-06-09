@@ -48,7 +48,13 @@ class AdminController extends Controller
         $this->view('admin/pendaftar', [
             'layout'       => 'layouts/admin',
             'page_title'   => 'Data Pendaftar',
-            'result'       => $result,
+            'pendaftar'    => $result['data'] ?? [],
+            'pagination'   => [
+                'total'       => $result['total'] ?? 0,
+                'per_page'    => $result['per_page'] ?? 20,
+                'page'        => $result['current_page'] ?? 1,
+                'total_pages' => $result['last_page'] ?? 1,
+            ],
             'filters'      => $filters,
             'tahun_list'   => $taModel->findAll([], 'created_at DESC'),
             'prodi_list'   => $prodiModel->getAktif(),
@@ -75,7 +81,7 @@ class AdminController extends Controller
             'page_title'=> 'Detail Pendaftar',
             'pendaftar' => $pendaftar,
             'dokumen'   => $dokumen,
-            'ver_log'   => $verLog,
+            'verifikasi_log' => $verLog,
             'csrf'      => Security::generateCsrf(),
             'dok_types' => (new DokumenModel())->getDokumenTypes(),
         ]);

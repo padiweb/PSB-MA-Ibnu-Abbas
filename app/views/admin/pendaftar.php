@@ -25,7 +25,8 @@ $statusLabels = [
 <!-- FILTER -->
 <div class="card border-0 rounded-3 mb-4" style="box-shadow:0 2px 12px rgba(0,0,0,.06);">
     <div class="card-body p-3">
-        <form method="GET" action="<?= url('/admin/pendaftar') ?>" id="filterForm">
+        <form method="GET" action="<?= BASE_URL ?>/index.php" id="filterForm">
+                <input type="hidden" name="page" value="admin/pendaftar">
             <div class="row g-2 align-items-end">
                 <div class="col-12 col-md-4">
                     <label class="form-label mb-1" style="font-size:.75rem;font-weight:600;color:#64748b;">CARI</label>
@@ -129,7 +130,7 @@ $statusLabels = [
                         <?= date('d M Y', strtotime($p['created_at'])) ?>
                     </td>
                     <td>
-                        <?php $s = $statusLabels[$p['status_verifikasi']] ?? ['label'=>ucfirst($p['status_verifikasi']),'class'=>'bg-secondary']; ?>
+                        <?php $s = $statusLabels[$p['status']] ?? ['label'=>ucfirst($p['status']),'class'=>'bg-secondary']; ?>
                         <span class="badge <?= $s['class'] ?>" style="font-size:.72rem;"><?= $s['label'] ?></span>
                     </td>
                     <td class="text-center">
@@ -158,7 +159,8 @@ $statusLabels = [
                 $currentPage = $pagination['page'] ?? 1;
                 $totalPages  = $pagination['total_pages'] ?? 1;
                 $params = array_filter($filters) + ['page' => 1];
-                $baseUrl = '/admin/pendaftar?' . http_build_query(array_filter($filters));
+                $safeFilters = array_filter($filters, fn($v) => $v !== null && $v !== '');
+                $baseUrl = BASE_URL . '/index.php?page=admin/pendaftar' . ($safeFilters ? '&' . http_build_query($safeFilters) : '');
                 ?>
                 <li class="page-item <?= $currentPage <= 1 ? 'disabled' : '' ?>">
                     <a class="page-link" href="<?= $baseUrl ?>&page=<?= $currentPage-1 ?>">‹</a>
