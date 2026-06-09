@@ -9,7 +9,7 @@ $statusColors  = ['menunggu'=>'warning','diterima'=>'success','revisi'=>'info','
 ?>
 <div class="page-header d-flex align-items-center gap-3 justify-content-between">
     <div class="d-flex align-items-center gap-3">
-        <a href="<?= BASE_URL ?>/admin/pendaftar" class="btn btn-sm btn-outline-secondary">
+        <a href="<?= url('/admin/pendaftar') ?>" class="btn btn-sm btn-outline-secondary">
             <i class="bi bi-arrow-left"></i>
         </a>
         <div>
@@ -20,7 +20,7 @@ $statusColors  = ['menunggu'=>'warning','diterima'=>'success','revisi'=>'info','
         </div>
     </div>
     <div class="d-flex gap-2">
-        <a href="<?= BASE_URL ?>/admin/pendaftar/<?= $p['id'] ?>/cetak" target="_blank" class="btn btn-sm btn-outline-secondary">
+        <a href="<?= url('/admin/pendaftar/<?= $p['id'] ?>/cetak') ?>" target="_blank" class="btn btn-sm btn-outline-secondary">
             <i class="bi bi-printer me-1"></i> Cetak
         </a>
     </div>
@@ -114,7 +114,7 @@ $statusColors  = ['menunggu'=>'warning','diterima'=>'success','revisi'=>'info','
                                     <div style="font-size:.7rem;color:#94a3b8;"><?= htmlspecialchars($doc['nama_file_asli'] ?? '') ?></div>
                                     <div style="font-size:.7rem;color:#94a3b8;"><?= date('d M Y', strtotime($doc['created_at'])) ?></div>
                                 </div>
-                                <a href="<?= BASE_URL ?>/admin/dokumen/<?= $doc['id'] ?>/download"
+                                <a href="<?= url('/admin/dokumen/<?= $doc['id'] ?>/download') ?>"
                                    class="btn btn-sm btn-outline-primary" style="padding:3px 8px;font-size:.72rem;">
                                     <i class="bi bi-download"></i>
                                 </a>
@@ -181,7 +181,7 @@ $statusColors  = ['menunggu'=>'warning','diterima'=>'success','revisi'=>'info','
 
                 <?php if (in_array(Session::get('role'), ['superadmin','admin','verifikator'])): ?>
                 <div class="p-4">
-                    <form method="POST" action="<?= BASE_URL ?>/admin/verifikasi/<?= $p['id'] ?>">
+                    <form method="POST" action="<?= url('/admin/verifikasi/<?= $p['id'] ?>') ?>">
                         <input type="hidden" name="csrf_token" value="<?= Security::generateCsrf() ?>">
 
                         <div class="mb-3">

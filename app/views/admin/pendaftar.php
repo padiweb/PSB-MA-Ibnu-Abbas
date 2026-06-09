@@ -17,7 +17,7 @@ $statusLabels = [
     <div>
         <h1><i class="bi bi-people me-2"></i>Data Pendaftar</h1>
     </div>
-    <a href="<?= BASE_URL ?>/admin/export" class="btn btn-sm" style="background:var(--primary);color:#fff;">
+    <a href="<?= url('/admin/export') ?>" class="btn btn-sm" style="background:var(--primary);color:#fff;">
         <i class="bi bi-download me-1"></i> Export Data
     </a>
 </div>
@@ -25,7 +25,7 @@ $statusLabels = [
 <!-- FILTER -->
 <div class="card border-0 rounded-3 mb-4" style="box-shadow:0 2px 12px rgba(0,0,0,.06);">
     <div class="card-body p-3">
-        <form method="GET" action="<?= BASE_URL ?>/admin/pendaftar" id="filterForm">
+        <form method="GET" action="<?= url('/admin/pendaftar') ?>" id="filterForm">
             <div class="row g-2 align-items-end">
                 <div class="col-12 col-md-4">
                     <label class="form-label mb-1" style="font-size:.75rem;font-weight:600;color:#64748b;">CARI</label>
@@ -69,7 +69,7 @@ $statusLabels = [
                     </select>
                 </div>
                 <div class="col-6 col-md-1">
-                    <a href="<?= BASE_URL ?>/admin/pendaftar" class="btn btn-sm btn-outline-secondary w-100">Reset</a>
+                    <a href="<?= url('/admin/pendaftar') ?>" class="btn btn-sm btn-outline-secondary w-100">Reset</a>
                 </div>
             </div>
         </form>
@@ -134,10 +134,10 @@ $statusLabels = [
                     </td>
                     <td class="text-center">
                         <div class="d-flex gap-1 justify-content-center">
-                            <a href="<?= BASE_URL ?>/admin/pendaftar/<?= $p['id'] ?>" class="btn btn-sm btn-outline-primary" title="Detail" style="padding:3px 8px;">
+                            <a href="<?= url('/admin/pendaftar/<?= $p['id'] ?>') ?>" class="btn btn-sm btn-outline-primary" title="Detail" style="padding:3px 8px;">
                                 <i class="bi bi-eye"></i>
                             </a>
-                            <a href="<?= BASE_URL ?>/admin/pendaftar/<?= $p['id'] ?>/cetak" class="btn btn-sm btn-outline-secondary" title="Cetak" style="padding:3px 8px;" target="_blank">
+                            <a href="<?= url('/admin/pendaftar/<?= $p['id'] ?>/cetak') ?>" class="btn btn-sm btn-outline-secondary" title="Cetak" style="padding:3px 8px;" target="_blank">
                                 <i class="bi bi-printer"></i>
                             </a>
                         </div>

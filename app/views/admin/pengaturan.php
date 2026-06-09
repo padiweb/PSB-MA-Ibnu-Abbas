@@ -8,7 +8,7 @@ foreach ($settings as $row) $s[$row['key']] = $row['value'];
     <p class="text-muted mb-0" style="font-size:.85rem;">Ubah konten website tanpa coding</p>
 </div>
 
-<form method="POST" action="<?= BASE_URL ?>/admin/pengaturan" enctype="multipart/form-data">
+<form method="POST" action="<?= url('/admin/pengaturan') ?>" enctype="multipart/form-data">
     <input type="hidden" name="csrf_token" value="<?= Security::generateCsrf() ?>">
 
     <div class="row g-3">

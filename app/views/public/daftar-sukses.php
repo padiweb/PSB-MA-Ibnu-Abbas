@@ -109,11 +109,11 @@ $promo = $promo_digunakan ?? false;
 
             <!-- CTA Buttons -->
             <div class="d-flex flex-column flex-sm-row gap-3">
-                <a href="<?= BASE_URL ?>/login" class="btn flex-fill py-3 fw-600"
+                <a href="<?= url('/login') ?>" class="btn flex-fill py-3 fw-600"
                    style="background:var(--primary);color:#fff;border-radius:12px;">
                     <i class="bi bi-speedometer2 me-2"></i>Masuk ke Dashboard
                 </a>
-                <a href="<?= BASE_URL ?>/" class="btn flex-fill py-3 fw-600 btn-outline-secondary" style="border-radius:12px;">
+                <a href="<?= url('/') ?>" class="btn flex-fill py-3 fw-600 btn-outline-secondary" style="border-radius:12px;">
                     <i class="bi bi-house me-2"></i>Ke Beranda
                 </a>
             </div>

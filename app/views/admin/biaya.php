@@ -14,7 +14,7 @@ $taId      = $ta_id ?? 0;
 <!-- Filter Tahun -->
 <div class="card border-0 rounded-3 mb-4" style="box-shadow:0 2px 12px rgba(0,0,0,.06);">
     <div class="card-body p-3">
-        <form method="GET" action="<?= BASE_URL ?>/admin/biaya">
+        <form method="GET" action="<?= url('/admin/biaya') ?>">
             <div class="row g-2 align-items-end">
                 <div class="col-md-4">
                     <label class="form-label mb-1 fw-600" style="font-size:.75rem;color:#64748b;">TAHUN AKADEMIK</label>
@@ -90,7 +90,7 @@ $taId      = $ta_id ?? 0;
                                 onclick="editBiaya(<?= htmlspecialchars(json_encode($b)) ?>)">
                             <i class="bi bi-pencil"></i>
                         </button>
-                        <form method="POST" action="<?= BASE_URL ?>/admin/biaya/<?= $b['id'] ?>/hapus" class="d-inline">
+                        <form method="POST" action="<?= url('/admin/biaya/<?= $b['id'] ?>/hapus') ?>" class="d-inline">
                             <input type="hidden" name="csrf_token" value="<?= Security::generateCsrf() ?>">
                             <button class="btn btn-sm btn-outline-danger" style="padding:3px 8px;"
                                     onclick="return confirm('Hapus data biaya ini?')">
@@ -114,7 +114,7 @@ $taId      = $ta_id ?? 0;
                 <h5 class="modal-title text-white fw-700" id="modalBiayaTitle">Tambah / Edit Biaya</h5>
                 <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
             </div>
-            <form method="POST" id="formBiaya" action="<?= BASE_URL ?>/admin/biaya">
+            <form method="POST" id="formBiaya" action="<?= url('/admin/biaya') ?>">
                 <input type="hidden" name="csrf_token" value="<?= Security::generateCsrf() ?>">
                 <input type="hidden" name="tahun_akademik_id" value="<?= $taId ?>">
                 <div class="modal-body p-4">

@@ -18,25 +18,17 @@ define('APP_ENV',     getenv('APP_ENV') ?: 'development'); // ← DIUBAH: produc
 define('APP_VERSION', '1.0.0');
 define('APP_NAME',    "PMB Ma'had Aly Ibnu Abbas");
 
-// ── BASE_URL: deteksi otomatis local vs production ──────────────
-// Jika ada env variable APP_URL (di server production), pakai itu.
-// Jika tidak ada (local), deteksi otomatis dari $_SERVER.
+// ── BASE_URL ─────────────────────────────────────────────────────
 if (getenv('APP_URL')) {
     define('BASE_URL', rtrim(getenv('APP_URL'), '/'));
 } else {
-    // Auto-detect untuk local XAMPP/WAMP/Laragon
+    // Auto-detect: http://localhost/PSB_MA_IBNU_ABBAS/public
     $scheme = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ? 'https' : 'http';
     $host   = $_SERVER['HTTP_HOST'] ?? 'localhost';
-    // BASE_URL = semua path sampai sebelum index.php
-    // Misal: /PSB_MA_IBNU_ABBAS/public/index.php → /PSB_MA_IBNU_ABBAS/public
-    $base = '';
-    if (!empty($_SERVER['SCRIPT_NAME'])) {
-        $scriptName = str_replace('\\', '/', $_SERVER['SCRIPT_NAME']);
-        // Hapus /index.php di akhir
-        $base = rtrim(dirname($scriptName), '/');
-        if ($base === '.') $base = '';
-    }
-    define('BASE_URL', $scheme . '://' . $host . $base);
+    $script = str_replace('\\', '/', $_SERVER['SCRIPT_NAME'] ?? '/index.php');
+    // Ambil folder sampai sebelum index.php
+    $dir    = rtrim(dirname($script), '/');
+    define('BASE_URL', $scheme . '://' . $host . $dir);
 }
 
 // ── Paths ───────────────────────────────────────────────────────

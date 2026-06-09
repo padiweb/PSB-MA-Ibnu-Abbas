@@ -1,4 +1,45 @@
 <?php
+
+/**
+ * Helper: generate URL pakai query string
+ * url('/login')       → BASE_URL/index.php?page=login
+ * url('/')            → BASE_URL/index.php
+ * url('/admin', ['ta'=>1]) → BASE_URL/index.php?page=admin&ta=1
+ */
+if (!function_exists('url')) {
+    function url(string $path = '/', array $extra = []): string
+    {
+        $path = ltrim(trim($path), '/');
+        
+        // File statis (assets) — akses langsung, bukan lewat router
+        if (preg_match('/\.(css|js|png|jpg|jpeg|gif|svg|ico|webp|woff|woff2|ttf)$/i', $path)) {
+            return BASE_URL . '/' . $path;
+        }
+        
+        // Bangun query string - page tidak di-encode agar slash tetap slash
+        $query = '';
+        if ($path !== '') {
+            $query = 'page=' . $path;
+            if ($extra) {
+                foreach ($extra as $k => $v) {
+                    $query .= '&' . urlencode($k) . '=' . urlencode($v);
+                }
+            }
+        } elseif ($extra) {
+            $query = http_build_query($extra);
+        }
+        return BASE_URL . '/index.php' . ($query ? '?' . $query : '');
+    }
+}
+
+/** Helper: escape HTML */
+if (!function_exists('e')) {
+    function e(mixed $val): string
+    {
+        return htmlspecialchars((string)$val, ENT_QUOTES | ENT_HTML5, 'UTF-8');
+    }
+}
+
 /**
  * Global helper: escape HTML output
  */

@@ -8,9 +8,9 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
-  <link rel="stylesheet" href="<?= BASE_URL ?>/assets/css/app.css?v=<?= APP_VERSION ?>">
+  <link rel="stylesheet" href="<?= url('/assets/css/vendor/bootstrap.min.css') ?>">
+  <link rel="stylesheet" href="<?= url('/assets/css/vendor/bootstrap-icons.min.css') ?>">
+  <link rel="stylesheet" href="<?= url('/assets/css/app.css') ?>">
   <?= $extra_head ?? '' ?>
 </head>
 <body class="site-body">
@@ -19,7 +19,7 @@
 <nav class="navbar navbar-expand-lg navbar-main sticky-top" id="mainNav">
   <div class="container">
     <a class="navbar-brand" href="<?= BASE_URL ?>">
-      <img src="<?= BASE_URL ?>/assets/images/logo.png" alt="<?= Security::clean($settings['site_name'] ?? APP_NAME) ?>" height="48" onerror="this.style.display='none'">
+      <img src="<?= url('/assets/images/logo.png') ?>" alt="<?= Security::clean($settings['site_name'] ?? APP_NAME) ?>" height="48" onerror="this.style.display='none'">
       <span class="brand-text"><?= Security::clean($settings['site_name'] ?? APP_NAME) ?></span>
     </a>
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navMain">
@@ -27,11 +27,11 @@
     </button>
     <div class="collapse navbar-collapse" id="navMain">
       <ul class="navbar-nav ms-auto align-items-lg-center gap-1">
-        <li class="nav-item"><a class="nav-link" href="<?= BASE_URL ?>/#program">Program Studi</a></li>
-        <li class="nav-item"><a class="nav-link" href="<?= BASE_URL ?>/#biaya">Biaya</a></li>
-        <li class="nav-item"><a class="nav-link" href="<?= BASE_URL ?>/#alur">Alur Daftar</a></li>
-        <li class="nav-item"><a class="nav-link" href="<?= BASE_URL ?>/#faq">FAQ</a></li>
-        <li class="nav-item"><a class="nav-link" href="<?= BASE_URL ?>/#kontak">Kontak</a></li>
+        <li class="nav-item"><a class="nav-link" href="<?= url('/') . '#program' ?>">Program Studi</a></li>
+        <li class="nav-item"><a class="nav-link" href="<?= url('/') . '#biaya' ?>">Biaya</a></li>
+        <li class="nav-item"><a class="nav-link" href="<?= url('/') . '#alur' ?>">Alur Daftar</a></li>
+        <li class="nav-item"><a class="nav-link" href="<?= url('/') . '#faq' ?>">FAQ</a></li>
+        <li class="nav-item"><a class="nav-link" href="<?= url('/') . '#kontak' ?>">Kontak</a></li>
         <?php if (Auth::check()): ?>
         <li class="nav-item dropdown">
           <a class="nav-link dropdown-toggle d-flex align-items-center gap-2" href="#" data-bs-toggle="dropdown">
@@ -40,18 +40,18 @@
           </a>
           <ul class="dropdown-menu dropdown-menu-end">
             <?php if (Auth::is('pendaftar')): ?>
-            <li><a class="dropdown-item" href="<?= BASE_URL ?>/pendaftar"><i class="bi bi-speedometer2 me-2"></i>Dashboard Saya</a></li>
+            <li><a class="dropdown-item" href="<?= url('/pendaftar') ?>"><i class="bi bi-speedometer2 me-2"></i>Dashboard Saya</a></li>
             <?php else: ?>
-            <li><a class="dropdown-item" href="<?= BASE_URL ?>/admin"><i class="bi bi-speedometer2 me-2"></i>Admin Panel</a></li>
+            <li><a class="dropdown-item" href="<?= url('/admin') ?>"><i class="bi bi-speedometer2 me-2"></i>Admin Panel</a></li>
             <?php endif; ?>
             <li><hr class="dropdown-divider"></li>
-            <li><a class="dropdown-item text-danger" href="<?= BASE_URL ?>/logout"><i class="bi bi-box-arrow-right me-2"></i>Keluar</a></li>
+            <li><a class="dropdown-item text-danger" href="<?= url('/logout') ?>"><i class="bi bi-box-arrow-right me-2"></i>Keluar</a></li>
           </ul>
         </li>
         <?php else: ?>
-        <li class="nav-item"><a class="nav-link" href="<?= BASE_URL ?>/login">Masuk</a></li>
+        <li class="nav-item"><a class="nav-link" href="<?= url('/login') ?>">Masuk</a></li>
         <li class="nav-item">
-          <a class="btn btn-primary-gold ms-2" href="<?= BASE_URL ?>/daftar">
+          <a class="btn btn-primary-gold ms-2" href="<?= url('/daftar') ?>">
             <i class="bi bi-pencil-square me-1"></i> Daftar Sekarang
           </a>
         </li>
@@ -100,7 +100,7 @@ $flashInfo    = Session::getFlash('info');
   <div class="container">
     <div class="row g-4 py-5">
       <div class="col-lg-4">
-        <img src="<?= BASE_URL ?>/assets/images/logo.png" alt="Logo" height="56" class="mb-3" onerror="this.style.display='none'">
+        <img src="<?= url('/assets/images/logo.png') ?>" alt="Logo" height="56" class="mb-3" onerror="this.style.display='none'">
         <h5 class="footer-brand"><?= Security::clean($settings['site_name'] ?? APP_NAME) ?></h5>
         <p class="footer-tagline small"><?= Security::clean($settings['site_tagline'] ?? '') ?></p>
         <?php if (!empty($settings['site_kerjasama'])): ?>
@@ -111,18 +111,18 @@ $flashInfo    = Session::getFlash('info');
         <h6 class="footer-heading">Navigasi</h6>
         <ul class="list-unstyled footer-links">
           <li><a href="<?= BASE_URL ?>">Beranda</a></li>
-          <li><a href="<?= BASE_URL ?>/#program">Program Studi</a></li>
-          <li><a href="<?= BASE_URL ?>/#biaya">Biaya Pendidikan</a></li>
-          <li><a href="<?= BASE_URL ?>/#alur">Alur Pendaftaran</a></li>
-          <li><a href="<?= BASE_URL ?>/#faq">FAQ</a></li>
+          <li><a href="<?= url('/') . '#program' ?>">Program Studi</a></li>
+          <li><a href="<?= url('/') . '#biaya' ?>">Biaya Pendidikan</a></li>
+          <li><a href="<?= url('/') . '#alur' ?>">Alur Pendaftaran</a></li>
+          <li><a href="<?= url('/') . '#faq' ?>">FAQ</a></li>
         </ul>
       </div>
       <div class="col-lg-3 col-6">
         <h6 class="footer-heading">Pendaftaran</h6>
         <ul class="list-unstyled footer-links">
-          <li><a href="<?= BASE_URL ?>/daftar">Daftar Online</a></li>
-          <li><a href="<?= BASE_URL ?>/login">Login Pendaftar</a></li>
-          <li><a href="<?= BASE_URL ?>/#persyaratan">Persyaratan</a></li>
+          <li><a href="<?= url('/daftar') ?>">Daftar Online</a></li>
+          <li><a href="<?= url('/login') ?>">Login Pendaftar</a></li>
+          <li><a href="<?= url('/') . '#persyaratan' ?>">Persyaratan</a></li>
         </ul>
       </div>
       <div class="col-lg-3">
@@ -156,8 +156,8 @@ $flashInfo    = Session::getFlash('info');
   </div>
 </footer>
 
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-<script src="<?= BASE_URL ?>/assets/js/app.js?v=<?= APP_VERSION ?>"></script>
+<script src="<?= url('/assets/js/bootstrap.bundle.min.js') ?>"></script>
+<script src="<?= url('/assets/js/app.js') ?>"></script>
 <?= $extra_scripts ?? '' ?>
 </body>
 </html>

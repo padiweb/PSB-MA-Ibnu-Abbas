@@ -157,7 +157,7 @@
 
 <!-- Sidebar -->
 <aside class="sidebar" id="sidebar">
-    <a href="<?= BASE_URL ?>/" class="sidebar-brand d-flex align-items-center gap-2">
+    <a href="<?= url('/') ?>" class="sidebar-brand d-flex align-items-center gap-2">
         <div>
             <div class="brand-title">Ma'had Aly Ibnu Abbas</div>
             <div class="brand-sub">Portal Pendaftar</div>
@@ -176,17 +176,17 @@
         <div class="nav-label">Menu</div>
         <ul class="list-unstyled mb-0">
             <li class="nav-item">
-                <a href="<?= BASE_URL ?>/pendaftar">
+                <a href="<?= url('/pendaftar') ?>">
                     <i class="bi bi-speedometer2"></i> Dashboard
                 </a>
             </li>
             <li class="nav-item">
-                <a href="<?= BASE_URL ?>/pendaftar/berkas" class="active">
+                <a href="<?= url('/pendaftar/berkas') ?>" class="active">
                     <i class="bi bi-folder2-open"></i> Kelola Berkas
                 </a>
             </li>
             <li class="nav-item">
-                <a href="<?= BASE_URL ?>/pendaftar/cetak/<?= $pendaftar['id'] ?>" target="_blank">
+                <a href="<?= url('/pendaftar/cetak/<?= $pendaftar['id'] ?>') ?>" target="_blank">
                     <i class="bi bi-printer"></i> Cetak Bukti
                 </a>
             </li>
@@ -194,7 +194,7 @@
     </nav>
 
     <div class="sidebar-footer">
-        <a href="<?= BASE_URL ?>/logout">
+        <a href="<?= url('/logout') ?>">
             <i class="bi bi-box-arrow-left"></i> Keluar
         </a>
     </div>
@@ -385,10 +385,10 @@
 
         <!-- Tombol Aksi -->
         <div class="d-flex gap-2 mt-4 flex-wrap">
-            <a href="<?= BASE_URL ?>/pendaftar" class="btn btn-outline-secondary">
+            <a href="<?= url('/pendaftar') ?>" class="btn btn-outline-secondary">
                 <i class="bi bi-arrow-left me-1"></i>Kembali ke Dashboard
             </a>
-            <a href="<?= BASE_URL ?>/pendaftar/cetak/<?= $pendaftar['id'] ?>" target="_blank"
+            <a href="<?= url('/pendaftar/cetak/<?= $pendaftar['id'] ?>') ?>" target="_blank"
                class="btn btn-outline-primary">
                 <i class="bi bi-printer me-1"></i>Cetak Bukti
             </a>
@@ -466,7 +466,7 @@ function uploadFile(jenis, file) {
     fd.append('dokumen',      file);
 
     const xhr = new XMLHttpRequest();
-    xhr.open('POST', BASE_URL + '/pendaftar/upload');
+    xhr.open('POST', BASE_URL + '/index.php?page=pendaftar/upload');
 
     xhr.upload.onprogress = (e) => {
         if (e.lengthComputable) {

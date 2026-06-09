@@ -70,7 +70,7 @@ $taId   = $ta_id ?? 0;
                                 onclick="editPersyaratan(<?= htmlspecialchars(json_encode($p)) ?>, <?= $taId ?>)">
                             <i class="bi bi-pencil"></i>
                         </button>
-                        <a href="<?= BASE_URL ?>/admin/persyaratan/<?= $p['id'] ?>/hapus?ta=<?= $taId ?>"
+                        <a href="<?= url('/admin/persyaratan/<?= $p['id'] ?>/hapus?ta=<?= $taId ?>') ?>"
                            class="btn btn-sm btn-outline-danger" style="padding:3px 8px;"
                            onclick="return confirm('Hapus persyaratan ini?')">
                             <i class="bi bi-trash"></i>
@@ -92,7 +92,7 @@ $taId   = $ta_id ?? 0;
                 <h5 class="modal-title text-white fw-700" id="modalPersTitle">Tambah Persyaratan</h5>
                 <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
             </div>
-            <form method="POST" id="formPers" action="<?= BASE_URL ?>/admin/persyaratan">
+            <form method="POST" id="formPers" action="<?= url('/admin/persyaratan') ?>">
                 <input type="hidden" name="csrf_token" value="<?= Security::generateCsrf() ?>">
                 <input type="hidden" name="id" id="persId" value="">
                 <input type="hidden" name="tahun_akademik_id" id="persTaId" value="<?= $taId ?>">

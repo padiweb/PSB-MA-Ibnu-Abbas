@@ -22,7 +22,7 @@
         </p>
         <div class="d-flex flex-wrap gap-3">
           <?php if ($tahun_aktif): ?>
-          <a href="<?= BASE_URL ?>/daftar" class="btn-primary-gold">
+          <a href="<?= url('/daftar') ?>" class="btn-primary-gold">
             <i class="bi bi-pencil-square me-2"></i> Daftar Sekarang
           </a>
           <?php endif; ?>
@@ -59,7 +59,7 @@
     <p class="mb-0 fw-bold text-dark" style="font-size:.88rem">
       <i class="bi bi-gift-fill me-1"></i>
       Promo: 20 Pendaftar Pertama S2 <strong>GRATIS Biaya Pendaftaran!</strong>
-      &ensp;<a href="<?= BASE_URL ?>/daftar" class="text-dark fw-bold">Daftar sekarang →</a>
+      &ensp;<a href="<?= url('/daftar') ?>" class="text-dark fw-bold">Daftar sekarang →</a>
     </p>
   </div>
 </div>
@@ -117,7 +117,7 @@
           </div>
           <?php endforeach; ?>
           <div class="mt-3">
-            <a href="<?= BASE_URL ?>/daftar" class="btn-primary-blue">
+            <a href="<?= url('/daftar') ?>" class="btn-primary-blue">
               <i class="bi bi-pencil-square me-2"></i> Daftar Program S1
             </a>
           </div>
@@ -151,7 +151,7 @@
             <i class="bi bi-gift-fill d-block mb-2" style="font-size:1.5rem;color:var(--gold-main)"></i>
             <p class="fw-bold mb-1 small" style="color:var(--gold-deep)">Promo 20 Pendaftar Pertama</p>
             <p class="text-muted mb-2" style="font-size:.78rem">Gratis Biaya Pendaftaran S2</p>
-            <a href="<?= BASE_URL ?>/daftar" class="btn-primary-gold" style="font-size:.8rem;padding:.4rem 1rem">
+            <a href="<?= url('/daftar') ?>" class="btn-primary-gold" style="font-size:.8rem;padding:.4rem 1rem">
               <i class="bi bi-pencil-square me-1"></i> Daftar S2
             </a>
           </div>
@@ -190,7 +190,7 @@
             <div class="biaya-item"><span class="biaya-label"><i class="bi bi-calendar-month me-2 text-blue"></i>SPP per Bulan</span><span class="biaya-value">Rp 250.000</span></div>
             <div class="biaya-item" style="border:none"><span class="biaya-label"><i class="bi bi-clock me-2 text-blue"></i>Masa Studi</span><span class="biaya-value">8 Semester</span></div>
             <div class="mt-4">
-              <a href="<?= BASE_URL ?>/daftar" class="btn-primary-blue w-100 justify-content-center">
+              <a href="<?= url('/daftar') ?>" class="btn-primary-blue w-100 justify-content-center">
                 <i class="bi bi-pencil-square me-2"></i> Daftar S1
               </a>
             </div>
@@ -222,7 +222,7 @@
             <div class="biaya-item"><span class="biaya-label"><i class="bi bi-journal-bookmark me-2" style="color:var(--gold-deep)"></i>Biaya s/d Lulus</span><span class="biaya-value" style="color:var(--gold-deep)">Rp 8.000.000</span></div>
             <div class="biaya-item" style="border:none"><span class="biaya-label"><i class="bi bi-clock me-2" style="color:var(--gold-deep)"></i>Masa Studi</span><span class="biaya-value" style="color:var(--gold-deep)">3–4 Semester</span></div>
             <div class="mt-4">
-              <a href="<?= BASE_URL ?>/daftar" class="btn-primary-gold w-100 justify-content-center">
+              <a href="<?= url('/daftar') ?>" class="btn-primary-gold w-100 justify-content-center">
                 <i class="bi bi-pencil-square me-2"></i> Daftar S2
               </a>
             </div>
@@ -271,7 +271,7 @@
       <?php endforeach; ?>
     </div>
     <div class="text-center mt-5">
-      <a href="<?= BASE_URL ?>/daftar" class="btn-primary-gold">
+      <a href="<?= url('/daftar') ?>" class="btn-primary-gold">
         <i class="bi bi-pencil-square me-2"></i> Mulai Pendaftaran Sekarang
       </a>
     </div>
@@ -435,11 +435,11 @@
           <h4 class="text-white fw-bold mb-1">Daftar Sekarang</h4>
           <p style="color:rgba(255,255,255,.6);font-size:.85rem;margin-bottom:1.5rem">Proses cepat, mudah, 100% online</p>
           <?php if ($tahun_aktif): ?>
-          <a href="<?= BASE_URL ?>/daftar" class="btn-primary-gold d-flex align-items-center justify-content-center w-100 mb-3" style="padding:.75rem">
+          <a href="<?= url('/daftar') ?>" class="btn-primary-gold d-flex align-items-center justify-content-center w-100 mb-3" style="padding:.75rem">
             <i class="bi bi-pencil-square me-2"></i> Mulai Pendaftaran
           </a>
           <?php endif; ?>
-          <a href="<?= BASE_URL ?>/login" class="btn btn-outline-light rounded-pill w-100" style="font-size:.9rem">
+          <a href="<?= url('/login') ?>" class="btn btn-outline-light rounded-pill w-100" style="font-size:.9rem">
             <i class="bi bi-box-arrow-in-right me-2"></i> Login Pendaftar
           </a>
           <hr style="border-color:rgba(255,255,255,.15);margin:1.25rem 0">

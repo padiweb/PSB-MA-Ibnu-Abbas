@@ -35,7 +35,7 @@ $list = $list ?? [];
                         <?= htmlspecialchars($pr['jenjang']) ?>
                     </span>
                 </td>
-                <td style="font-size:.83rem;"><?= htmlspecialchars($pr['nama_fakultas'] ?? '-') ?></td>
+                <td style="font-size:.83rem;"><?= htmlspecialchars($pr['fakultas'] ?? '-') ?></td>
                 <td><code style="font-size:.8rem;"><?= htmlspecialchars($pr['gelar'] ?? '') ?></code></td>
                 <td>
                     <span class="badge <?= $pr['is_aktif'] ? 'bg-success' : 'bg-secondary' ?>" style="font-size:.7rem;">
@@ -48,7 +48,7 @@ $list = $list ?? [];
                                 onclick="editProdi(<?= htmlspecialchars(json_encode($pr)) ?>)">
                             <i class="bi bi-pencil"></i>
                         </button>
-                        <form method="POST" action="<?= BASE_URL ?>/admin/prodi/<?= $pr['id'] ?>/toggle" class="d-inline">
+                        <form method="POST" action="<?= url('/admin/prodi/<?= $pr['id'] ?>/toggle') ?>" class="d-inline">
                             <input type="hidden" name="csrf_token" value="<?= Security::generateCsrf() ?>">
                             <button class="btn btn-sm btn-outline-<?= $pr['is_aktif'] ? 'warning' : 'success' ?>" style="padding:3px 8px;font-size:.72rem;">
                                 <i class="bi bi-<?= $pr['is_aktif'] ? 'pause-circle' : 'play-circle' ?>"></i>
@@ -71,7 +71,7 @@ $list = $list ?? [];
                 <h5 class="modal-title text-white fw-700" id="modalProdiTitle">Tambah Program Studi</h5>
                 <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
             </div>
-            <form method="POST" id="formProdi" action="<?= BASE_URL ?>/admin/prodi">
+            <form method="POST" id="formProdi" action="<?= url('/admin/prodi') ?>">
                 <input type="hidden" name="csrf_token" value="<?= Security::generateCsrf() ?>">
                 <input type="hidden" name="id" id="prodiId" value="">
                 <div class="modal-body p-4">
@@ -100,7 +100,7 @@ $list = $list ?? [];
                     </div>
                     <div class="mb-3 mt-3">
                         <label class="form-label fw-600" style="font-size:.82rem;">Fakultas</label>
-                        <input type="text" name="nama_fakultas" id="prodiFakultas" class="form-control"
+                        <input type="text" name="fakultas" id="prodiFakultas" class="form-control"
                                placeholder="Tarbiyah / Ekonomi / Hukum">
                     </div>
                     <div class="mb-0">
@@ -130,15 +130,15 @@ function editProdi(data) {
     document.getElementById('prodiSingkatan').value = data.singkatan || '';
     document.getElementById('prodiJenjang').value   = data.jenjang;
     document.getElementById('prodiGelar').value     = data.gelar || '';
-    document.getElementById('prodiFakultas').value  = data.nama_fakultas || '';
+    document.getElementById('prodiFakultas').value  = data.fakultas || '';
     document.getElementById('prodiAktif').checked   = data.is_aktif == 1;
-    document.getElementById('formProdi').action = BASE_URL + '/admin/prodi/' + data.id + '/update';
+    document.getElementById('formProdi').action = BASE_URL + '/index.php?page=admin/prodi/' + data.id + '/update';
     new bootstrap.Modal(document.getElementById('modalProdi')).show();
 }
 document.getElementById('modalProdi').addEventListener('hidden.bs.modal', function () {
     document.getElementById('modalProdiTitle').textContent = 'Tambah Program Studi';
     document.getElementById('formProdi').reset();
-    document.getElementById('formProdi').action = BASE_URL + '/admin/prodi';
+    document.getElementById('formProdi').action = BASE_URL + '/index.php?page=admin/prodi';
     document.getElementById('prodiId').value = '';
     document.getElementById('prodiAktif').checked = true;
 });

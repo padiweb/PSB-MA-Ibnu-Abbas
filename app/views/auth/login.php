@@ -5,7 +5,7 @@
       <div class="col-sm-10 col-md-7 col-lg-5 col-xl-4">
         <div class="card border-0 shadow-lg rounded-4 overflow-hidden">
           <div class="py-4 px-4 text-center" style="background: linear-gradient(135deg, var(--blue-dark), var(--blue-main));">
-            <img src="<?= BASE_URL ?>/assets/images/logo.png" alt="Logo" height="52" class="mb-2" onerror="this.style.display='none'">
+            <img src="<?= url('/assets/images/logo.png') ?>" alt="Logo" height="52" class="mb-2" onerror="this.style.display='none'">
             <h5 class="text-white mb-0 fw-bold" style="font-family:var(--font-heading)"><?= Security::clean($settings['site_name'] ?? APP_NAME) ?></h5>
             <p class="text-white-50 small mb-0">Portal Mahasiswa &amp; Admin</p>
           </div>
@@ -13,7 +13,7 @@
             <h5 class="fw-bold mb-1 text-center" style="color:var(--blue-main)">Masuk ke Akun</h5>
             <p class="text-muted text-center small mb-4">Gunakan Nomor Pendaftaran atau Email</p>
 
-            <form id="loginForm" method="POST" action="<?= BASE_URL ?>/login" novalidate>
+            <form id="loginForm" method="POST" action="<?= url('/login') ?>" novalidate>
               <input type="hidden" name="_token" value="<?= Security::clean($csrf) ?>">
 
               <div class="mb-3">
@@ -42,7 +42,7 @@
               <hr>
               <p class="text-center small mb-0 text-muted">
                 Belum mendaftar?
-                <a href="<?= BASE_URL ?>/daftar" class="fw-bold" style="color:var(--blue-main)">Daftar Sekarang</a>
+                <a href="<?= url('/daftar') ?>" class="fw-bold" style="color:var(--blue-main)">Daftar Sekarang</a>
               </p>
             </form>
           </div>

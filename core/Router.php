@@ -1,32 +1,36 @@
 <?php
 /**
- * Router - Simple MVC Router
+ * Router — Query String based
+ * Tidak butuh mod_rewrite / .htaccess
+ * URL: index.php?page=login&id=5
  */
 class Router
 {
     private array $routes = [];
 
-    public function get(string $pattern, string $controller, string $method): void
+    public function get(string $pattern, string $ctrl, string $action): void
     {
-        $this->routes['GET'][$pattern] = [$controller, $method];
+        $this->routes['GET'][$pattern] = [$ctrl, $action];
     }
 
-    public function post(string $pattern, string $controller, string $method): void
+    public function post(string $pattern, string $ctrl, string $action): void
     {
-        $this->routes['POST'][$pattern] = [$controller, $method];
+        $this->routes['POST'][$pattern] = [$ctrl, $action];
     }
 
     public function dispatch(): void
     {
         $method = $_SERVER['REQUEST_METHOD'];
-        $uri    = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
-        $base   = parse_url(BASE_URL, PHP_URL_PATH) ?? '';
-        $uri    = rtrim(str_replace($base, '', $uri), '/') ?: '/';
+
+        // Ambil path dari query string ?page=xxx/yyy
+        $page = trim($_GET['page'] ?? '', '/');
+        $uri  = '/' . $page;
+        if ($uri === '/') $uri = '/';
 
         $routes = $this->routes[$method] ?? [];
 
         foreach ($routes as $pattern => [$ctrl, $action]) {
-            $regex = '#^' . preg_replace('/\{(\w+)\}/', '(?P<$1>[^/]+)', $pattern) . '$#';
+            $regex  = '#^' . preg_replace('/\{(\w+)\}/', '(?P<$1>[^/]+)', $pattern) . '$#';
             if (preg_match($regex, $uri, $matches)) {
                 $params = array_filter($matches, 'is_string', ARRAY_FILTER_USE_KEY);
                 $this->run($ctrl, $action, $params);
@@ -34,21 +38,20 @@ class Router
             }
         }
 
+        // 404
         http_response_code(404);
         $this->run('ErrorController', 'notFound', []);
     }
 
     private function run(string $ctrl, string $action, array $params): void
     {
-        // Semua file sudah di-load di index.php via require_once
-        // Cukup load controller files di sini (require_once aman dari double-load)
-        $ctrlFiles = [
+        $files = [
             APP_PATH . '/controllers/BaseController.php',
             APP_PATH . '/controllers/PendaftaranController.php',
             APP_PATH . '/controllers/AdminController.php',
             APP_PATH . '/controllers/ExtraControllers.php',
         ];
-        foreach ($ctrlFiles as $f) {
+        foreach ($files as $f) {
             if (file_exists($f)) require_once $f;
         }
 
@@ -56,7 +59,6 @@ class Router
             http_response_code(500);
             die("Controller [{$ctrl}] tidak ditemukan.");
         }
-
         $obj = new $ctrl();
         if (!method_exists($obj, $action)) {
             http_response_code(404);

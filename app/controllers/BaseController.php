@@ -42,7 +42,15 @@ class Controller
 
     protected function redirect(string $path, bool $absolute = false): void
     {
-        $url = $absolute ? $path : BASE_URL . $path;
+        if ($absolute) {
+            $url = $path;
+        } elseif ($path === '/' || $path === '') {
+            $url = BASE_URL . '/index.php';
+        } else {
+            // Konversi /login → index.php?page=login
+            $page = ltrim($path, '/');
+            $url  = BASE_URL . '/index.php?page=' . $page;
+        }
         header('Location: ' . $url);
         exit;
     }

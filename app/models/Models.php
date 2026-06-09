@@ -158,7 +158,7 @@ class PendaftarModel extends Model
         $stmt = $this->db->prepare(
             "SELECT p.*, u.email, u.username,
                     ta.kode AS ta_kode, ta.nama AS ta_nama,
-                    ps.nama_prodi AS prodi_nama, ps.jenjang, ps.gelar, ps.fakultas,
+                    ps.nama_prodi, ps.jenjang, ps.gelar, ps.fakultas,
                     u2.nama AS verifikator_nama
              FROM pendaftar p
              JOIN users u ON u.id = p.user_id
@@ -175,7 +175,7 @@ class PendaftarModel extends Model
     {
         $stmt = $this->db->prepare(
             "SELECT p.*, ta.kode AS ta_kode, ta.nama AS ta_nama,
-                    ps.nama_prodi AS prodi_nama, ps.jenjang, ps.gelar, ps.fakultas
+                    ps.nama_prodi, ps.jenjang, ps.gelar, ps.fakultas
              FROM pendaftar p
              JOIN tahun_akademik ta ON ta.id = p.tahun_akademik_id
              JOIN program_studi ps ON ps.id = p.program_studi_id
@@ -190,7 +190,7 @@ class PendaftarModel extends Model
     public function getByNomor(string $nomor): ?array
     {
         $stmt = $this->db->prepare(
-            "SELECT p.*, ta.kode AS ta_kode, ps.nama_prodi AS prodi_nama,
+            "SELECT p.*, ta.kode AS ta_kode, ps.nama_prodi,
                     ps.jenjang, ps.gelar, ps.fakultas
              FROM pendaftar p
              JOIN tahun_akademik ta ON ta.id = p.tahun_akademik_id
@@ -224,7 +224,7 @@ class PendaftarModel extends Model
             $params[] = $q; $params[] = $q; $params[] = $q;
         }
 
-        $sql = "SELECT p.*, ta.kode AS ta_kode, ps.nama_prodi AS prodi_nama, ps.jenjang
+        $sql = "SELECT p.*, ta.kode AS ta_kode, ps.nama_prodi, ps.jenjang
                 FROM pendaftar p
                 JOIN tahun_akademik ta ON ta.id = p.tahun_akademik_id
                 JOIN program_studi ps ON ps.id = p.program_studi_id
@@ -255,8 +255,10 @@ class PendaftarModel extends Model
     public function getPerProdi(int $tahunAkademikId): array
     {
         $stmt = $this->db->prepare(
-            "SELECT ps.nama_prodi, ps.jenjang, COUNT(p.id) AS total,
-                    SUM(p.status = 'diterima') AS diterima
+            "SELECT ps.nama_prodi, ps.jenjang, ps.fakultas AS nama_fakultas,
+                    COUNT(p.id) AS total,
+                    SUM(p.status = 'diterima') AS diterima,
+                    SUM(p.status = 'menunggu') AS menunggu
              FROM pendaftar p
              JOIN program_studi ps ON ps.id = p.program_studi_id
              WHERE p.tahun_akademik_id = ?
@@ -395,6 +397,24 @@ class ProdiModel extends Model
         return $stmt->fetchAll();
     }
 
+    /** Ambil prodi aktif + biaya dari TA aktif, untuk form pendaftaran */
+    public function getAktifWithBiaya(int $tahunAkademikId): array
+    {
+        $stmt = $this->db->prepare(
+            "SELECT ps.*, ps.fakultas AS nama_fakultas,
+                    COALESCE(b.biaya_pendaftaran, 0) AS biaya_pendaftaran,
+                    COALESCE(b.biaya_spp, 0) AS biaya_spp,
+                    COALESCE(b.biaya_pendidikan, 0) AS biaya_pendidikan,
+                    COALESCE(b.keterangan, '') AS keterangan_biaya
+             FROM `program_studi` ps
+             LEFT JOIN `biaya` b ON b.program_studi_id = ps.id AND b.tahun_akademik_id = ?
+             WHERE ps.`is_aktif` = 1
+             ORDER BY ps.`urutan`, ps.`jenjang`"
+        );
+        $stmt->execute([$tahunAkademikId]);
+        return $stmt->fetchAll();
+    }
+
     public function getGrouped(): array
     {
         $rows   = $this->getAktif();
@@ -419,7 +439,7 @@ class BiayaModel extends Model
     public function getByTA(int $tahunAkademikId): array
     {
         $stmt = $this->db->prepare(
-            "SELECT b.*, ps.nama_prodi AS prodi_nama, ps.jenjang, ps.fakultas AS nama_fakultas
+            "SELECT b.*, ps.nama_prodi, ps.jenjang, ps.fakultas AS nama_fakultas
              FROM `biaya` b
              LEFT JOIN `program_studi` ps ON ps.id = b.program_studi_id
              WHERE b.tahun_akademik_id = ?

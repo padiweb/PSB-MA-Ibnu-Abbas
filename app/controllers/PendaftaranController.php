@@ -31,7 +31,7 @@ class PendaftaranController extends Controller
             $this->redirect('/');
         }
 
-        $prodiList  = $this->prodiModel->getAktif();
+        $prodiList  = $this->prodiModel->getAktifWithBiaya($tahunAktif['id']);
         $biayaList  = $this->biayaModel->getByTA($tahunAktif['id']);
 
         $this->view('public/daftar', [
