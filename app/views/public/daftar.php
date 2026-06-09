@@ -98,6 +98,15 @@ $tahunAktif = $tahun_aktif ?? null;
                   </div>
                   <div class="form-text text-muted" style="font-size:.75rem">Format: 08xx-xxxx-xxxx (8–16 digit)</div>
                 </div>
+                <div class="col-md-6">
+                  <label class="form-label fw-600 small required">Email Aktif</label>
+                  <div class="input-group">
+                    <span class="input-group-text"><i class="bi bi-envelope"></i></span>
+                    <input type="email" name="email" class="form-control" required
+                           placeholder="contoh@gmail.com">
+                  </div>
+                  <div class="form-text text-muted" style="font-size:.75rem">Digunakan untuk login & lupa password</div>
+                </div>
                 <div class="col-12">
                   <label class="form-label fw-600 small required">Nama Ibu Kandung</label>
                   <input type="text" name="nama_ibu_kandung" class="form-control" required placeholder="Nama ibu kandung">
@@ -682,7 +691,9 @@ function buildReview() {
           <div class="d-flex justify-content-between"><span class="text-muted">TTL</span><span>${fd.get('tempat_lahir')||''}, ${fd.get('tanggal_lahir')||''}</span></div>
           <div class="d-flex justify-content-between"><span class="text-muted">Jenis Kelamin</span><span>${fd.get('jenis_kelamin')==='L'?'Laki-laki':'Perempuan'}</span></div>
           <div class="d-flex justify-content-between"><span class="text-muted">No. HP</span><span>${fd.get('nomor_hp')||'-'}</span></div>
+          <div class="d-flex justify-content-between"><span class="text-muted">Email</span><span>${fd.get('email')||'-'}</span></div>
           <div class="d-flex justify-content-between"><span class="text-muted">Nama Ibu</span><span>${fd.get('nama_ibu_kandung')||'-'}</span></div>
+          <div class="d-flex flex-column gap-1"><span class="text-muted">Alamat</span><span style="font-size:.82rem">${fd.get('alamat')||'-'}</span></div>
         </div>
       </div>
     </div>
@@ -733,10 +744,10 @@ function submitForm() {
               Simpan nomor ini. Gunakan untuk login ke dashboard pendaftar.
             </p>
             <div class="d-flex gap-3 justify-content-center flex-wrap">
-              <a href="${BASE_URL}/daftar/sukses/${encodeURIComponent(nomor)}" class="btn-primary-gold">
+              <a href="${BASE_URL}/index.php?page=daftar/sukses/${encodeURIComponent(nomor)}" class="btn-primary-gold">
                 <i class="bi bi-eye me-1"></i> Lihat Status Pendaftaran
               </a>
-              <a href="${BASE_URL}/login" class="btn btn-outline-secondary rounded-pill px-4">
+              <a href="${BASE_URL}/index.php?page=login" class="btn btn-outline-secondary rounded-pill px-4">
                 <i class="bi bi-box-arrow-in-right me-1"></i> Login
               </a>
             </div>

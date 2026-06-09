@@ -11,7 +11,9 @@ if (!function_exists('url')) {
     {
         $path = ltrim(trim($path), '/');
         
-        // File statis (assets) — akses langsung, bukan lewat router
+        // File statis (assets) — akses langsung pakai BASE_URL
+        // BASE_URL sudah mengarah ke folder tempat index.php berada
+        // assets selalu ada di BASE_URL/assets/...
         if (preg_match('/\.(css|js|png|jpg|jpeg|gif|svg|ico|webp|woff|woff2|ttf)$/i', $path)) {
             return BASE_URL . '/' . $path;
         }

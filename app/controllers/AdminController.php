@@ -170,6 +170,112 @@ class AdminController extends Controller
         $this->redirect('/admin/pendaftar');
     }
 
+    /** GET /admin/pendaftar/{id}/edit */
+    public function editPendaftarForm(string $id): void
+    {
+        Auth::requireRole(['superadmin','admin']);
+        $pid      = Security::cleanInt($id);
+        $pm       = new PendaftarModel();
+        $pendaftar= $pm->getWithDetails($pid);
+        if (!$pendaftar) {
+            Session::flash('error', 'Data tidak ditemukan.');
+            $this->redirect('/admin/pendaftar');
+        }
+        $this->view('admin/edit-pendaftar', [
+            'layout'     => 'layouts/admin',
+            'page_title' => 'Edit Data Pendaftar',
+            'pendaftar'  => $pendaftar,
+            'prodi_list' => (new ProdiModel())->getAktif(),
+            'csrf'       => Security::generateCsrf(),
+        ]);
+    }
+
+    /** POST /admin/pendaftar/{id}/edit */
+    public function editPendaftarSave(string $id): void
+    {
+        Auth::requireRole(['superadmin','admin']);
+        $this->verifyCsrf();
+        $pid      = Security::cleanInt($id);
+        $pm       = new PendaftarModel();
+        $pendaftar= $pm->findById($pid);
+        if (!$pendaftar) {
+            Session::flash('error', 'Data tidak ditemukan.');
+            $this->redirect('/admin/pendaftar');
+        }
+
+        $data = [
+            'nama_lengkap'     => Security::cleanRaw($_POST['nama_lengkap']     ?? ''),
+            'tempat_lahir'     => Security::cleanRaw($_POST['tempat_lahir']     ?? ''),
+            'tanggal_lahir'    => Security::cleanRaw($_POST['tanggal_lahir']    ?? ''),
+            'jenis_kelamin'    => Security::cleanRaw($_POST['jenis_kelamin']    ?? ''),
+            'nomor_hp'         => preg_replace('/[^0-9+]/', '', $_POST['nomor_hp'] ?? ''),
+            'alamat'           => Security::cleanRaw($_POST['alamat']           ?? ''),
+            'nama_ibu_kandung' => Security::cleanRaw($_POST['nama_ibu_kandung'] ?? ''),
+            'program_studi_id' => Security::cleanInt($_POST['program_studi_id'] ?? 0),
+            'status'           => Security::cleanRaw($_POST['status']           ?? ''),
+        ];
+
+        // Update email jika diisi
+        $newEmail = trim(strtolower(Security::cleanRaw($_POST['email'] ?? '')));
+        if ($newEmail) {
+            (new UserModel())->update($pendaftar['user_id'], ['email' => $newEmail]);
+        }
+
+        $pm->update($pid, $data);
+        AuditLog::log('ADMIN_EDIT', 'pendaftar', $pid);
+        Session::flash('success', 'Data pendaftar berhasil diperbarui.');
+        $this->redirect('/admin/pendaftar/' . $pid);
+    }
+
+    /** POST /admin/pendaftar/{id}/hapus */
+    public function hapusPendaftar(string $id): void
+    {
+        Auth::requireRole(['superadmin','admin']);
+        $this->verifyCsrf();
+        $pid = Security::cleanInt($id);
+        $pm  = new PendaftarModel();
+        $p   = $pm->findById($pid);
+        if (!$p) {
+            Session::flash('error', 'Data pendaftar tidak ditemukan.');
+            $this->redirect('/admin/pendaftar');
+        }
+        // Hapus dokumen terkait dari storage
+        $docs = (new DokumenModel())->getByPendaftar($pid);
+        foreach ($docs as $doc) {
+            $path = STORAGE_PATH . '/uploads/' . $doc['path_file'];
+            if (file_exists($path)) @unlink($path);
+        }
+        // Hapus pendaftar (cascade ke dokumen & log via FK)
+        $pm->delete($pid);
+        AuditLog::log('HAPUS', 'pendaftar', $pid);
+        Session::flash('success', 'Data pendaftar berhasil dihapus.');
+        $this->redirect('/admin/pendaftar');
+    }
+
+    /** POST /admin/pendaftar/{id}/reset-pw */
+    public function resetPasswordPendaftar(string $id): void
+    {
+        Auth::requireRole(['superadmin','admin']);
+        $this->verifyCsrf();
+        $pid      = Security::cleanInt($id);
+        $pm       = new PendaftarModel();
+        $pendaftar= $pm->findById($pid);
+        if (!$pendaftar) {
+            $this->json(['success'=>false,'message'=>'Data tidak ditemukan.']);
+        }
+        $newPw    = Security::cleanRaw($_POST['new_password'] ?? '');
+        if (strlen($newPw) < 6) {
+            Session::flash('error', 'Password minimal 6 karakter.');
+            $this->redirect('/admin/pendaftar/' . $pid);
+        }
+        (new UserModel())->update($pendaftar['user_id'], [
+            'password_hash' => Security::hashPassword($newPw)
+        ]);
+        AuditLog::log('RESET_PASSWORD', 'pendaftar', $pid);
+        Session::flash('success', 'Password berhasil direset.');
+        $this->redirect('/admin/pendaftar/' . $pid);
+    }
+
     public function cetakPendaftar(string $id): void
     {
         $pendaftar = (new PendaftarModel())->getWithDetails(Security::cleanInt($id));

@@ -41,7 +41,9 @@ define('CONFIG_PATH',  ROOT_PATH . '/config');
 define('STORAGE_PATH', ROOT_PATH . '/storage');
 define('UPLOAD_PATH',  STORAGE_PATH . '/uploads');
 define('LOG_PATH',     STORAGE_PATH . '/logs');
-define('PUBLIC_PATH',  ROOT_PATH . '/public');
+// PUBLIC_PATH selalu ROOT_PATH/public
+// (index.php di public/ → ROOT_PATH = parent folder, PUBLIC_PATH = ROOT_PATH/public)
+define('PUBLIC_PATH', ROOT_PATH . '/public');
 
 // ── Database ────────────────────────────────────────────────────
 define('DB_HOST',    getenv('DB_HOST')    ?: 'localhost');

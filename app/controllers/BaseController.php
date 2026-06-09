@@ -85,6 +85,7 @@ class Controller
             'nama_ibu_kandung' => 'Nama ibu kandung',
             'program_studi_id' => 'Program studi',
             'password'         => 'Password',
+            'email'            => 'Email',
         ];
 
         $errors = [];
@@ -228,6 +229,66 @@ class AuthController extends Controller
     {
         Auth::logout();
         Session::flash('info', 'Anda telah keluar.');
+        $this->redirect('/login');
+    }
+
+    /** GET /lupa-password */
+    public function lupaPasswordForm(): void
+    {
+        if (Auth::check()) $this->redirect('/');
+        $this->view('auth/lupa-password', [
+            'page_title' => 'Lupa Password',
+            'csrf'       => Security::generateCsrf(),
+        ]);
+    }
+
+    /** POST /lupa-password */
+    public function lupaPassword(): void
+    {
+        $this->verifyCsrf();
+        $nomor   = strtoupper(trim(Security::cleanRaw($_POST['nomor_pendaftaran'] ?? '')));
+        $newPw   = Security::cleanRaw($_POST['new_password'] ?? '');
+        $confirm = Security::cleanRaw($_POST['confirm_password'] ?? '');
+
+        if (empty($nomor)) {
+            Session::flash('error', 'Nomor pendaftaran wajib diisi.');
+            $this->redirect('/lupa-password');
+        }
+        if (strlen($newPw) < 8) {
+            Session::flash('error', 'Password baru minimal 8 karakter.');
+            $this->redirect('/lupa-password');
+        }
+        if ($newPw !== $confirm) {
+            Session::flash('error', 'Konfirmasi password tidak cocok.');
+            $this->redirect('/lupa-password');
+        }
+
+        // Cari user via nomor pendaftaran ATAU email
+        $pm        = new PendaftarModel();
+        $userModel = new UserModel();
+        $pendaftar = $pm->findBy('nomor_pendaftaran', $nomor);
+        $user      = null;
+
+        if ($pendaftar) {
+            $user = $userModel->findById($pendaftar['user_id']);
+        } else {
+            // Coba cari via email
+            $user = $userModel->findByUsernameOrEmail($nomor);
+            if ($user) {
+                $pendaftar = $pm->findBy('user_id', $user['id']);
+            }
+        }
+
+        if (!$pendaftar || !$user) {
+            Session::flash('error', 'Nomor pendaftaran atau email tidak ditemukan.');
+            $this->redirect('/lupa-password');
+        }
+
+        $userModel->update($user['id'], [
+            'password_hash' => Security::hashPassword($newPw)
+        ]);
+
+        Session::flash('success', 'Password berhasil diubah. Silakan login.');
         $this->redirect('/login');
     }
 }

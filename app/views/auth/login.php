@@ -11,16 +11,16 @@
           </div>
           <div class="card-body p-4">
             <h5 class="fw-bold mb-1 text-center" style="color:var(--blue-main)">Masuk ke Akun</h5>
-            <p class="text-muted text-center small mb-4">Gunakan Nomor Pendaftaran atau Email</p>
+            <p class="text-muted text-center small mb-4">Gunakan Email atau Nomor Pendaftaran</p>
 
             <form id="loginForm" method="POST" action="<?= url('/login') ?>" novalidate>
-              <input type="hidden" name="_token" value="<?= Security::clean($csrf) ?>">
+              <input type="hidden" name="_token" value="<?= Security::generateCsrf() ?>">
 
               <div class="mb-3">
-                <label class="form-label">Nomor Pendaftaran / Email</label>
+                <label class="form-label">Email / Nomor Pendaftaran</label>
                 <div class="input-group">
                   <span class="input-group-text bg-light border-end-0"><i class="bi bi-person text-muted"></i></span>
-                  <input type="text" name="credential" class="form-control border-start-0 ps-0" placeholder="PMB-2026-000001 atau email" required>
+                  <input type="text" name="credential" class="form-control border-start-0 ps-0" placeholder="email@gmail.com atau PMB-2026-000001" required>
                 </div>
               </div>
 
@@ -39,6 +39,12 @@
                 <i class="bi bi-box-arrow-in-right me-2"></i> Masuk
               </button>
 
+              <div class="text-end mb-3" style="margin-top:-8px">
+                <a href="<?= url('/lupa-password') ?>" class="small" style="color:var(--blue-main)">
+                  <i class="bi bi-key me-1"></i>Lupa password?
+                </a>
+              </div>
+
               <hr>
               <p class="text-center small mb-0 text-muted">
                 Belum mendaftar?
@@ -55,16 +61,16 @@
   </div>
 </section>
 
-<?php $extra_scripts = '<script>
+<script>
 function togglePassword() {
-  const inp  = document.getElementById("passwordInput");
-  const icon = document.getElementById("toggleIcon");
-  if (inp.type === "password") { inp.type = "text"; icon.className = "bi bi-eye-slash"; }
-  else { inp.type = "password"; icon.className = "bi bi-eye"; }
+  const inp  = document.getElementById('passwordInput');
+  const icon = document.getElementById('toggleIcon');
+  if (inp.type === 'password') { inp.type = 'text'; icon.className = 'bi bi-eye-slash'; }
+  else { inp.type = 'password'; icon.className = 'bi bi-eye'; }
 }
-document.getElementById("loginForm").addEventListener("submit", function(e) {
-  const btn = document.getElementById("btnLogin");
-  btn.innerHTML = \'<span class="loading-spinner me-2"></span> Memproses...\';
+document.getElementById('loginForm').addEventListener('submit', function() {
+  const btn = document.getElementById('btnLogin');
+  btn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span> Memproses...';
   btn.disabled = true;
 });
-</script>'; ?>
+</script>

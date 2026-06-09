@@ -2,7 +2,7 @@
 // views/pendaftar/dashboard.php
 $p    = $pendaftar ?? [];
 $docs = $dokumen ?? [];
-$logs = $verifikasi_log ?? [];
+$logs = $riwayat ?? $verifikasi_log ?? [];
 
 $statusColors = [
     'menunggu' => ['bg'=>'#fff7ed','border'=>'#fed7aa','text'=>'#c2410c','icon'=>'bi-hourglass-split','label'=>'Menunggu Verifikasi'],
@@ -24,6 +24,11 @@ $st = $statusColors[$p['status'] ?? 'menunggu'];
             <a href="<?= url('/pendaftar/cetak/' . $p['id']) ?>" target="_blank" class="btn btn-sm btn-outline-primary" style="font-size:.78rem;">
                 <i class="bi bi-printer me-1"></i> Cetak Bukti
             </a>
+            <?php if (in_array($p['status'] ?? '', ['draft','menunggu','revisi'])): ?>
+            <a href="<?= url('/pendaftar/edit') ?>" class="btn btn-sm btn-outline-warning" style="font-size:.78rem;">
+                <i class="bi bi-pencil-square me-1"></i> Edit Data
+            </a>
+            <?php endif; ?>
             <a href="<?= url('/logout') ?>" class="btn btn-sm btn-outline-danger" style="font-size:.78rem;">
                 <i class="bi bi-power me-1"></i> Keluar
             </a>
@@ -68,26 +73,40 @@ $st = $statusColors[$p['status'] ?? 'menunggu'];
 
             <!-- DATA RINGKASAN -->
             <div class="row g-3 mb-4">
-                <div class="col-md-6">
-                    <div class="card border-0 rounded-3 h-100" style="box-shadow:0 2px 12px rgba(0,0,0,.06);">
+                <div class="col-12">
+                    <div class="card border-0 rounded-3" style="box-shadow:0 2px 12px rgba(0,0,0,.06);">
                         <div class="card-body p-4">
                             <h6 class="fw-700 mb-3" style="color:var(--primary);">
-                                <i class="bi bi-person-vcard me-2"></i>Data Diri
+                                <i class="bi bi-person-vcard me-2"></i>Data Diri Lengkap
                             </h6>
-                            <?php $fields = [
-                                ['Nama Lengkap', $p['nama_lengkap'] ?? ''],
-                                ['Tempat, Tgl Lahir', ($p['tempat_lahir'] ?? '').', '.($p['tanggal_lahir'] ? date('d M Y', strtotime($p['tanggal_lahir'])) : '')],
-                                ['Nomor HP', $p['nomor_hp'] ?? ''],
-                                ['Nama Ibu Kandung', $p['nama_ibu_kandung'] ?? ''],
-                            ]; foreach ($fields as [$lbl, $val]): ?>
-                            <div class="d-flex py-2 border-bottom" style="font-size:.83rem;">
-                                <span class="text-muted" style="width:140px;flex-shrink:0;"><?= $lbl ?></span>
-                                <span class="fw-500"><?= htmlspecialchars($val ?: '-') ?></span>
+                            <div class="row g-0">
+                                <?php
+                                $jk = ($p['jenis_kelamin'] ?? '') === 'L' ? 'Laki-laki' : (($p['jenis_kelamin'] ?? '') === 'P' ? 'Perempuan' : '-');
+                                $allFields = [
+                                    ['Nama Lengkap',     $p['nama_lengkap']      ?? ''],
+                                    ['Nomor Pendaftaran',$p['nomor_pendaftaran'] ?? ''],
+                                    ['Tempat Lahir',     $p['tempat_lahir']      ?? ''],
+                                    ['Tanggal Lahir',    $p['tanggal_lahir'] ? date('d F Y', strtotime($p['tanggal_lahir'])) : ''],
+                                    ['Jenis Kelamin',    $jk],
+                                    ['Nomor HP',         $p['nomor_hp']          ?? ''],
+                                    ['Email',            $p['email']             ?? ''],
+                                    ['Nama Ibu Kandung', $p['nama_ibu_kandung']  ?? ''],
+                                    ['Alamat KTP',       $p['alamat']            ?? ''],
+                                ];
+                                foreach ($allFields as [$lbl, $val]):
+                                ?>
+                                <div class="col-md-6">
+                                    <div class="d-flex py-2 border-bottom" style="font-size:.83rem;">
+                                        <span class="text-muted" style="min-width:145px;flex-shrink:0;font-size:.78rem;"><?= $lbl ?></span>
+                                        <span class="fw-500"><?= htmlspecialchars($val ?: '-') ?></span>
+                                    </div>
+                                </div>
+                                <?php endforeach; ?>
                             </div>
-                            <?php endforeach; ?>
                         </div>
                     </div>
                 </div>
+
                 <div class="col-md-6">
                     <div class="card border-0 rounded-3 h-100" style="box-shadow:0 2px 12px rgba(0,0,0,.06);">
                         <div class="card-body p-4">
@@ -99,14 +118,50 @@ $st = $statusColors[$p['status'] ?? 'menunggu'];
                                 <span class="fw-700"><?= htmlspecialchars($p['nama_prodi'] ?? '-') ?></span>
                             </div>
                             <div class="py-2 border-bottom" style="font-size:.83rem;">
+                                <span class="text-muted d-block" style="font-size:.72rem;">Fakultas</span>
+                                <span class="fw-500"><?= htmlspecialchars($p['fakultas'] ?? '-') ?></span>
+                            </div>
+                            <div class="py-2 border-bottom" style="font-size:.83rem;">
                                 <span class="text-muted d-block" style="font-size:.72rem;">Jenjang</span>
                                 <span class="badge <?= ($p['jenjang'] ?? '') === 'S2' ? 'bg-warning text-dark' : 'bg-primary' ?>">
                                     <?= htmlspecialchars($p['jenjang'] ?? '') ?>
                                 </span>
                             </div>
+                            <div class="py-2 border-bottom" style="font-size:.83rem;">
+                                <span class="text-muted d-block" style="font-size:.72rem;">Gelar</span>
+                                <span class="fw-500"><?= htmlspecialchars($p['gelar'] ?? '-') ?></span>
+                            </div>
                             <div class="py-2" style="font-size:.83rem;">
                                 <span class="text-muted d-block" style="font-size:.72rem;">Tahun Akademik</span>
-                                <span class="fw-500"><?= htmlspecialchars($p['ta_nama'] ?? $p['ta_kode'] ?? '-' ?? '-') ?></span>
+                                <span class="fw-500"><?= htmlspecialchars($p['ta_nama'] ?? $p['ta_kode'] ?? '-') ?></span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-6">
+                    <div class="card border-0 rounded-3 h-100" style="box-shadow:0 2px 12px rgba(0,0,0,.06);">
+                        <div class="card-body p-4">
+                            <h6 class="fw-700 mb-3" style="color:var(--primary);">
+                                <i class="bi bi-info-circle me-2"></i>Info Akun
+                            </h6>
+                            <div class="py-2 border-bottom" style="font-size:.83rem;">
+                                <span class="text-muted d-block" style="font-size:.72rem;">Nomor Pendaftaran</span>
+                                <code class="fw-700" style="color:var(--primary);font-size:.95rem;"><?= htmlspecialchars($p['nomor_pendaftaran'] ?? '-') ?></code>
+                            </div>
+                            <div class="py-2 border-bottom" style="font-size:.83rem;">
+                                <span class="text-muted d-block" style="font-size:.72rem;">Email Login</span>
+                                <span class="fw-500"><?= htmlspecialchars($p['email'] ?? '-') ?></span>
+                            </div>
+                            <div class="py-2 border-bottom" style="font-size:.83rem;">
+                                <span class="text-muted d-block" style="font-size:.72rem;">Tanggal Daftar</span>
+                                <span class="fw-500"><?= isset($p['created_at']) ? date('d M Y, H:i', strtotime($p['created_at'])) : '-' ?></span>
+                            </div>
+                            <div class="py-2" style="font-size:.83rem;">
+                                <span class="text-muted d-block" style="font-size:.72rem;">Status Pendaftaran</span>
+                                <span class="badge" style="background:<?= $st['bg'] ?? '#f1f5f9' ?>;color:<?= $st['text'] ?? '#64748b' ?>;border:1px solid <?= $st['border'] ?? '#e2e8f0' ?>;font-size:.75rem;">
+                                    <i class="bi <?= $st['icon'] ?? 'bi-circle' ?> me-1"></i><?= $st['label'] ?? ucfirst($p['status'] ?? '-') ?>
+                                </span>
                             </div>
                         </div>
                     </div>
@@ -213,15 +268,42 @@ $st = $statusColors[$p['status'] ?? 'menunggu'];
                     <h6 class="fw-700 mb-3" style="color:var(--primary);">
                         <i class="bi bi-clock-history me-2"></i>Riwayat Verifikasi
                     </h6>
-                    <?php foreach ($logs as $log): ?>
-                    <div class="d-flex gap-3 pb-3 mb-3 border-bottom" style="font-size:.82rem;">
-                        <div style="min-width:8px;width:8px;height:8px;border-radius:50%;background:var(--primary);margin-top:5px;flex-shrink:0;"></div>
-                        <div>
-                            <div class="fw-600">Status diubah ke <span class="text-primary"><?= ucfirst($log['status_sesudah']) ?></span></div>
-                            <?php if ($log['catatan']): ?>
-                            <div class="mt-1 text-muted"><?= htmlspecialchars($log['catatan']) ?></div>
+                    <?php
+                    $statusIcons = [
+                        'menunggu' => ['icon'=>'bi-hourglass-split','color'=>'#d97706','bg'=>'#fff7ed'],
+                        'diterima' => ['icon'=>'bi-check-circle-fill','color'=>'#16a34a','bg'=>'#f0fdf4'],
+                        'revisi'   => ['icon'=>'bi-pencil-square','color'=>'#2563eb','bg'=>'#eff6ff'],
+                        'ditolak'  => ['icon'=>'bi-x-circle-fill','color'=>'#dc2626','bg'=>'#fff5f5'],
+                    ];
+                    foreach ($logs as $i => $log):
+                        $si = $statusIcons[$log['status_sesudah'] ?? 'menunggu'] ?? $statusIcons['menunggu'];
+                    ?>
+                    <div class="d-flex gap-3 <?= $i < count($logs)-1 ? 'pb-3 mb-3 border-bottom' : '' ?>">
+                        <!-- Icon -->
+                        <div style="width:36px;height:36px;border-radius:50%;background:<?= $si['bg'] ?>;
+                                    display:flex;align-items:center;justify-content:center;flex-shrink:0;border:2px solid <?= $si['color'] ?>20;">
+                            <i class="bi <?= $si['icon'] ?>" style="color:<?= $si['color'] ?>;font-size:.9rem;"></i>
+                        </div>
+                        <div class="flex-fill">
+                            <div class="d-flex align-items-center gap-2 mb-1">
+                                <span class="fw-600" style="font-size:.83rem;">Status berubah menjadi</span>
+                                <span class="badge rounded-pill" style="background:<?= $si['bg'] ?>;color:<?= $si['color'] ?>;font-size:.7rem;border:1px solid <?= $si['color'] ?>40;">
+                                    <?= ucfirst($log['status_sesudah'] ?? '-') ?>
+                                </span>
+                            </div>
+                            <?php if (!empty($log['catatan'])): ?>
+                            <div class="p-2 rounded-2 mb-1" style="background:<?= $si['bg'] ?>;border-left:3px solid <?= $si['color'] ?>;font-size:.82rem;color:#374151;">
+                                <i class="bi bi-chat-quote me-1" style="color:<?= $si['color'] ?>"></i>
+                                <?= nl2br(htmlspecialchars($log['catatan'])) ?>
+                            </div>
                             <?php endif; ?>
-                            <div class="text-muted mt-1" style="font-size:.72rem;"><?= date('d M Y H:i', strtotime($log['created_at'])) ?></div>
+                            <div style="font-size:.72rem;color:#9ca3af;">
+                                <i class="bi bi-clock me-1"></i>
+                                <?= date('d M Y, H:i', strtotime($log['created_at'])) ?>
+                                <?php if (!empty($log['nama_verifikator'])): ?>
+                                · oleh <?= htmlspecialchars($log['nama_verifikator']) ?>
+                                <?php endif; ?>
+                            </div>
                         </div>
                     </div>
                     <?php endforeach; ?>

@@ -171,14 +171,30 @@ class PendaftarModel extends Model
         return $stmt->fetch() ?: null;
     }
 
+    /** Verifikasi identitas: nomor pendaftaran + tanggal lahir */
+    public function findByNomorAndTanggalLahir(string $nomor, string $tanggal): ?array
+    {
+        $stmt = $this->db->prepare(
+            "SELECT p.*, u.id AS user_id, u.password_hash
+             FROM pendaftar p
+             JOIN users u ON u.id = p.user_id
+             WHERE p.nomor_pendaftaran = ? AND p.tanggal_lahir = ?
+             LIMIT 1"
+        );
+        $stmt->execute([strtoupper(trim($nomor)), $tanggal]);
+        return $stmt->fetch() ?: null;
+    }
+
     public function getByUserId(int $userId): ?array
     {
         $stmt = $this->db->prepare(
             "SELECT p.*, ta.kode AS ta_kode, ta.nama AS ta_nama,
-                    ps.nama_prodi, ps.jenjang, ps.gelar, ps.fakultas
+                    ps.nama_prodi, ps.jenjang, ps.gelar, ps.fakultas,
+                    u.email, u.username
              FROM pendaftar p
              JOIN tahun_akademik ta ON ta.id = p.tahun_akademik_id
              JOIN program_studi ps ON ps.id = p.program_studi_id
+             JOIN users u ON u.id = p.user_id
              WHERE p.user_id = ?
              ORDER BY p.created_at DESC
              LIMIT 1"

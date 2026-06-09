@@ -520,6 +520,79 @@ class PendaftarController extends Controller
         }
     }
 
+    /** GET /pendaftar/edit */
+    public function editForm(): void
+    {
+        Auth::requireRole(['pendaftar']);
+        $this->pendaftarModel = new PendaftarModel();
+        $pendaftar = $this->pendaftarModel->getByUserId(Auth::id());
+        if (!$pendaftar) { $this->redirect('/login'); }
+
+        // Hanya boleh edit jika status draft, menunggu, atau revisi
+        if (!in_array($pendaftar['status'], ['draft','menunggu','revisi'])) {
+            Session::flash('error', 'Data tidak dapat diubah karena sudah diverifikasi.');
+            $this->redirect('/pendaftar');
+        }
+
+        $this->view('pendaftar/edit', [
+            'page_title' => 'Edit Data Pendaftaran',
+            'pendaftar'  => $pendaftar,
+            'csrf'       => Security::generateCsrf(),
+        ]);
+    }
+
+    /** POST /pendaftar/edit */
+    public function editSave(): void
+    {
+        Auth::requireRole(['pendaftar']);
+        $this->verifyCsrf();
+        $this->pendaftarModel = new PendaftarModel();
+        $pendaftar = $this->pendaftarModel->getByUserId(Auth::id());
+        if (!$pendaftar) { $this->redirect('/login'); }
+
+        if (!in_array($pendaftar['status'], ['draft','menunggu','revisi'])) {
+            Session::flash('error', 'Data tidak dapat diubah.');
+            $this->redirect('/pendaftar');
+        }
+
+        // Sanitasi & validasi
+        $data = [
+            'nama_lengkap'     => Security::cleanRaw($_POST['nama_lengkap']     ?? ''),
+            'tempat_lahir'     => Security::cleanRaw($_POST['tempat_lahir']     ?? ''),
+            'tanggal_lahir'    => Security::cleanRaw($_POST['tanggal_lahir']    ?? ''),
+            'jenis_kelamin'    => Security::cleanRaw($_POST['jenis_kelamin']    ?? ''),
+            'nomor_hp'         => preg_replace('/[^0-9+]/', '', $_POST['nomor_hp'] ?? ''),
+            'alamat'           => Security::cleanRaw($_POST['alamat']           ?? ''),
+            'nama_ibu_kandung' => Security::cleanRaw($_POST['nama_ibu_kandung'] ?? ''),
+        ];
+
+        $errors = $this->validate($data, [
+            'nama_lengkap'     => 'required|min:3',
+            'tempat_lahir'     => 'required|min:2',
+            'tanggal_lahir'    => 'required',
+            'jenis_kelamin'    => 'required',
+            'nomor_hp'         => 'required|min:8',
+            'alamat'           => 'required|min:5',
+            'nama_ibu_kandung' => 'required|min:3',
+        ]);
+
+        if ($errors) {
+            Session::flash('error', implode(' ', $errors));
+            $this->redirect('/pendaftar/edit');
+        }
+
+        // Update email juga jika diisi
+        $newEmail = trim(strtolower(Security::cleanRaw($_POST['email'] ?? '')));
+        if ($newEmail && filter_var($newEmail, FILTER_VALIDATE_EMAIL)) {
+            (new UserModel())->update($pendaftar['user_id'], ['email' => $newEmail]);
+        }
+
+        $this->pendaftarModel->update($pendaftar['id'], $data);
+        AuditLog::log('EDIT', 'pendaftar', $pendaftar['id']);
+        Session::flash('success', 'Data berhasil diperbarui.');
+        $this->redirect('/pendaftar');
+    }
+
     /** Helper: CSRF check untuk endpoint JSON */
     private function verifyCsrfJson(): void
     {

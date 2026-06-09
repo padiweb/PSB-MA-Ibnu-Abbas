@@ -39,12 +39,15 @@ $statusColors  = ['menunggu'=>'warning','diterima'=>'success','revisi'=>'info','
                 <div class="p-4">
                     <div class="row g-3" style="font-size:.85rem;">
                         <?php $fields = [
-                            ['Nama Lengkap',    $p['nama_lengkap'] ?? ''],
-                            ['Tempat Lahir',     $p['tempat_lahir'] ?? ''],
-                            ['Tanggal Lahir',    $p['tanggal_lahir'] ? date('d F Y', strtotime($p['tanggal_lahir'])) : ''],
-                            ['Nomor HP',         $p['nomor_hp'] ?? ''],
-                            ['Nama Ibu Kandung', $p['nama_ibu_kandung'] ?? ''],
-                            ['Alamat KTP',       $p['alamat'] ?? ''],
+                            ['Nama Lengkap',      $p['nama_lengkap'] ?? ''],
+                            ['Nomor Pendaftaran', $p['nomor_pendaftaran'] ?? ''],
+                            ['Tempat Lahir',      $p['tempat_lahir'] ?? ''],
+                            ['Tanggal Lahir',     $p['tanggal_lahir'] ? date('d F Y', strtotime($p['tanggal_lahir'])) : ''],
+                            ['Jenis Kelamin',     ($p['jenis_kelamin'] ?? '') === 'L' ? 'Laki-laki' : (($p['jenis_kelamin'] ?? '') === 'P' ? 'Perempuan' : '-')],
+                            ['Nomor HP',          $p['nomor_hp'] ?? ''],
+                            ['Email',             $p['email'] ?? ''],
+                            ['Nama Ibu Kandung',  $p['nama_ibu_kandung'] ?? ''],
+                            ['Alamat KTP',        $p['alamat'] ?? ''],
                         ]; foreach ($fields as [$lbl, $val]): ?>
                         <div class="col-md-6">
                             <div class="text-muted" style="font-size:.72rem;font-weight:600;text-transform:uppercase;letter-spacing:.04em;"><?= $lbl ?></div>
@@ -246,7 +249,7 @@ $statusColors  = ['menunggu'=>'warning','diterima'=>'success','revisi'=>'info','
                     </div>
                 </div>
 
-                <?php if (in_array(Session::get('role'), ['superadmin','admin','verifikator'])): ?>
+                <?php if (in_array(Auth::role(), ['superadmin','admin','verifikator'])): ?>
                 <div class="p-4">
                     <p class="text-muted mb-3" style="font-size:.78rem;">
                         <i class="bi bi-info-circle me-1"></i>
@@ -296,6 +299,27 @@ $statusColors  = ['menunggu'=>'warning','diterima'=>'success','revisi'=>'info','
                         <button type="submit" class="btn w-100 rounded-3" style="background:var(--primary);color:#fff;font-size:.85rem;padding:.65rem;">
                             <i class="bi bi-check2-circle me-2"></i>Simpan Verifikasi
                         </button>
+                    </form>
+
+                    <hr class="my-3">
+
+                    <!-- Reset Password -->
+                    <form method="POST" action="<?= url('/admin/pendaftar/' . $p['id'] . '/reset-pw') ?>" id="resetPwForm">
+                        <input type="hidden" name="csrf_token" value="<?= Security::generateCsrf() ?>">
+                        <label class="form-label fw-600 mb-1" style="font-size:.78rem;">Reset Password Pendaftar</label>
+                        <div class="input-group input-group-sm">
+                            <input type="password" name="new_password" id="adminResetPw" class="form-control" 
+                                   placeholder="Password baru (min. 6 karakter)" minlength="6" required>
+                            <button type="button" class="btn btn-outline-secondary" 
+                                    onclick="const i=document.getElementById('adminResetPw');i.type=i.type==='password'?'text':'password'">
+                                <i class="bi bi-eye"></i>
+                            </button>
+                            <button type="submit" class="btn btn-outline-warning"
+                                    onclick="return confirm('Reset password pendaftar ini?')">
+                                <i class="bi bi-key me-1"></i>Reset
+                            </button>
+                        </div>
+                        <div style="font-size:.7rem;color:#94a3b8;margin-top:4px;">Gunakan jika pendaftar lupa password.</div>
                     </form>
                 </div>
                 <?php endif; ?>

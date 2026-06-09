@@ -188,7 +188,7 @@
         <a href="<?= url('/admin/pengaturan') ?>" class="sidebar-link <?= strpos($uri,'/admin/pengaturan') === 0 ? 'active' : '' ?>">
             <i class="bi bi-gear"></i> Pengaturan CMS
         </a>
-        <?php if (Session::get('role') === 'superadmin'): ?>
+        <?php if (Auth::role() === 'superadmin'): ?>
         <a href="<?= url('/admin/users') ?>" class="sidebar-link <?= strpos($uri,'/admin/users') === 0 ? 'active' : '' ?>">
             <i class="bi bi-person-gear"></i> Manajemen User
         </a>
@@ -221,14 +221,14 @@
     <div class="d-flex align-items-center gap-3">
         <div class="d-none d-md-block text-end">
             <div style="font-size:.82rem; font-weight:600; color:var(--primary);">
-                <?= htmlspecialchars(Session::get('nama') ?? Session::get('username') ?? '') ?>
+                <?= htmlspecialchars(Auth::user()['nama'] ?? '') ?>
             </div>
             <div style="font-size:.72rem; color:#64748b; text-transform:uppercase;">
-                <?= htmlspecialchars(Session::get('role') ?? '') ?>
+                <?= htmlspecialchars(Auth::role() ?? '') ?>
             </div>
         </div>
         <div style="width:34px;height:34px;border-radius:50%;background:var(--primary);display:flex;align-items:center;justify-content:center;color:#fff;font-size:.8rem;font-weight:700;">
-            <?= strtoupper(substr(Session::get('nama') ?? Session::get('username') ?? 'A', 0, 1)) ?>
+            <?= strtoupper(substr(Auth::user()['nama'] ?? 'A', 0, 1)) ?>
         </div>
     </div>
 </header>

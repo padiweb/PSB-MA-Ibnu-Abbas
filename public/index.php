@@ -34,6 +34,8 @@ $router->get('/logout',                          'AuthController',          'log
 // ── Pendaftar ─────────────────────────────────────────────────────
 $router->get('/pendaftar',                       'PendaftarController',     'dashboard');
 $router->get('/pendaftar/berkas',                'PendaftarController',     'berkas');
+$router->get('/pendaftar/edit',                  'PendaftarController',     'editForm');
+$router->post('/pendaftar/edit',                 'PendaftarController',     'editSave');
 $router->post('/pendaftar/upload',               'PendaftarController',     'uploadDokumen');
 $router->get('/pendaftar/cetak/{id}',            'PendaftarController',     'cetak');
 
@@ -44,6 +46,14 @@ $router->get('/admin/pendaftar/{id}',            'AdminController',         'det
 $router->post('/admin/verifikasi/{id}',          'AdminController',         'verifikasi');
 $router->get('/admin/export',                    'AdminController',         'export');
 $router->get('/admin/pendaftar/{id}/cetak',      'AdminController',         'cetakPendaftar');
+$router->post('/admin/pendaftar/{id}/hapus',     'AdminController',         'hapusPendaftar');
+$router->get('/admin/pendaftar/{id}/edit',       'AdminController',         'editPendaftarForm');
+$router->post('/admin/pendaftar/{id}/edit',      'AdminController',         'editPendaftarSave');
+$router->post('/admin/pendaftar/{id}/reset-pw',  'AdminController',         'resetPasswordPendaftar');
+
+// Lupa password (publik)
+$router->get('/lupa-password',                   'AuthController',          'lupaPasswordForm');
+$router->post('/lupa-password',                  'AuthController',          'lupaPassword');
 $router->get('/admin/dokumen/{id}/download',     'AdminController',         'downloadDokumen');
 $router->get('/admin/api/statistik',             'AdminController',         'apiStatistik');
 $router->get('/admin/api/pendaftar',             'AdminController',         'apiPendaftar');

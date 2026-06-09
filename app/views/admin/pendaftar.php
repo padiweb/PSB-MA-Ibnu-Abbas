@@ -141,6 +141,11 @@ $statusLabels = [
                             <a href="<?= url('/admin/pendaftar/' . $p['id'] . '/cetak') ?>" class="btn btn-sm btn-outline-secondary" title="Cetak" style="padding:3px 8px;" target="_blank">
                                 <i class="bi bi-printer"></i>
                             </a>
+                            <button type="button" class="btn btn-sm btn-outline-danger" title="Hapus"
+                                    style="padding:3px 8px;"
+                                    onclick="hapusPendaftar(<?= $p['id'] ?>, '<?= htmlspecialchars($p['nama_lengkap'], ENT_QUOTES) ?>')">
+                                <i class="bi bi-trash"></i>
+                            </button>
                         </div>
                     </td>
                 </tr>
@@ -186,4 +191,19 @@ document.getElementById('searchInput').addEventListener('input', function() {
     clearTimeout(searchTimer);
     searchTimer = setTimeout(() => document.getElementById('filterForm').submit(), 500);
 });
+</script>
+
+<!-- Form hapus tersembunyi -->
+<form method="POST" id="formHapusPendaftar" style="display:none">
+    <input type="hidden" name="csrf_token" value="<?= Security::generateCsrf() ?>">
+    <input type="hidden" name="_method" value="POST">
+</form>
+
+<script>
+function hapusPendaftar(id, nama) {
+    if (!confirm('Hapus pendaftar berikut?\n\n' + nama + '\n\nSemua data dan dokumen akan dihapus permanen. Tindakan ini tidak bisa dibatalkan.')) return;
+    const form = document.getElementById('formHapusPendaftar');
+    form.action = '<?= BASE_URL ?>/index.php?page=admin/pendaftar/' + id + '/hapus';
+    form.submit();
+}
 </script>

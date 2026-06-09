@@ -72,6 +72,7 @@ class PendaftaranController extends Controller
             'tanggal_lahir'   => 'required',
             'jenis_kelamin'   => 'required',
             'nomor_hp'        => 'required|min:8|max:16',
+            'email'           => 'required|email',
             'alamat'          => 'required|min:5',
             'nama_ibu_kandung'=> 'required|min:3|max:150',
             'program_studi_id'=> 'required|numeric',
@@ -103,6 +104,7 @@ class PendaftaranController extends Controller
             // Buat user
             $userId = $this->userModel->insert([
                 'username'      => $nomorPendaftaran,
+                'email'         => !empty($input['email']) ? strtolower(trim($input['email'])) : null,
                 'password_hash' => Security::hashPassword($input['password']),
                 'role'          => 'pendaftar',
                 'nama'          => $input['nama_lengkap'],
@@ -283,7 +285,7 @@ class PendaftaranController extends Controller
     private function sanitizeInput(array $post): array
     {
         $fields = ['nama_lengkap','tempat_lahir','tanggal_lahir','jenis_kelamin',
-                   'nomor_hp','alamat','nama_ibu_kandung','program_studi_id',
+                   'nomor_hp','email','alamat','nama_ibu_kandung','program_studi_id',
                    'password','asal_universitas','tahun_lulus_s1','ipk_s1'];
         $out = [];
         foreach ($fields as $f) {
