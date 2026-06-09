@@ -106,63 +106,119 @@ $flashInfo    = Session::getFlash('info');
 </main>
 
 <!-- Footer -->
-<footer class="site-footer mt-5">
-  <div class="container">
-    <div class="row g-4 py-5">
-      <div class="col-lg-4">
-        <img src="<?= $logoSrc ?? url('/assets/images/logo.png') ?>" alt="Logo" height="56" class="mb-3" onerror="this.style.display='none'">
-        <h5 class="footer-brand"><?= Security::clean($settings['site_name'] ?? APP_NAME) ?></h5>
-        <p class="footer-tagline small"><?= Security::clean($settings['site_tagline'] ?? '') ?></p>
-        <?php if (!empty($settings['site_kerjasama'])): ?>
-        <p class="small text-muted"><?= Security::clean($settings['site_kerjasama']) ?></p>
-        <?php endif; ?>
-      </div>
-      <div class="col-lg-2 col-6">
-        <h6 class="footer-heading">Navigasi</h6>
-        <ul class="list-unstyled footer-links">
-          <li><a href="<?= BASE_URL ?>">Beranda</a></li>
-          <li><a href="<?= url('/') . '#program' ?>">Program Studi</a></li>
-          <li><a href="<?= url('/') . '#biaya' ?>">Biaya Pendidikan</a></li>
-          <li><a href="<?= url('/') . '#alur' ?>">Alur Pendaftaran</a></li>
-          <li><a href="<?= url('/') . '#faq' ?>">FAQ</a></li>
-        </ul>
-      </div>
-      <div class="col-lg-3 col-6">
-        <h6 class="footer-heading">Pendaftaran</h6>
-        <ul class="list-unstyled footer-links">
-          <li><a href="<?= url('/daftar') ?>">Daftar Online</a></li>
-          <li><a href="<?= url('/login') ?>">Login Pendaftar</a></li>
-          <li><a href="<?= url('/') . '#persyaratan' ?>">Persyaratan</a></li>
-        </ul>
-      </div>
-      <div class="col-lg-3">
-        <h6 class="footer-heading">Kontak</h6>
-        <ul class="list-unstyled footer-contact">
-          <?php if (!empty($settings['site_phone'])): ?>
-          <li><i class="bi bi-whatsapp me-2"></i><a href="https://wa.me/<?= preg_replace('/[^0-9]/','',$settings['site_phone']) ?>"><?= Security::clean($settings['site_phone']) ?></a></li>
+<footer class="site-footer">
+  <!-- Footer Top -->
+  <div style="background:var(--blue-dark);padding:3.5rem 0 2.5rem">
+    <div class="container">
+      <div class="row g-4">
+
+        <!-- Brand -->
+        <div class="col-lg-4 col-md-6">
+          <div class="d-flex align-items-center gap-3 mb-3">
+            <?php
+            $fLogoPath = $settings['logo_path'] ?? '';
+            $fLogoUrl  = $fLogoPath ? BASE_URL . $fLogoPath : '';
+            ?>
+            <?php if ($fLogoUrl): ?>
+            <img src="<?= htmlspecialchars($fLogoUrl) ?>" alt="Logo" height="52"
+                 style="object-fit:contain;border-radius:8px;background:rgba(255,255,255,.1);padding:4px"
+                 onerror="this.style.display='none'">
+            <?php endif; ?>
+            <div>
+              <h5 class="footer-brand mb-0"><?= Security::clean($settings['site_name'] ?? APP_NAME) ?></h5>
+              <?php if (!empty($settings['site_kerjasama'])): ?>
+              <p class="mb-0" style="font-size:.73rem;color:rgba(255,255,255,.45)"><?= Security::clean($settings['site_kerjasama']) ?></p>
+              <?php endif; ?>
+            </div>
+          </div>
+          <?php if (!empty($settings['site_tagline'])): ?>
+          <p class="footer-tagline small mb-3"><?= Security::clean($settings['site_tagline']) ?></p>
           <?php endif; ?>
-          <?php if (!empty($settings['site_website'])): ?>
-          <li><i class="bi bi-globe me-2"></i><a href="https://<?= Security::clean($settings['site_website']) ?>"><?= Security::clean($settings['site_website']) ?></a></li>
-          <?php endif; ?>
-          <?php if (!empty($settings['site_email'])): ?>
-          <li><i class="bi bi-envelope me-2"></i><a href="mailto:<?= Security::clean($settings['site_email']) ?>"><?= Security::clean($settings['site_email']) ?></a></li>
-          <?php endif; ?>
-          <?php if (!empty($settings['site_alamat'])): ?>
-          <li><i class="bi bi-geo-alt me-2"></i><?= Security::clean($settings['site_alamat']) ?></li>
-          <?php endif; ?>
-        </ul>
+          <!-- Sosmed placeholder -->
+          <div class="d-flex gap-2">
+            <?php if (!empty($settings['site_phone'])): ?>
+            <a href="https://wa.me/<?= preg_replace('/[^0-9]/','',$settings['site_phone']) ?>" target="_blank"
+               style="width:36px;height:36px;border-radius:8px;background:rgba(255,255,255,.1);display:flex;align-items:center;justify-content:center;color:rgba(255,255,255,.7);text-decoration:none;transition:.2s"
+               onmouseover="this.style.background='#25d366';this.style.color='#fff'"
+               onmouseout="this.style.background='rgba(255,255,255,.1)';this.style.color='rgba(255,255,255,.7)'">
+              <i class="bi bi-whatsapp"></i>
+            </a>
+            <?php endif; ?>
+          </div>
+        </div>
+
+        <!-- Navigasi -->
+        <div class="col-lg-2 col-md-3 col-6">
+          <h6 class="footer-heading">Navigasi</h6>
+          <ul class="list-unstyled footer-links">
+            <li><a href="<?= url('/') ?>"><i class="bi bi-chevron-right me-1" style="font-size:.65rem"></i>Beranda</a></li>
+            <li><a href="<?= url('/') . '#program' ?>"><i class="bi bi-chevron-right me-1" style="font-size:.65rem"></i>Program Studi</a></li>
+            <li><a href="<?= url('/') . '#biaya' ?>"><i class="bi bi-chevron-right me-1" style="font-size:.65rem"></i>Biaya</a></li>
+            <li><a href="<?= url('/') . '#alur' ?>"><i class="bi bi-chevron-right me-1" style="font-size:.65rem"></i>Alur Daftar</a></li>
+            <li><a href="<?= url('/') . '#faq' ?>"><i class="bi bi-chevron-right me-1" style="font-size:.65rem"></i>FAQ</a></li>
+          </ul>
+        </div>
+
+        <!-- Pendaftaran -->
+        <div class="col-lg-3 col-md-3 col-6">
+          <h6 class="footer-heading">Pendaftaran</h6>
+          <ul class="list-unstyled footer-links">
+            <li><a href="<?= url('/daftar') ?>"><i class="bi bi-chevron-right me-1" style="font-size:.65rem"></i>Daftar Online</a></li>
+            <li><a href="<?= url('/login') ?>"><i class="bi bi-chevron-right me-1" style="font-size:.65rem"></i>Login Pendaftar</a></li>
+            <li><a href="<?= url('/') . '#persyaratan' ?>"><i class="bi bi-chevron-right me-1" style="font-size:.65rem"></i>Persyaratan</a></li>
+          </ul>
+        </div>
+
+        <!-- Kontak -->
+        <div class="col-lg-3 col-md-6">
+          <h6 class="footer-heading">Hubungi Kami</h6>
+          <ul class="list-unstyled footer-contact">
+            <?php if (!empty($settings['site_phone'])): ?>
+            <li>
+              <i class="bi bi-whatsapp"></i>
+              <a href="https://wa.me/<?= preg_replace('/[^0-9]/','',$settings['site_phone']) ?>" target="_blank">
+                <?= Security::clean($settings['site_phone']) ?>
+              </a>
+            </li>
+            <?php endif; ?>
+            <?php if (!empty($settings['site_email'])): ?>
+            <li>
+              <i class="bi bi-envelope"></i>
+              <a href="mailto:<?= Security::clean($settings['site_email']) ?>"><?= Security::clean($settings['site_email']) ?></a>
+            </li>
+            <?php endif; ?>
+            <?php if (!empty($settings['site_website'])): ?>
+            <li>
+              <i class="bi bi-globe"></i>
+              <a href="https://<?= Security::clean($settings['site_website']) ?>" target="_blank"><?= Security::clean($settings['site_website']) ?></a>
+            </li>
+            <?php endif; ?>
+            <?php if (!empty($settings['site_alamat'])): ?>
+            <li>
+              <i class="bi bi-geo-alt"></i>
+              <span><?= Security::clean($settings['site_alamat']) ?></span>
+            </li>
+            <?php endif; ?>
+          </ul>
+        </div>
+
       </div>
     </div>
-    <div class="footer-bottom">
-      <div class="row align-items-center">
-        <div class="col-md-6">
+  </div>
+
+  <!-- Footer Bottom -->
+  <div class="footer-bottom">
+    <div class="container">
+      <div class="row align-items-center g-2">
+        <div class="col-md-6 text-center text-md-start">
           <p class="mb-0 small">&copy; <?= date('Y') ?> <?= Security::clean($settings['site_name'] ?? APP_NAME) ?>. Semua hak dilindungi.</p>
         </div>
-        <div class="col-md-6 text-md-end">
-          <p class="mb-0 small">Sistem PMB v<?= APP_VERSION ?></p>
+        <div class="col-md-6 text-center text-md-end">
+          <p class="mb-0 small" style="color:rgba(255,255,255,.3)">Sistem PMB v<?= APP_VERSION ?></p>
         </div>
       </div>
     </div>
+  </div>
   </div>
 </footer>
 

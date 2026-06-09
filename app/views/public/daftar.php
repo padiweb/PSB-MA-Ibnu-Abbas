@@ -5,7 +5,7 @@ $tahunAktif = $tahun_aktif ?? null;
 ?>
 
 <!-- HERO DAFTAR -->
-<section style="background:linear-gradient(135deg,var(--blue-dark) 0%,var(--blue-main) 50%,var(--blue-mid) 100%);padding:3.5rem 0 5rem;position:relative;overflow:hidden">
+<section style="background:linear-gradient(135deg,var(--blue-dark) 0%,var(--blue-main) 50%,var(--blue-mid) 100%);padding:3rem 0 2rem;position:relative;overflow:hidden">
   <div class="container text-center position-relative" style="z-index:2">
     <div class="d-inline-flex align-items-center gap-2 px-3 py-1 rounded-pill mb-3"
          style="background:rgba(201,162,39,.2);border:1px solid rgba(201,162,39,.4)">
@@ -18,12 +18,12 @@ $tahunAktif = $tahun_aktif ?? null;
       Formulir Pendaftaran Mahasiswa Baru
     </h1>
     <p class="mb-0" style="color:rgba(255,255,255,.7);font-size:.9rem">
-      Ma'had Aly Ibnu Abbas Karanganyar — Proses cepat & mudah
+      Ma'had Aly Ibnu Abbas Karanganyar — Proses cepat &amp; mudah
     </p>
   </div>
 </section>
 
-<div class="container" style="margin-top:-3rem;padding-bottom:4rem">
+<div class="container" style="margin-top:2rem;padding-bottom:4rem">
   <div class="row justify-content-center">
     <div class="col-lg-9 col-xl-8">
 
