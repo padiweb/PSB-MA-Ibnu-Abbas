@@ -38,7 +38,7 @@ $s = $settings ?? [];
                         <input type="file" name="logo" class="form-control form-control-sm" accept="image/*">
                         <?php if (!empty($s['logo_path'])): ?>
                         <div class="mt-2">
-                            <img src="<?= htmlspecialchars($s['logo_path']) ?>" alt="Logo" style="height:48px;" class="border rounded">
+                            <img src="<?= htmlspecialchars(BASE_URL . $s['logo_path']) ?>" alt="Logo" style="height:48px;" class="border rounded">
                             <div style="font-size:.72rem;color:#94a3b8;">Logo saat ini</div>
                         </div>
                         <?php endif; ?>

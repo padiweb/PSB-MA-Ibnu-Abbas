@@ -138,9 +138,17 @@
 <!-- SIDEBAR -->
 <nav id="adminSidebar">
     <a href="<?= url('/admin') ?>" class="sidebar-brand d-flex align-items-center gap-2">
-        <div class="sidebar-brand-icon">M</div>
+        <?php $logoPath = $settings['logo_path'] ?? ''; ?>
+        <?php if ($logoPath): ?>
+        <img src="<?= htmlspecialchars(BASE_URL . $logoPath) ?>"
+             alt="Logo" height="36" width="36"
+             style="object-fit:contain;border-radius:6px;background:#fff;padding:2px"
+             onerror="this.style.display='none'">
+        <?php else: ?>
+        <div class="sidebar-brand-icon"><?= strtoupper(substr($settings['site_name'] ?? 'M', 0, 1)) ?></div>
+        <?php endif; ?>
         <div>
-            <div class="sidebar-brand-text">Ma'had Aly Ibnu Abbas</div>
+            <div class="sidebar-brand-text"><?= Security::clean($settings['site_name'] ?? "Ma'had Aly Ibnu Abbas") ?></div>
             <div class="sidebar-brand-sub">Admin Panel PMB</div>
         </div>
     </a>

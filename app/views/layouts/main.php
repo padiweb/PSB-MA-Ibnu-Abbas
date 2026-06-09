@@ -18,8 +18,18 @@
 <!-- Navbar -->
 <nav class="navbar navbar-expand-lg navbar-main sticky-top" id="mainNav">
   <div class="container">
-    <a class="navbar-brand" href="<?= BASE_URL ?>">
-      <img src="<?= url('/assets/images/logo.png') ?>" alt="<?= Security::clean($settings['site_name'] ?? APP_NAME) ?>" height="48" onerror="this.style.display='none'">
+    <a class="navbar-brand" href="<?= url('/') ?>">
+      <?php
+      $logoPath = $settings['logo_path'] ?? '';
+      $logoUrl  = $logoPath ? BASE_URL . $logoPath : '';
+      ?>
+      <?php if ($logoUrl): ?>
+      <img src="<?= htmlspecialchars($logoUrl) ?>" 
+           alt="<?= Security::clean($settings['site_name'] ?? APP_NAME) ?>" 
+           height="44"
+           style="object-fit:contain;max-width:120px"
+           onerror="this.style.display='none'">
+      <?php endif; ?>
       <span class="brand-text"><?= Security::clean($settings['site_name'] ?? APP_NAME) ?></span>
     </a>
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navMain">
@@ -100,7 +110,7 @@ $flashInfo    = Session::getFlash('info');
   <div class="container">
     <div class="row g-4 py-5">
       <div class="col-lg-4">
-        <img src="<?= url('/assets/images/logo.png') ?>" alt="Logo" height="56" class="mb-3" onerror="this.style.display='none'">
+        <img src="<?= $logoSrc ?? url('/assets/images/logo.png') ?>" alt="Logo" height="56" class="mb-3" onerror="this.style.display='none'">
         <h5 class="footer-brand"><?= Security::clean($settings['site_name'] ?? APP_NAME) ?></h5>
         <p class="footer-tagline small"><?= Security::clean($settings['site_tagline'] ?? '') ?></p>
         <?php if (!empty($settings['site_kerjasama'])): ?>

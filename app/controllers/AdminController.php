@@ -472,17 +472,35 @@ class CmsController extends Controller
         $cms = new CmsModel();
         foreach ($_POST as $k => $v) {
             if (in_array($k, ['csrf_token', '_token'], true)) continue;
-            $cms->set(Security::cleanRaw($k), Security::cleanRaw($v));
+            $key = Security::cleanRaw((string)$k);
+            // Skip jika nilai berupa array (misal checkbox group, FAQ array)
+            if (is_array($v)) {
+                // Gabungkan array menjadi JSON atau string dipisah newline
+                $value = implode("\n", array_map('strip_tags', $v));
+            } else {
+                $value = Security::cleanRaw((string)$v);
+            }
+            $cms->set($key, $value);
         }
 
         if (!empty($_FILES['logo']) && $_FILES['logo']['error'] === UPLOAD_ERR_OK) {
-            $err = Security::validateUpload($_FILES['logo']);
-            if (empty($err)) {
-                $path = Security::saveUpload($_FILES['logo'], 'images');
-                $cms->set('logo_path', '/assets/images/' . basename($path));
-                $src  = UPLOAD_PATH . '/images/' . basename($path);
-                $dest = PUBLIC_PATH . '/assets/images/logo.' . pathinfo($path, PATHINFO_EXTENSION);
-                if (file_exists($src)) copy($src, $dest);
+            $file     = $_FILES['logo'];
+            $ext      = strtolower(pathinfo($file['name'], PATHINFO_EXTENSION));
+            $allowed  = ['png','jpg','jpeg','gif','svg','webp'];
+            if (in_array($ext, $allowed)) {
+                // Simpan langsung ke public/assets/images/logo.ext
+                $destDir  = PUBLIC_PATH . '/assets/images/';
+                if (!is_dir($destDir)) mkdir($destDir, 0755, true);
+                // Hapus logo lama
+                foreach (['png','jpg','jpeg','gif','svg','webp'] as $e) {
+                    $old = $destDir . 'logo.' . $e;
+                    if (file_exists($old)) @unlink($old);
+                }
+                $destFile = $destDir . 'logo.' . $ext;
+                if (move_uploaded_file($file['tmp_name'], $destFile)) {
+                    $logoPath = '/assets/images/logo.' . $ext;
+                    $cms->set('logo_path', $logoPath);
+                }
             }
         }
 
