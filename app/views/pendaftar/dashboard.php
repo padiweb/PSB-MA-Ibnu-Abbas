@@ -284,7 +284,7 @@ function closeSidebar() {
     &copy; <?= date('Y') ?> <?= htmlspecialchars($settings['site_name'] ?? APP_NAME) ?>
     &nbsp;&middot;&nbsp;
      
-    <a href="https://padiweb.com" target="_blank" 
+    <a href="https://wa.me/6282242362853" target="_blank" 
        style="color:#64748b;text-decoration:none;font-weight:600;"
        onmouseover="this.style.color='var(--primary)'"
        onmouseout="this.style.color='#64748b'">Padiweb Labs</a>

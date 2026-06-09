@@ -216,7 +216,7 @@ $flashInfo    = Session::getFlash('info');
         <div class="col-md-6 text-center text-md-end">
           <p class="mb-0 small" style="color:rgba(255,255,255,.35)">
             Sistem PMB v<?= APP_VERSION ?> &nbsp;&middot;&nbsp;
-             <a href="https://padiweb.com" target="_blank" 
+             <a href="https://wa.me/6282242853" target="_blank" 
                style="color:rgba(255,255,255,.55);text-decoration:none;font-weight:600;transition:.2s"
                onmouseover="this.style.color='var(--gold-light)'"
                onmouseout="this.style.color='rgba(255,255,255,.55)'">Padiweb Labs</a>
