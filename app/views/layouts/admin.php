@@ -294,7 +294,7 @@ function closeSidebar() {
     <div style="display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:.5rem;">
         <span>&copy; <?= date('Y') ?> <?= htmlspecialchars($settings['site_name'] ?? APP_NAME) ?></span>
         <span>
-            Developed by
+            
             <a href="https://padiweb.com" target="_blank"
                style="color:#64748b;text-decoration:none;font-weight:600;"
                onmouseover="this.style.color='var(--primary)'"
