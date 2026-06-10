@@ -525,12 +525,17 @@ class CmsModel extends Model
         return $result;
     }
 
-    public function set(string $key, string $value): void
+    public function set(string $key, string $value, string $label = '', string $group = 'umum'): void
     {
+        // label default: buat dari key_name jika kosong
+        if (!$label) {
+            $label = ucwords(str_replace(['_', '-'], ' ', $key));
+        }
         $this->db->prepare(
-            "INSERT INTO `cms_settings` (`key_name`,`value`) VALUES (?,?)
-             ON DUPLICATE KEY UPDATE `value`=?"
-        )->execute([$key, $value, $value]);
+            "INSERT INTO `cms_settings` (`key_name`,`value`,`label`,`group_name`)
+              VALUES (?,?,?,?)
+              ON DUPLICATE KEY UPDATE `value`=?"
+        )->execute([$key, $value, $label, $group, $value]);
     }
 
     public function getGrouped(): array

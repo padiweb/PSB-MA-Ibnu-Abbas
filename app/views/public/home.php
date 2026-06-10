@@ -10,8 +10,16 @@
           <?= $tahun_aktif ? Security::clean($tahun_aktif['nama']) : 'Pendaftaran Dibuka' ?>
         </div>
         <h1 class="hero-title mb-3">
-          Penerimaan<br>
-          <span style="color:var(--gold-light)">Mahasiswa Baru</span>
+          <?php
+          $heroTitle = $settings['hero_title'] ?? 'Penerimaan Mahasiswa Baru';
+          $titleParts = explode(' ', $heroTitle, 2);
+          if (count($titleParts) === 2):
+          ?>
+          <?= Security::clean($titleParts[0]) ?><br>
+          <span style="color:var(--gold-light)"><?= Security::clean($titleParts[1]) ?></span>
+          <?php else: ?>
+          <?= Security::clean($heroTitle) ?>
+          <?php endif; ?>
         </h1>
         <p class="hero-subtitle mb-2">
           <?= Security::clean($settings['hero_subtitle'] ?? 'Wujudkan Impianmu Bersama Kami') ?>
@@ -64,6 +72,35 @@
   </div>
 </div>
 
+
+<?php if (!empty($settings['about_text'])): ?>
+<!-- ABOUT SECTION -->
+<section style="padding:3.5rem 0;background:#fff;border-bottom:1px solid var(--border)">
+  <div class="container">
+    <div class="row align-items-center g-4">
+      <div class="col-lg-3 text-center">
+        <?php $logoPath = $settings['logo_path'] ?? ''; ?>
+        <?php if ($logoPath): ?>
+        <img src="<?= htmlspecialchars(BASE_URL . $logoPath) ?>" alt="Logo"
+             style="max-height:100px;max-width:200px;object-fit:contain;" onerror="this.style.display='none'">
+        <?php else: ?>
+        <div style="width:80px;height:80px;border-radius:50%;background:var(--blue-pale);display:flex;align-items:center;justify-content:center;margin:0 auto;font-size:2rem;color:var(--blue-main)">
+          <i class="bi bi-building"></i>
+        </div>
+        <?php endif; ?>
+      </div>
+      <div class="col-lg-9">
+        <h3 class="fw-bold mb-2" style="color:var(--blue-main);font-size:1.2rem">
+          <?= Security::clean($settings['site_name'] ?? APP_NAME) ?>
+        </h3>
+        <p class="text-muted mb-0" style="font-size:.92rem;line-height:1.7">
+          <?= nl2br(Security::clean($settings['about_text'])) ?>
+        </p>
+      </div>
+    </div>
+  </div>
+</section>
+<?php endif; ?>
 
 <!-- ═══════════════════════ PROGRAM STUDI ═══════════════════════ -->
 <section id="program" style="padding:5rem 0;background:var(--off-white)">
@@ -355,19 +392,19 @@
       <div class="col-lg-8">
         <div class="accordion" id="faqAccordion">
           <?php
-          $faqs = [
+          // Ambil FAQ dari DB jika ada, fallback ke FAQ default
+          $dbFaqs = !empty($settings['faq_list']) ? json_decode($settings['faq_list'], true) : [];
+          $faqs = !empty($dbFaqs) ? $dbFaqs : [
             ['q'=>'Apakah pendaftaran bisa dilakukan secara online?',
-             'a'=>'Ya, seluruh proses pendaftaran dapat dilakukan secara online melalui website ini. Upload dokumen, isi formulir, dan pantau status dari mana saja.'],
+             'a'=>'Ya, seluruh proses pendaftaran dapat dilakukan secara online melalui website ini.'],
             ['q'=>'Berapa biaya pendaftaran Program S1?',
              'a'=>'Biaya pendaftaran Program S1 adalah Rp 300.000, dengan SPP Rp 250.000/bulan. Masa studi 8 semester.'],
             ['q'=>'Apakah ada promo untuk Program Magister S2?',
-             'a'=>'Ya! 20 pendaftar pertama Program S2 mendapatkan GRATIS biaya pendaftaran (Rp 500.000). Segera daftar sebelum kuota habis!'],
+             'a'=>'Ya! 20 pendaftar pertama Program S2 mendapatkan GRATIS biaya pendaftaran. Segera daftar sebelum kuota habis!'],
             ['q'=>'Dokumen apa saja yang harus diupload?',
-             'a'=>'KTP, Kartu Keluarga, Akte Kelahiran, Ijazah & Transkrip, dan Foto Resmi. Untuk S2, ijazah S1 bisa menyusul.'],
+             'a'=>'KTP, Kartu Keluarga, Akte Kelahiran, Ijazah & Transkrip, dan Foto Resmi.'],
             ['q'=>'Bagaimana cara mengetahui status pendaftaran saya?',
-             'a'=>'Setelah mendaftar, Anda mendapat Nomor Pendaftaran. Login ke dashboard untuk memantau status verifikasi berkas.'],
-            ['q'=>'Apakah Ma\'had Aly Ibnu Abbas Karanganyar terdaftar resmi?',
-             'a'=>'Ya, bekerjasama dengan Institut Muhammadiyah Ngawi dan telah terdaftar resmi dalam sistem pendidikan tinggi Indonesia.'],
+             'a'=>'Setelah mendaftar, Anda mendapat Nomor Pendaftaran. Login ke dashboard untuk memantau status verifikasi.'],
           ];
           foreach ($faqs as $i => $f):
           ?>
@@ -405,29 +442,56 @@
           Hubungi tim kami untuk informasi lebih lanjut, atau langsung daftar secara online.
         </p>
         <div class="d-flex flex-column gap-3">
-          <a href="https://wa.me/<?= preg_replace('/[^0-9]/', '', $settings['site_phone'] ?? '08561464905') ?>"
+          <?php if (!empty($settings['site_phone'])): ?>
+          <a href="https://wa.me/<?= preg_replace('/[^0-9]/', '', $settings['site_phone']) ?>"
              target="_blank" class="d-flex align-items-center gap-3 text-white text-decoration-none">
             <div style="width:48px;height:48px;border-radius:12px;background:rgba(255,255,255,.12);display:flex;align-items:center;justify-content:center;font-size:1.2rem;flex-shrink:0"><i class="bi bi-whatsapp"></i></div>
             <div>
               <div style="font-size:.75rem;color:rgba(255,255,255,.55)">WhatsApp / Telepon</div>
-              <div class="fw-bold"><?= Security::clean($settings['site_phone'] ?? '0856-1464-905') ?></div>
+              <div class="fw-bold"><?= Security::clean($settings['site_phone']) ?></div>
             </div>
           </a>
-          <div class="d-flex align-items-center gap-3">
+          <?php endif; ?>
+          <?php if (!empty($settings['site_email'])): ?>
+          <a href="mailto:<?= Security::clean($settings['site_email']) ?>"
+             class="d-flex align-items-center gap-3 text-white text-decoration-none">
+            <div style="width:48px;height:48px;border-radius:12px;background:rgba(255,255,255,.12);display:flex;align-items:center;justify-content:center;font-size:1.2rem;flex-shrink:0"><i class="bi bi-envelope"></i></div>
+            <div>
+              <div style="font-size:.75rem;color:rgba(255,255,255,.55)">Email</div>
+              <div class="fw-bold"><?= Security::clean($settings['site_email']) ?></div>
+            </div>
+          </a>
+          <?php endif; ?>
+          <?php if (!empty($settings['site_website'])): ?>
+          <a href="https://<?= Security::clean($settings['site_website']) ?>" target="_blank"
+             class="d-flex align-items-center gap-3 text-white text-decoration-none">
             <div style="width:48px;height:48px;border-radius:12px;background:rgba(255,255,255,.12);display:flex;align-items:center;justify-content:center;font-size:1.2rem;flex-shrink:0"><i class="bi bi-globe"></i></div>
             <div>
               <div style="font-size:.75rem;color:rgba(255,255,255,.55)">Website</div>
-              <div class="fw-bold"><?= Security::clean($settings['site_website'] ?? 'www.ibnuabbass.com') ?></div>
+              <div class="fw-bold"><?= Security::clean($settings['site_website']) ?></div>
             </div>
-          </div>
+          </a>
+          <?php endif; ?>
+          <?php if (!empty($settings['site_alamat'])): ?>
           <div class="d-flex align-items-center gap-3">
             <div style="width:48px;height:48px;border-radius:12px;background:rgba(255,255,255,.12);display:flex;align-items:center;justify-content:center;font-size:1.2rem;flex-shrink:0"><i class="bi bi-geo-alt-fill"></i></div>
             <div>
               <div style="font-size:.75rem;color:rgba(255,255,255,.55)">Alamat</div>
-              <div class="fw-bold" style="font-size:.9rem"><?= Security::clean($settings['site_alamat'] ?? 'Karanganyar, Jawa Tengah') ?></div>
+              <div class="fw-bold" style="font-size:.9rem"><?= Security::clean($settings['site_alamat']) ?></div>
             </div>
           </div>
+          <?php endif; ?>
         </div>
+
+        <?php if (!empty($settings['maps_url'])): ?>
+        <!-- Google Maps Embed -->
+        <div class="mt-4 rounded-3 overflow-hidden" style="height:200px;border:2px solid rgba(255,255,255,.2)">
+          <iframe src="<?= htmlspecialchars($settings['maps_url']) ?>"
+                  width="100%" height="200" style="border:0;display:block"
+                  allowfullscreen="" loading="lazy"
+                  referrerpolicy="no-referrer-when-downgrade"></iframe>
+        </div>
+        <?php endif; ?>
       </div>
 
       <div class="col-lg-5 offset-lg-1">

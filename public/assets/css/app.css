@@ -703,14 +703,14 @@ h3 { font-size: clamp(1.2rem, 2vw, 1.5rem); }
   display: flex;
   align-items: flex-start;
   gap: .6rem;
-  color: rgba(255,255,255,.6);
+  color: rgba(255, 255, 255, 0.6);
 }
 .footer-contact i { color: var(--gold-main); flex-shrink: 0; margin-top: 2px; }
 .footer-bottom {
-  background: rgba(0,0,0,.25);
+  background: rgba(20, 32, 66, 0.808);
   border-top: 1px solid rgba(255,255,255,.06);
   padding: 1rem 0;
-  color: rgba(255,255,255,.4);
+  color: rgba(255, 255, 255, 0.692);
 }
 
 /* ── Utilities ────────────────────────────────────────────── */

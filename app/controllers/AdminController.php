@@ -652,19 +652,59 @@ class CmsController extends Controller
     public function save(): void
     {
         $this->verifyCsrf();
-        $cms = new CmsModel();
-        foreach ($_POST as $k => $v) {
-            if (in_array($k, ['csrf_token', '_token'], true)) continue;
-            $key = Security::cleanRaw((string)$k);
-            // Skip jika nilai berupa array (misal checkbox group, FAQ array)
-            if (is_array($v)) {
-                // Gabungkan array menjadi JSON atau string dipisah newline
-                $value = implode("\n", array_map('strip_tags', $v));
-            } else {
-                $value = Security::cleanRaw((string)$v);
+
+        try {
+            $cms = new CmsModel();
+
+            // Proses $_POST['settings'] array
+            $labelMap = [
+                'site_name'      => 'Nama Institusi',
+                'site_tagline'   => 'Tagline / Motto',
+                'site_kerjasama' => 'Kerjasama Dengan',
+                'hero_title'     => 'Judul Hero',
+                'hero_subtitle'  => 'Subjudul Hero',
+                'site_phone'     => 'Nomor WhatsApp/Telepon',
+                'site_email'     => 'Email',
+                'site_website'   => 'Website',
+                'site_alamat'    => 'Alamat',
+                'color_primary'  => 'Warna Utama',
+                'color_accent'   => 'Warna Aksen',
+                'maps_url'       => 'Google Maps URL',
+                'about_text'     => 'Tentang Kampus',
+            ];
+            $groupMap = [
+                'site_name' => 'identitas', 'site_tagline' => 'identitas',
+                'site_kerjasama' => 'identitas',
+                'hero_title' => 'hero', 'hero_subtitle' => 'hero',
+                'site_phone' => 'kontak', 'site_email' => 'kontak',
+                'site_website' => 'kontak', 'site_alamat' => 'kontak',
+                'color_primary' => 'tampilan', 'color_accent' => 'tampilan',
+                'maps_url' => 'tampilan', 'about_text' => 'tentang',
+            ];
+
+            $settings = $_POST['settings'] ?? [];
+            
+            foreach ($settings as $k => $v) {
+                $key   = Security::cleanRaw((string)$k);
+                $value = is_array($v) ? implode("
+", array_map('strip_tags', $v)) : Security::cleanRaw((string)$v);
+                $label = $labelMap[$key] ?? ucwords(str_replace(['_','-'], ' ', $key));
+                $group = $groupMap[$key] ?? 'umum';
+                $cms->set($key, $value, $label, $group);
             }
-            $cms->set($key, $value);
-        }
+
+            // Proses FAQ - simpan sebagai JSON
+            $faqQ = $_POST['faq_q'] ?? [];
+            $faqA = $_POST['faq_a'] ?? [];
+            $faqs = [];
+            foreach ($faqQ as $i => $q) {
+                $q = trim(Security::cleanRaw((string)$q));
+                $a = trim(Security::cleanRaw((string)($faqA[$i] ?? '')));
+                if ($q || $a) {
+                    $faqs[] = ['q' => $q, 'a' => $a];
+                }
+            }
+            $cms->set('faq_list', json_encode($faqs, JSON_UNESCAPED_UNICODE), 'FAQ List', 'faq');
 
         if (!empty($_FILES['logo']) && $_FILES['logo']['error'] === UPLOAD_ERR_OK) {
             $file     = $_FILES['logo'];
@@ -687,8 +727,11 @@ class CmsController extends Controller
             }
         }
 
-        AuditLog::log('UPDATE', 'cms_settings');
-        Session::flash('success', 'Pengaturan berhasil disimpan.');
+            AuditLog::log('UPDATE', 'cms_settings', 0);
+            Session::flash('success', 'Pengaturan berhasil disimpan.');
+        } catch (\Exception $e) {
+            Session::flash('error', 'Gagal menyimpan: ' . $e->getMessage());
+        }
         $this->redirect('/admin/pengaturan');
     }
 
