@@ -54,6 +54,13 @@ $list = $list ?? [];
                                 <i class="bi bi-<?= $pr['is_aktif'] ? 'pause-circle' : 'play-circle' ?>"></i>
                             </button>
                         </form>
+                        <form method="POST" action="<?= url('/admin/prodi/' . $pr['id'] . '/hapus') ?>" class="d-inline"
+                              onsubmit="return confirm('Hapus prodi <?= htmlspecialchars(addslashes($pr['nama_prodi'])) ?>?\nData tidak bisa dikembalikan.')">
+                            <input type="hidden" name="csrf_token" value="<?= Security::generateCsrf() ?>">
+                            <button class="btn btn-sm btn-outline-danger" style="padding:3px 8px;" title="Hapus">
+                                <i class="bi bi-trash"></i>
+                            </button>
+                        </form>
                     </div>
                 </td>
             </tr>

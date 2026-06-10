@@ -154,42 +154,54 @@
     </a>
 
     <div class="sidebar-nav">
-        <?php $uri = $_SERVER['REQUEST_URI']; ?>
+        <?php
+        $uri  = $_SERVER['REQUEST_URI'];
+        $role = Auth::role();
+        $isSuperadmin  = $role === 'superadmin';
+        $isAdmin       = in_array($role, ['superadmin','admin']);
+        $isVerifikator = in_array($role, ['superadmin','admin','verifikator']);
+        ?>
 
         <div class="nav-section-label">Utama</div>
-        <a href="<?= url('/admin') ?>" class="sidebar-link <?= $uri === '/admin' ? 'active' : '' ?>">
+        <a href="<?= url('/admin') ?>" class="sidebar-link <?= strpos($uri,'page=admin') !== false && strpos($uri,'page=admin/') === false ? 'active' : '' ?>">
             <i class="bi bi-grid-1x2"></i> Dashboard
         </a>
 
         <div class="nav-section-label">Pendaftaran</div>
-        <a href="<?= url('/admin/pendaftar') ?>" class="sidebar-link <?= strpos($uri,'/admin/pendaftar') === 0 ? 'active' : '' ?>">
+        <a href="<?= url('/admin/pendaftar') ?>" class="sidebar-link <?= strpos($uri,'admin/pendaftar') !== false ? 'active' : '' ?>">
             <i class="bi bi-people"></i> Data Pendaftar
         </a>
-        <a href="<?= url('/admin/pendaftar', ['status'=>'menunggu']) ?>" class="sidebar-link <?= strpos($uri,'/admin/verifikasi') === 0 ? 'active' : '' ?>">
+        <a href="<?= url('/admin/pendaftar', ['status'=>'menunggu']) ?>" class="sidebar-link">
             <i class="bi bi-shield-check"></i> Verifikasi Berkas
         </a>
-        <a href="<?= url('/admin/export') ?>" class="sidebar-link <?= strpos($uri,'/admin/export') === 0 ? 'active' : '' ?>">
+        <?php if ($isAdmin): ?>
+        <a href="<?= url('/admin/export') ?>" class="sidebar-link <?= strpos($uri,'admin/export') !== false ? 'active' : '' ?>">
             <i class="bi bi-download"></i> Export Data
         </a>
+        <?php endif; ?>
 
+        <?php if ($isAdmin): ?>
         <div class="nav-section-label">Pengaturan</div>
-        <a href="<?= url('/admin/tahun-akademik') ?>" class="sidebar-link <?= strpos($uri,'/admin/tahun-akademik') === 0 ? 'active' : '' ?>">
+        <a href="<?= url('/admin/tahun-akademik') ?>" class="sidebar-link <?= strpos($uri,'tahun-akademik') !== false ? 'active' : '' ?>">
             <i class="bi bi-calendar3"></i> Tahun Akademik
         </a>
-        <a href="<?= url('/admin/prodi') ?>" class="sidebar-link <?= strpos($uri,'/admin/prodi') === 0 ? 'active' : '' ?>">
+        <a href="<?= url('/admin/prodi') ?>" class="sidebar-link <?= strpos($uri,'admin/prodi') !== false ? 'active' : '' ?>">
             <i class="bi bi-mortarboard"></i> Program Studi
         </a>
-        <a href="<?= url('/admin/biaya') ?>" class="sidebar-link <?= strpos($uri,'/admin/biaya') === 0 ? 'active' : '' ?>">
+        <a href="<?= url('/admin/biaya') ?>" class="sidebar-link <?= strpos($uri,'admin/biaya') !== false ? 'active' : '' ?>">
             <i class="bi bi-currency-dollar"></i> Biaya
         </a>
-        <a href="<?= url('/admin/persyaratan') ?>" class="sidebar-link <?= strpos($uri,'/admin/persyaratan') === 0 ? 'active' : '' ?>">
+        <a href="<?= url('/admin/persyaratan') ?>" class="sidebar-link <?= strpos($uri,'admin/persyaratan') !== false ? 'active' : '' ?>">
             <i class="bi bi-list-check"></i> Persyaratan
         </a>
-        <a href="<?= url('/admin/pengaturan') ?>" class="sidebar-link <?= strpos($uri,'/admin/pengaturan') === 0 ? 'active' : '' ?>">
+        <?php endif; ?>
+
+        <?php if ($isSuperadmin): ?>
+        <div class="nav-section-label">Superadmin</div>
+        <a href="<?= url('/admin/pengaturan') ?>" class="sidebar-link <?= strpos($uri,'admin/pengaturan') !== false ? 'active' : '' ?>">
             <i class="bi bi-gear"></i> Pengaturan CMS
         </a>
-        <?php if (Auth::role() === 'superadmin'): ?>
-        <a href="<?= url('/admin/users') ?>" class="sidebar-link <?= strpos($uri,'/admin/users') === 0 ? 'active' : '' ?>">
+        <a href="<?= url('/admin/users') ?>" class="sidebar-link <?= strpos($uri,'admin/users') !== false ? 'active' : '' ?>">
             <i class="bi bi-person-gear"></i> Manajemen User
         </a>
         <?php endif; ?>

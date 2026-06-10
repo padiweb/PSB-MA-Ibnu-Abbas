@@ -72,6 +72,13 @@ $roleColors = ['superadmin'=>'bg-danger','admin'=>'bg-primary','verifikator'=>'b
                                 <i class="bi bi-<?= $u['is_aktif'] ? 'pause-circle' : 'play-circle' ?>"></i>
                             </button>
                         </form>
+                        <form method="POST" action="<?= url('/admin/users/' . $u['id'] . '/hapus') ?>" class="d-inline"
+                              onsubmit="return confirm('Hapus user <?= htmlspecialchars(addslashes($u['nama'])) ?>?\nTindakan ini tidak bisa dibatalkan.')">
+                            <input type="hidden" name="csrf_token" value="<?= Security::generateCsrf() ?>">
+                            <button class="btn btn-sm btn-outline-danger" style="padding:3px 8px;" title="Hapus">
+                                <i class="bi bi-trash"></i>
+                            </button>
+                        </form>
                         <?php endif; ?>
                     </div>
                 </td>
