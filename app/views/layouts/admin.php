@@ -104,8 +104,8 @@
         }
 
         /* TABLE */
-        .admin-table { background: #fff; border-radius: 12px; overflow: hidden; border: 1px solid #e2e8f0; }
-        .admin-table .table { margin: 0; }
+        .admin-table { background: #fff; border-radius: 12px; overflow: hidden; border: 1px solid #e2e8f0; overflow-x: auto; -webkit-overflow-scrolling: touch; }
+        .admin-table .table { margin: 0; min-width: 540px; }
         .admin-table .table thead th {
             background: #f8fafc; font-size: .75rem; font-weight: 700;
             text-transform: uppercase; letter-spacing: .05em; color: #64748b;
@@ -290,18 +290,18 @@ function closeSidebar() {
 <?php endif; ?>
 
 <!-- Footer Admin -->
-<footer style="background:#f8fafc;border-top:1px solid #e2e8f0;padding:.6rem 1.5rem;
-               text-align:right;font-size:.72rem;color:#94a3b8;position:fixed;
-               bottom:0;right:0;left:var(--sidebar-w, 240px);z-index:100;">
-    &copy; <?= date('Y') ?> <?= htmlspecialchars($settings['site_name'] ?? APP_NAME) ?>
-    &nbsp;&middot;&nbsp;
-     
-    <a href="https://wa.me/6282242362853" target="_blank" 
-       style="color:#64748b;text-decoration:none;font-weight:600;"
-       onmouseover="this.style.color='var(--primary)'"
-       onmouseout="this.style.color='#64748b'">Padiweb Labs</a>
-    &nbsp;&middot;&nbsp; v<?= APP_VERSION ?>
+<footer style="background:#f8fafc;border-top:1px solid #e2e8f0;padding:.6rem 1.5rem;font-size:.72rem;color:#94a3b8;">
+    <div style="display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:.5rem;">
+        <span>&copy; <?= date('Y') ?> <?= htmlspecialchars($settings['site_name'] ?? APP_NAME) ?></span>
+        <span>
+            Developed by
+            <a href="https://padiweb.com" target="_blank"
+               style="color:#64748b;text-decoration:none;font-weight:600;"
+               onmouseover="this.style.color='var(--primary)'"
+               onmouseout="this.style.color='#64748b'">Padiweb Labs</a>
+            &nbsp;v<?= APP_VERSION ?>
+        </span>
+    </div>
 </footer>
-<div style="height:2.5rem"></div>
 </body>
 </html>

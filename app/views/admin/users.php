@@ -1,19 +1,21 @@
 <?php // views/admin/users.php
-$list = $list ?? [];
-$roles = ['superadmin'=>'Super Admin','admin'=>'Admin PMB','verifikator'=>'Verifikator'];
+$list       = $list ?? [];
+$roles      = ['superadmin'=>'Super Admin','admin'=>'Admin PMB','verifikator'=>'Verifikator'];
 $roleColors = ['superadmin'=>'bg-danger','admin'=>'bg-primary','verifikator'=>'bg-info text-dark'];
 ?>
-<div class="page-header d-flex align-items-center justify-content-between">
+
+<div class="page-header d-flex align-items-center justify-content-between mb-4">
     <div>
         <h1><i class="bi bi-person-gear me-2"></i>Manajemen User</h1>
         <p class="text-muted mb-0" style="font-size:.82rem;">Kelola akun admin, verifikator, dan superadmin</p>
     </div>
-    <button class="btn btn-sm" style="background:var(--primary);color:#fff;" data-bs-toggle="modal" data-bs-target="#modalUser">
+    <button class="btn btn-sm rounded-3" style="background:var(--primary);color:#fff;" data-bs-toggle="modal" data-bs-target="#modalUser">
         <i class="bi bi-person-plus me-1"></i> Tambah User
     </button>
 </div>
 
-<div class="admin-table">
+<!-- DESKTOP: tabel -->
+<div class="admin-table d-none d-md-block">
     <table class="table">
         <thead>
             <tr>
@@ -60,8 +62,8 @@ $roleColors = ['superadmin'=>'bg-danger','admin'=>'bg-primary','verifikator'=>'b
                 <td style="font-size:.78rem;color:#64748b;"><?= date('d M Y', strtotime($u['created_at'])) ?></td>
                 <td class="text-center">
                     <div class="d-flex gap-1 justify-content-center">
-                        <button class="btn btn-sm btn-outline-warning" style="padding:3px 8px;font-size:.72rem;"
-                                onclick="resetPw(<?= $u['id'] ?>, '<?= htmlspecialchars($u['nama']) ?>')"
+                        <button class="btn btn-sm btn-outline-warning" style="padding:3px 8px;"
+                                onclick="resetPw(<?= $u['id'] ?>, '<?= htmlspecialchars($u['nama'], ENT_QUOTES) ?>')"
                                 title="Reset Password">
                             <i class="bi bi-key"></i>
                         </button>
@@ -73,7 +75,7 @@ $roleColors = ['superadmin'=>'bg-danger','admin'=>'bg-primary','verifikator'=>'b
                             </button>
                         </form>
                         <form method="POST" action="<?= url('/admin/users/' . $u['id'] . '/hapus') ?>" class="d-inline"
-                              onsubmit="return confirm('Hapus user <?= htmlspecialchars(addslashes($u['nama'])) ?>?\nTindakan ini tidak bisa dibatalkan.')">
+                              onsubmit="return confirm('Hapus user ini?\nTindakan tidak bisa dibatalkan.')">
                             <input type="hidden" name="csrf_token" value="<?= Security::generateCsrf() ?>">
                             <button class="btn btn-sm btn-outline-danger" style="padding:3px 8px;" title="Hapus">
                                 <i class="bi bi-trash"></i>
@@ -87,6 +89,84 @@ $roleColors = ['superadmin'=>'bg-danger','admin'=>'bg-primary','verifikator'=>'b
             <?php endif; ?>
         </tbody>
     </table>
+</div>
+
+<!-- MOBILE: card list -->
+<div class="d-md-none">
+    <?php if (empty($list)): ?>
+    <div class="text-center py-5 text-muted">
+        <i class="bi bi-people" style="font-size:2rem;opacity:.3"></i>
+        <p class="mt-2 small">Tidak ada data user</p>
+    </div>
+    <?php else: ?>
+    <div class="d-flex flex-column gap-3">
+        <?php foreach ($list as $u): ?>
+        <div class="card border-0 rounded-3" style="box-shadow:0 2px 10px rgba(0,0,0,.07);">
+            <div class="card-body p-3">
+                <!-- Header card -->
+                <div class="d-flex align-items-center gap-3 mb-3">
+                    <div style="width:42px;height:42px;border-radius:50%;background:var(--primary);display:flex;align-items:center;justify-content:center;color:#fff;font-size:.9rem;font-weight:700;flex-shrink:0;">
+                        <?= strtoupper(substr($u['nama'] ?? 'A', 0, 1)) ?>
+                    </div>
+                    <div class="flex-fill">
+                        <div class="fw-700" style="font-size:.9rem;">
+                            <?= htmlspecialchars($u['nama'] ?? '') ?>
+                            <?php if ($u['id'] === Session::get('user_id')): ?>
+                            <span style="font-size:.68rem;color:var(--accent);"> ● Akun Anda</span>
+                            <?php endif; ?>
+                        </div>
+                        <code style="font-size:.75rem;color:#64748b;"><?= htmlspecialchars($u['username']) ?></code>
+                    </div>
+                    <span class="badge <?= $roleColors[$u['role']] ?? 'bg-secondary' ?>" style="font-size:.68rem;">
+                        <?= $roles[$u['role']] ?? ucfirst($u['role']) ?>
+                    </span>
+                </div>
+                <!-- Info -->
+                <div class="row g-2 mb-3" style="font-size:.78rem;">
+                    <div class="col-12">
+                        <span class="text-muted">Email:</span>
+                        <span class="ms-1"><?= htmlspecialchars($u['email'] ?? '-') ?></span>
+                    </div>
+                    <div class="col-6">
+                        <span class="text-muted">Status:</span>
+                        <span class="badge <?= $u['is_aktif'] ? 'bg-success' : 'bg-secondary' ?> ms-1" style="font-size:.65rem;">
+                            <?= $u['is_aktif'] ? 'Aktif' : 'Nonaktif' ?>
+                        </span>
+                    </div>
+                    <div class="col-6">
+                        <span class="text-muted">Dibuat:</span>
+                        <span class="ms-1"><?= date('d M Y', strtotime($u['created_at'])) ?></span>
+                    </div>
+                </div>
+                <!-- Aksi -->
+                <div class="d-flex gap-2">
+                    <button class="btn btn-sm btn-outline-warning flex-fill rounded-3"
+                            onclick="resetPw(<?= $u['id'] ?>, '<?= htmlspecialchars($u['nama'], ENT_QUOTES) ?>')"
+                            style="font-size:.75rem;">
+                        <i class="bi bi-key me-1"></i>Reset PW
+                    </button>
+                    <?php if ($u['id'] !== Session::get('user_id')): ?>
+                    <form method="POST" action="<?= url('/admin/users/' . $u['id'] . '/toggle') ?>" class="flex-fill">
+                        <input type="hidden" name="csrf_token" value="<?= Security::generateCsrf() ?>">
+                        <button class="btn btn-sm btn-outline-<?= $u['is_aktif'] ? 'secondary' : 'success' ?> w-100 rounded-3" style="font-size:.75rem;">
+                            <i class="bi bi-<?= $u['is_aktif'] ? 'pause-circle' : 'play-circle' ?> me-1"></i>
+                            <?= $u['is_aktif'] ? 'Nonaktifkan' : 'Aktifkan' ?>
+                        </button>
+                    </form>
+                    <form method="POST" action="<?= url('/admin/users/' . $u['id'] . '/hapus') ?>"
+                          onsubmit="return confirm('Hapus user ini?\nTidak bisa dibatalkan.')">
+                        <input type="hidden" name="csrf_token" value="<?= Security::generateCsrf() ?>">
+                        <button class="btn btn-sm btn-outline-danger rounded-3" style="font-size:.75rem;padding:.3rem .65rem;" title="Hapus">
+                            <i class="bi bi-trash"></i>
+                        </button>
+                    </form>
+                    <?php endif; ?>
+                </div>
+            </div>
+        </div>
+        <?php endforeach; ?>
+    </div>
+    <?php endif; ?>
 </div>
 
 <!-- MODAL TAMBAH USER -->
