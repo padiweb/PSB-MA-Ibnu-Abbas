@@ -175,7 +175,7 @@ $tahunAktif = $tahun_aktif ?? null;
           <a href="<?= url('/admin/export') ?>"
              class="btn btn-sm text-start d-flex align-items-center gap-2 rounded-3"
              style="background:#f0fdf4;color:#15803d;border:1px solid #bbf7d0;font-size:.82rem;padding:.6rem .9rem">
-            <i class="bi bi-file-earmark-spreadsheet"></i> Export CSV
+            <i class="bi bi-file-earmark-excel"></i> Export Excel
           </a>
           <a href="<?= url('/admin/tahun-akademik') ?>"
              class="btn btn-sm text-start d-flex align-items-center gap-2 rounded-3"

@@ -17,8 +17,9 @@ $statusLabels = [
     <div>
         <h1><i class="bi bi-people me-2"></i>Data Pendaftar</h1>
     </div>
-    <a href="<?= url('/admin/export') ?>" class="btn btn-sm" style="background:var(--primary);color:#fff;">
-        <i class="bi bi-download me-1"></i> Export Data
+    <a href="<?= BASE_URL . '/index.php?page=admin/export' . ($filters['tahun_akademik_id'] ? '&ta='.$filters['tahun_akademik_id'] : '') ?>"
+       class="btn btn-sm btn-outline-success rounded-3">
+        <i class="bi bi-file-earmark-excel me-1"></i> Export Excel
     </a>
 </div>
 

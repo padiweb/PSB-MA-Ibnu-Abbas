@@ -134,40 +134,111 @@ class AdminController extends Controller
     {
         Auth::requireRole(['superadmin','admin']);
 
-        $taId   = Security::cleanInt($_GET['ta'] ?? 0);
-        $format = Security::cleanRaw($_GET['format'] ?? 'csv');
-        $pendaftarModel = new PendaftarModel();
+        $taId = Security::cleanInt($_GET['ta'] ?? 0);
+        $pm   = new PendaftarModel();
+        $data = $pm->getForExport($taId);
 
-        $filters = $taId ? ['tahun_akademik_id' => $taId] : [];
-        $data = $pendaftarModel->findAll($filters, 'created_at DESC', 5000);
+        // Nama file
+        $taModel  = new TahunAkademikModel();
+        $taLabel  = '';
+        if ($taId) {
+            $ta = $taModel->findById($taId);
+            $taLabel = $ta ? '_' . preg_replace('/[^a-zA-Z0-9]/', '', $ta['kode']) : '';
+        }
+        $filename = 'data_pendaftar_pmb' . $taLabel . '_' . date('Ymd_His') . '.xls';
 
-        if ($format === 'csv') {
-            header('Content-Type: text/csv; charset=UTF-8');
-            header('Content-Disposition: attachment; filename="pendaftar_pmb_' . date('Ymd') . '.csv"');
-            echo "\xEF\xBB\xBF";
+        // Header Excel (format XML Spreadsheet - dibuka Excel & LibreOffice tanpa library)
+        header('Content-Type: application/vnd.ms-excel; charset=UTF-8');
+        header('Content-Disposition: attachment; filename="' . $filename . '"');
+        header('Cache-Control: max-age=0');
+        echo "\xEF\xBB\xBF"; // UTF-8 BOM
 
-            $out = fopen('php://output', 'w');
-            fputcsv($out, ['No','Nomor Pendaftaran','Nama Lengkap','Jenis Kelamin','Tempat Lahir','Tanggal Lahir','Nomor HP','Alamat','Nama Ibu','Status','Tanggal Submit']);
-            foreach ($data as $i => $row) {
-                fputcsv($out, [
-                    $i+1,
-                    $row['nomor_pendaftaran'],
-                    $row['nama_lengkap'],
-                    $row['jenis_kelamin'] === 'L' ? 'Laki-laki' : 'Perempuan',
-                    $row['tempat_lahir'],
-                    $row['tanggal_lahir'],
-                    $row['nomor_hp'],
-                    $row['alamat'],
-                    $row['nama_ibu_kandung'],
-                    ucfirst($row['status']),
-                    $row['tanggal_submit'] ?? '-',
-                ]);
-            }
-            fclose($out);
-            exit;
+        // Style
+        $styleHeader = 'background:#1a3a6b;color:#ffffff;font-weight:bold;font-size:11pt;border:1px solid #cccccc;';
+        $styleCell   = 'font-size:10pt;border:1px solid #dddddd;vertical-align:top;';
+        $styleAlt    = 'font-size:10pt;border:1px solid #dddddd;background:#f8fafc;vertical-align:top;';
+
+        $headers = [
+            'No', 'Nomor Pendaftaran', 'Nama Lengkap', 'Jenis Kelamin',
+            'Tempat Lahir', 'Tanggal Lahir', 'Email', 'Nomor HP', 'Alamat',
+            'Nama Ibu Kandung', 'Program Studi', 'Jenjang', 'Fakultas', 'Gelar',
+            'Tahun Akademik', 'Status', 'Tanggal Daftar', 'Tanggal Submit',
+            'Catatan Verifikasi', 'Verifikator',
+            'Asal Universitas (S2)', 'Tahun Lulus S1 (S2)', 'IPK S1 (S2)',
+        ];
+
+        $statusLabel = [
+            'draft'    => 'Draft',
+            'menunggu' => 'Menunggu Verifikasi',
+            'diterima' => 'Diterima',
+            'revisi'   => 'Perlu Revisi',
+            'ditolak'  => 'Ditolak',
+        ];
+
+        ob_start();
+        echo '<html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:x="urn:schemas-microsoft-com:office:excel" xmlns="http://www.w3.org/TR/REC-html40">';
+        echo '<head><meta charset="UTF-8"><!--[if gte mso 9]><xml><x:ExcelWorkbook><x:ExcelWorksheets><x:ExcelWorksheet>';
+        echo '<x:Name>Data Pendaftar PMB</x:Name><x:WorksheetOptions><x:DisplayGridlines/></x:WorksheetOptions>';
+        echo '</x:ExcelWorksheet></x:ExcelWorksheets></x:ExcelWorkbook></xml><![endif]--></head><body>';
+        echo '<table border="1" cellpadding="5" cellspacing="0" style="border-collapse:collapse;font-family:Arial,sans-serif;">';
+
+        // Title row
+        echo '<tr><td colspan="' . count($headers) . '" style="background:#0f2754;color:#ffffff;font-size:14pt;font-weight:bold;text-align:center;padding:12px;">';
+        echo 'DATA PENDAFTAR PMB MA\'HAD ALY IBNU ABBAS KARANGANYAR';
+        if ($taId && isset($ta)) echo ' - ' . htmlspecialchars($ta['nama'] ?? '');
+        echo '</td></tr>';
+
+        // Subtitle
+        echo '<tr><td colspan="' . count($headers) . '" style="background:#1a3a6b;color:#c9a227;font-size:10pt;text-align:center;padding:5px;">';
+        echo 'Dicetak: ' . date('d F Y, H:i') . ' WIB | Total Pendaftar: ' . count($data);
+        echo '</td></tr>';
+
+        // Empty row
+        echo '<tr><td colspan="' . count($headers) . '">&nbsp;</td></tr>';
+
+        // Header kolom
+        echo '<tr>';
+        foreach ($headers as $h) {
+            echo '<th style="' . $styleHeader . 'text-align:center;padding:8px;">' . htmlspecialchars($h) . '</th>';
+        }
+        echo '</tr>';
+
+        // Data rows
+        foreach ($data as $i => $row) {
+            $style = ($i % 2 === 0) ? $styleCell : $styleAlt;
+            echo '<tr>';
+            echo '<td style="' . $style . 'text-align:center;">' . ($i + 1) . '</td>';
+            echo '<td style="' . $style . '">' . htmlspecialchars($row['nomor_pendaftaran'] ?? '') . '</td>';
+            echo '<td style="' . $style . '">' . htmlspecialchars($row['nama_lengkap'] ?? '') . '</td>';
+            echo '<td style="' . $style . 'text-align:center;">' . ($row['jenis_kelamin'] === 'L' ? 'Laki-laki' : 'Perempuan') . '</td>';
+            echo '<td style="' . $style . '">' . htmlspecialchars($row['tempat_lahir'] ?? '') . '</td>';
+            echo '<td style="' . $style . 'text-align:center;">' . ($row['tanggal_lahir'] ? date('d/m/Y', strtotime($row['tanggal_lahir'])) : '-') . '</td>';
+            echo '<td style="' . $style . '">' . htmlspecialchars($row['email'] ?? '-') . '</td>';
+            echo '<td style="' . $style . '">' . htmlspecialchars($row['nomor_hp'] ?? '') . '</td>';
+            echo '<td style="' . $style . '">' . htmlspecialchars($row['alamat'] ?? '') . '</td>';
+            echo '<td style="' . $style . '">' . htmlspecialchars($row['nama_ibu_kandung'] ?? '') . '</td>';
+            echo '<td style="' . $style . 'font-weight:bold;">' . htmlspecialchars($row['nama_prodi'] ?? '') . '</td>';
+            echo '<td style="' . $style . 'text-align:center;">' . htmlspecialchars($row['jenjang'] ?? '') . '</td>';
+            echo '<td style="' . $style . '">' . htmlspecialchars($row['fakultas'] ?? '') . '</td>';
+            echo '<td style="' . $style . 'text-align:center;">' . htmlspecialchars($row['gelar'] ?? '') . '</td>';
+            echo '<td style="' . $style . '">' . htmlspecialchars($row['ta_nama'] ?? $row['ta_kode'] ?? '') . '</td>';
+            // Status dengan warna
+            $statusColors = ['diterima'=>'#d4edda;color:#155724','menunggu'=>'#fff3cd;color:#856404','revisi'=>'#cce5ff;color:#004085','ditolak'=>'#f8d7da;color:#721c24','draft'=>'#e2e3e5;color:#383d41'];
+            $sc = $statusColors[$row['status'] ?? 'draft'] ?? '#e2e3e5;color:#383d41';
+            echo '<td style="' . $style . 'background:' . $sc . ';text-align:center;font-weight:bold;">' . htmlspecialchars($statusLabel[$row['status'] ?? 'draft'] ?? ucfirst($row['status'] ?? '')) . '</td>';
+            echo '<td style="' . $style . 'text-align:center;">' . ($row['created_at'] ? date('d/m/Y H:i', strtotime($row['created_at'])) : '-') . '</td>';
+            echo '<td style="' . $style . 'text-align:center;">' . ($row['tanggal_submit'] ? date('d/m/Y H:i', strtotime($row['tanggal_submit'])) : '-') . '</td>';
+            echo '<td style="' . $style . '">' . nl2br(htmlspecialchars($row['catatan_verifikasi'] ?? '-')) . '</td>';
+            echo '<td style="' . $style . '">' . htmlspecialchars($row['verifikator_nama'] ?? '-') . '</td>';
+            echo '<td style="' . $style . '">' . htmlspecialchars($row['asal_universitas'] ?? '-') . '</td>';
+            echo '<td style="' . $style . 'text-align:center;">' . htmlspecialchars($row['tahun_lulus_s1'] ?? '-') . '</td>';
+            echo '<td style="' . $style . 'text-align:center;">' . ($row['ipk_s1'] ? number_format($row['ipk_s1'], 2) : '-') . '</td>';
+            echo '</tr>';
         }
 
-        $this->redirect('/admin/pendaftar');
+        echo '</table></body></html>';
+        echo ob_get_clean();
+        exit;
     }
 
     /** GET /admin/pendaftar/{id}/edit */
@@ -401,8 +472,8 @@ class TahunAkademikController extends Controller
         $buka = Security::cleanRaw($_POST['tanggal_buka'] ?? '') ?: null;
         $tutup= Security::cleanRaw($_POST['tanggal_tutup'] ?? '') ?: null;
 
-        if (!preg_match('/^\d{4}\/\d{4}$/', $kode)) {
-            Session::flash('error', 'Format kode salah. Gunakan: 2026/2027');
+        if (empty($kode)) {
+            Session::flash('error', 'Kode tahun akademik wajib diisi.');
             $this->redirect('/admin/tahun-akademik');
         }
 
@@ -502,7 +573,7 @@ class ProdiController extends Controller
     {
         $this->verifyCsrf();
         $data = [
-            'nama_prodi'=> Security::cleanRaw($_POST['nama'] ?? ''),
+            'nama_prodi'=> Security::cleanRaw($_POST['nama_prodi'] ?? $_POST['nama'] ?? ''),
             'singkatan' => strtoupper(Security::cleanRaw($_POST['singkatan'] ?? '')),
             'jenjang'   => Security::cleanRaw($_POST['jenjang'] ?? 'S1'),
             'fakultas'  => Security::cleanRaw($_POST['fakultas'] ?? ''),
@@ -520,7 +591,7 @@ class ProdiController extends Controller
         $this->verifyCsrf();
         $model = new ProdiModel();
         $data  = [
-            'nama_prodi'=> Security::cleanRaw($_POST['nama'] ?? ''),
+            'nama_prodi'=> Security::cleanRaw($_POST['nama_prodi'] ?? $_POST['nama'] ?? ''),
             'singkatan' => strtoupper(Security::cleanRaw($_POST['singkatan'] ?? '')),
             'jenjang'   => Security::cleanRaw($_POST['jenjang'] ?? 'S1'),
             'fakultas'  => Security::cleanRaw($_POST['fakultas'] ?? ''),

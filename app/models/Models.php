@@ -217,6 +217,29 @@ class PendaftarModel extends Model
         return $stmt->fetch() ?: null;
     }
 
+    public function getForExport(int $taId = 0): array
+    {
+        $sql = "SELECT p.*, 
+                    u.email, u.username,
+                    ta.nama AS ta_nama, ta.kode AS ta_kode,
+                    ps.nama_prodi, ps.jenjang, ps.gelar, ps.fakultas,
+                    u2.nama AS verifikator_nama
+                FROM pendaftar p
+                JOIN users u ON u.id = p.user_id
+                JOIN tahun_akademik ta ON ta.id = p.tahun_akademik_id
+                JOIN program_studi ps ON ps.id = p.program_studi_id
+                LEFT JOIN users u2 ON u2.id = p.diverifikasi_oleh";
+        $params = [];
+        if ($taId > 0) {
+            $sql   .= " WHERE p.tahun_akademik_id = ?";
+            $params[] = $taId;
+        }
+        $sql .= " ORDER BY p.created_at ASC";
+        $stmt = $this->db->prepare($sql);
+        $stmt->execute($params);
+        return $stmt->fetchAll();
+    }
+
     public function searchAdmin(array $filters, int $page = 1, int $perPage = 20): array
     {
         $params = [];

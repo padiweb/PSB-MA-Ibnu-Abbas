@@ -133,6 +133,7 @@ $taId   = $ta_id ?? 0;
 </div>
 
 <script>
+const BASE_URL = '<?= BASE_URL ?>';
 function editPersyaratan(data, taId) {
     document.getElementById('modalPersTitle').textContent = 'Edit Persyaratan';
     document.getElementById('persId').value    = data.id;
@@ -141,13 +142,13 @@ function editPersyaratan(data, taId) {
     document.getElementById('persUrutan').value= data.urutan || 1;
     document.getElementById('persWajib').checked = data.wajib == 1;
     document.getElementById('persTaId').value  = taId;
-    document.getElementById('formPers').action = '/admin/persyaratan/' + data.id + '/update';
+    document.getElementById('formPers').action = BASE_URL + '/index.php?page=admin/persyaratan/' + data.id;
     new bootstrap.Modal(document.getElementById('modalPersyaratan')).show();
 }
 document.getElementById('modalPersyaratan').addEventListener('hidden.bs.modal', function () {
     document.getElementById('modalPersTitle').textContent = 'Tambah Persyaratan';
     document.getElementById('formPers').reset();
-    document.getElementById('formPers').action = '/admin/persyaratan/simpan';
+    document.getElementById('formPers').action = BASE_URL + '/index.php?page=admin/persyaratan';
     document.getElementById('persId').value = '';
     document.getElementById('persWajib').checked = true;
 });

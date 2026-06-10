@@ -47,9 +47,13 @@ class Controller
         } elseif ($path === '/' || $path === '') {
             $url = BASE_URL . '/index.php';
         } else {
-            // Konversi /login → index.php?page=login
-            $page = ltrim($path, '/');
-            $url  = BASE_URL . '/index.php?page=' . $page;
+            // Pisahkan path dari query string jika ada
+            // Contoh: '/admin/biaya?ta=1' → page=admin/biaya&ta=1
+            $parts     = explode('?', ltrim($path, '/'), 2);
+            $page      = $parts[0];
+            $extraQs   = $parts[1] ?? '';
+            $url       = BASE_URL . '/index.php?page=' . $page;
+            if ($extraQs) $url .= '&' . $extraQs;
         }
         header('Location: ' . $url);
         exit;
