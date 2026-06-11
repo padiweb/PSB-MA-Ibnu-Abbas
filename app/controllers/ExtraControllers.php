@@ -341,6 +341,7 @@ class PendaftarController extends Controller
         $riwayat = $this->getVerifikasiLog($pendaftar['id']);
 
         $this->view('pendaftar/dashboard', [
+            'layout'     => 'layouts/pendaftar',
             'page_title' => 'Dashboard Pendaftar',
             'pendaftar'  => $pendaftar,
             'dokumen'    => $dokumen,
@@ -370,6 +371,7 @@ class PendaftarController extends Controller
         }
 
         $this->view('pendaftar/berkas', [
+            'layout'       => 'layouts/pendaftar',
             'page_title'   => 'Kelola Berkas',
             'pendaftar'    => $pendaftar,
             'dokumen'      => $dokumen,

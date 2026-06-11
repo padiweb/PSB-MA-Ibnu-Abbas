@@ -1,5 +1,14 @@
 <?php
-// views/pendaftar/cetak.php — digunakan dengan layout print
+// views/pendaftar/cetak.php
+function tanggalID(string $date, bool $withTime = false): string {
+    $bulan = ['','Januari','Februari','Maret','April','Mei','Juni',
+              'Juli','Agustus','September','Oktober','November','Desember'];
+    $ts = strtotime($date);
+    if (!$ts) return '-';
+    $str = date('d', $ts) . ' ' . $bulan[(int)date('n', $ts)] . ' ' . date('Y', $ts);
+    if ($withTime) $str .= ' ' . date('H:i', $ts);
+    return $str;
+}
 $p    = $pendaftar ?? [];
 $docs = $dokumen ?? [];
 $logs = $verifikasi_log ?? [];
@@ -12,11 +21,17 @@ $st = $p['status'] ?? 'menunggu';
 
     <!-- KOP SURAT -->
     <div class="kop">
+        <?php $logoPath = $settings['logo_path'] ?? ''; ?>
+        <?php if ($logoPath): ?>
+        <img src="<?= htmlspecialchars(BASE_URL . $logoPath) ?>" alt="Logo"
+             style="width:70px;height:70px;object-fit:contain;" onerror="this.style.display='none'">
+        <?php else: ?>
         <div class="kop-logo">M</div>
+        <?php endif; ?>
         <div class="kop-text">
-            <div class="kop-name">Ma'had 'Aly Ibnu Abbas Karanganyar</div>
+            <div class="kop-name"><?= Security::clean($settings['site_name'] ?? "Ma'had 'Aly Ibnu Abbas Karanganyar") ?></div>
             <div class="kop-sub">Ma'had 'Aly Tahfidzul Qur'an Waddirosah Al Islamiyah</div>
-            <div class="kop-sub2">Bekerjasama dengan Institut Muhammadiyah Ngawi &bull; www.ibnuabbass.com</div>
+            <div class="kop-sub2"><?= Security::clean($settings['site_kerjasama'] ?? '') ?> &bull; <?= Security::clean($settings['site_website'] ?? 'www.ibnuabbass.com') ?></div>
         </div>
     </div>
 
@@ -41,7 +56,7 @@ $st = $p['status'] ?? 'menunggu';
             <?php $dataDiri = [
                 ['Nama Lengkap', $p['nama_lengkap'] ?? '-'],
                 ['Tempat Lahir', $p['tempat_lahir'] ?? '-'],
-                ['Tanggal Lahir', $p['tanggal_lahir'] ? date('d F Y', strtotime($p['tanggal_lahir'])) : '-'],
+                ['Tanggal Lahir', $p['tanggal_lahir'] ? tanggalID($p['tanggal_lahir']) : '-'],
                 ['Nomor HP', $p['nomor_hp'] ?? '-'],
                 ['Nama Ibu Kandung', $p['nama_ibu_kandung'] ?? '-'],
                 ['Alamat KTP', $p['alamat'] ?? '-'],
@@ -61,7 +76,7 @@ $st = $p['status'] ?? 'menunggu';
             ['Program Studi', $p['nama_prodi'] ?? '-'],
             ['Jenjang', $p['jenjang'] ?? '-'],
             ['Tahun Akademik', $p['ta_nama'] ?? $p['ta_kode'] ?? '-' ?? '-'],
-            ['Tanggal Daftar', $p['created_at'] ? date('d F Y H:i', strtotime($p['created_at'])) : '-'],
+            ['Tanggal Daftar', $p['created_at'] ? tanggalID($p['created_at'], true) : '-'],
         ]; foreach ($dataProdi as [$lbl, $val]): ?>
         <div class="info-row">
             <span class="info-label"><?= $lbl ?></span>
@@ -92,7 +107,7 @@ $st = $p['status'] ?? 'menunggu';
                     <td><?= $i+1 ?></td>
                     <td><?= htmlspecialchars($doc['jenis_dokumen']) ?></td>
                     <td style="font-size:8.5pt;"><?= htmlspecialchars($doc['nama_file_asli'] ?? '-') ?></td>
-                    <td><?= date('d/m/Y', strtotime($doc['created_at'])) ?></td>
+                    <td><?= $doc['uploaded_at'] ? tanggalID($doc['uploaded_at']) : '-' ?></td>
                     <td class="status-ok">✓ Terupload</td>
                 </tr>
                 <?php endforeach; ?>
@@ -112,7 +127,7 @@ $st = $p['status'] ?? 'menunggu';
             <tbody>
                 <?php foreach ($logs as $log): ?>
                 <tr>
-                    <td><?= date('d/m/Y H:i', strtotime($log['created_at'])) ?></td>
+                    <td><?= tanggalID($log['created_at'], true) ?></td>
                     <td><strong><?= ucfirst($log['status_sesudah']) ?></strong></td>
                     <td><?= htmlspecialchars($log['catatan'] ?? '-') ?></td>
                 </tr>
@@ -132,7 +147,7 @@ $st = $p['status'] ?? 'menunggu';
     <!-- TANDA TANGAN -->
     <div class="ttd-area">
         <div class="ttd-box">
-            <div style="font-size:9pt;color:#555;">Karanganyar, <?= date('d F Y') ?></div>
+            <div style="font-size:9pt;color:#555;">Karanganyar, <?= (function(){ $b=['','Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus','September','Oktober','November','Desember']; return date('d').' '.$b[(int)date('n')].' '.date('Y'); })() ?></div>
             <div class="ttd-line">
                 <strong>Panitia PMB</strong><br>
                 <span style="color:#555;">Ma'had 'Aly Ibnu Abbas</span>

@@ -24,11 +24,17 @@ class Controller
             die("View tidak ditemukan: {$viewPath}");
         }
 
+        // Jika layout='none', langsung tampilkan tanpa wrapper
+        $layout = $data['layout'] ?? 'layouts/main';
+        if ($layout === 'none') {
+            require $viewFile;
+            return;
+        }
+
         ob_start();
         require $viewFile;
         $content = ob_get_clean();
 
-        $layout = $data['layout'] ?? 'layouts/main';
         require APP_PATH . '/views/' . $layout . '.php';
     }
 
