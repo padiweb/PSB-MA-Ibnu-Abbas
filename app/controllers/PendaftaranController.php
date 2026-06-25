@@ -200,9 +200,9 @@ class PendaftaranController extends Controller
                 'nomor_pendaftaran'=> $nomorPendaftaran,
                 'redirect'        => BASE_URL . '/daftar/sukses/' . urlencode($nomorPendaftaran),
             ]);
-        } catch (Exception $e) {
-            $db->rollBack();
-            Logger::error('Pendaftaran gagal: ' . $e->getMessage());
+        } catch (\Exception $e) {
+            if (isset($db)) $db->rollBack();
+            Logger::error('Pendaftaran gagal: ' . $e->getMessage() . ' | ' . $e->getFile() . ':' . $e->getLine());
             $this->json(['success'=>false,'message'=>'Terjadi kesalahan. Silakan coba lagi.'], 500);
         }
     }

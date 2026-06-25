@@ -143,14 +143,27 @@ class PendaftarModel extends Model
     public function generateNomor(string $tahunKode): string
     {
         $tahun = explode('/', $tahunKode)[0];
-        $stmt  = $this->db->prepare(
-            "SELECT COUNT(*) FROM `pendaftar` p
+        // Pakai MAX nomor_pendaftaran agar tidak duplicate meski ada data yang dihapus
+        $stmt = $this->db->prepare(
+            "SELECT MAX(CAST(SUBSTRING_INDEX(nomor_pendaftaran, '-', -1) AS UNSIGNED))
+             FROM `pendaftar` p
              JOIN `tahun_akademik` ta ON ta.id = p.tahun_akademik_id
-             WHERE ta.kode LIKE ?"
+             WHERE ta.kode LIKE ? AND p.nomor_pendaftaran LIKE ?"
         );
-        $stmt->execute([$tahun . '%']);
-        $count = (int) $stmt->fetchColumn();
-        return sprintf('PMB-%s-%06d', $tahun, $count + 1);
+        $stmt->execute([$tahun . '%', 'PMB-' . $tahun . '-%']);
+        $max = (int) $stmt->fetchColumn();
+        
+        // Loop sampai dapat nomor yang benar-benar belum ada di users (uk_username)
+        $next = $max + 1;
+        do {
+            $nomor = sprintf('PMB-%s-%06d', $tahun, $next);
+            $cek = $this->db->prepare("SELECT id FROM `users` WHERE `username` = ? LIMIT 1");
+            $cek->execute([$nomor]);
+            if (!$cek->fetch()) break;
+            $next++;
+        } while (true);
+        
+        return $nomor;
     }
 
     public function getWithDetails(int $id): ?array
