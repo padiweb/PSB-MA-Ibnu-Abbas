@@ -20,6 +20,9 @@ $statusColors  = ['menunggu'=>'warning','diterima'=>'success','revisi'=>'info','
         </div>
     </div>
     <div class="d-flex gap-2">
+        <a href="<?= url('/admin/pendaftar/' . $p['id'] . '/edit') ?>" class="btn btn-sm btn-outline-warning rounded-3">
+            <i class="bi bi-pencil-square me-1"></i> Edit
+        </a>
         <a href="<?= url('/admin/pendaftar/' . $p['id'] . '/cetak') ?>" target="_blank" class="btn btn-sm btn-outline-secondary">
             <i class="bi bi-printer me-1"></i> Cetak
         </a>

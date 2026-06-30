@@ -23,9 +23,16 @@ $st = $statusColors[$p['status'] ?? 'menunggu'];
         <h4 class="fw-700 mb-0" style="color:var(--primary);">Assalamu'alaikum, <?= htmlspecialchars(explode(' ', $p['nama_lengkap'] ?? 'Pendaftar')[0]) ?></h4>
         <p class="text-muted mb-0" style="font-size:.85rem;">Dashboard Pendaftar PMB Ma'had Aly Ibnu Abbas</p>
     </div>
-    <a href="<?= url('/pendaftar/cetak/' . $p['id']) ?>" target="_blank" class="btn btn-sm btn-outline-primary rounded-pill">
-        <i class="bi bi-printer me-1"></i> Cetak Bukti
-    </a>
+    <div class="d-flex gap-2">
+        <?php if (in_array($p['status'] ?? '', ['draft','menunggu','revisi'])): ?>
+        <a href="<?= url('/pendaftar/edit') ?>" class="btn btn-sm btn-outline-warning rounded-pill">
+            <i class="bi bi-pencil-square me-1"></i> Edit Data
+        </a>
+        <?php endif; ?>
+        <a href="<?= url('/pendaftar/cetak/' . $p['id']) ?>" target="_blank" class="btn btn-sm btn-outline-primary rounded-pill">
+            <i class="bi bi-printer me-1"></i> Cetak Bukti
+        </a>
+    </div>
 </div>
 
             <!-- STATUS CARD -->
